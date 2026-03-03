@@ -28,12 +28,13 @@ zoom:
   - data/metadata/zoom_params_pineda_2024_neurons.yaml
 resources:
   retries:                          1
-  mins_run_mapping:                 120
-  mins_run_cellbender:              180
+  gb_render_html_label_celltypes:   32
+  gb_render_html_zoom:              32
   gb_run_integration:               64
   gb_run_marker_genes:              98
-  mins_run_marker_genes:            180
-  gb_render_html_label_celltypes:   32
+  gb_zoom_run_marker_genes:         98
   mins_render_html_label_celltypes: 60
-  gb_zoom_run_marker_genes:         64
+  mins_run_cellbender:              180
+  mins_run_mapping:                 120
+  mins_run_marker_genes:            180
   mins_zoom_run_marker_genes:       120

@@ -1,7 +1,7 @@
-name: "dam_mice_2"
+name: "Pineda 2024"
 output_dir: ../public
 navbar:
-  title: "dam_mice_2"
+  title: "Pineda 2024"
 output:
   rmdformats::downcute:
     highlight: textmate
