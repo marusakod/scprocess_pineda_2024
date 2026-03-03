@@ -1,0 +1,37 @@
+---
+title: "pineda_2024"
+author:
+- name: Will Macnair
+  affiliation: 
+  - Church of England
+date: '`r format(as.Date("2026-02-28"), "%B %d, %Y")`'
+output:
+  rmdformats::downcute:
+    highlight: textmate
+    code_folding: hide
+    toc_depth: 3
+    css: custom.css
+---
+
+
+This page serves as a starting point for exploring the results of `scprocess`. The links below organize all generated reports, with each one detailing a specific step of the analysis (e.g., mapping, ambient RNA removal, QC).
+
+Use this page to navigate through the full set of visualizations and outputs for your project.
+
+## Core steps
+
+- Mapping ([link](pineda_mapping.html))
+
+- Ambient RNA removal ([link](pineda_ambient.html))
+- QC ([link](pineda_qc.html))
+- Highly variable genes ([link](pineda_hvgs.html))
+- Integration ([link](pineda_integration.html))
+- Marker genes ([link](pineda_marker_genes_0.2.html))
+
+## Cell type annotation
+- Celltype labelling ([link](pineda_label_celltypes.html))
+
+## Subclustering
+- myeloid_0.2 ([link](pineda_zoom_myeloid_0.2.html))
+- myeloid_0.5 ([link](pineda_zoom_myeloid_0.5.html))
+

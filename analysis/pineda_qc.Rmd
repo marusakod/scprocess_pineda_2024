@@ -1,0 +1,152 @@
+---
+title: "Cell-level QC"
+author:
+- name: Will Macnair
+  affiliation: 
+  - Church of England
+date: '`r format(as.Date("2026-02-28"), "%B %d, %Y")`'
+output:
+  rmdformats::downcute:
+    highlight: textmate
+    code_folding: hide
+    toc_depth: 3
+    css: custom.css
+---
+
+```{r setup_knitr, include=FALSE}
+library('BiocStyle')
+knitr::opts_chunk$set(
+  autodep=TRUE, cache=TRUE, cache.lazy=FALSE, dev='png', 
+  fig.path = "figure/pineda_qc.Rmd/", warning = FALSE, message =FALSE
+)
+knitr::opts_knit$set(root.dir = '..', base.dir = '../public/', base.url = '')
+# workflowr::wflow_build(files='analysis/pineda_qc.Rmd', view=F, verbose=T, delete_cache=F)
+```
+
+```{r setup_helpers, cache=FALSE, include = FALSE}
+source('code/utils.R')
+source('code/qc.R')
+n_cores     = 1
+setDTthreads(n_cores)
+```
+
+```{r setup_input, include = FALSE}
+# define qc metric files
+meta_f      = "/pstore/data/brain-sc-analysis/studies/pineda_2024/data/metadata/pineda_2024_harmonized_metadata.csv"
+qc_f        = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_qc/qc_all_samples_pineda_2024_2026-02-28.csv.gz"
+cuts_f      = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_qc/qc_thresholds_by_sample_id_pineda_2024_2026-02-28.csv"
+batch_var   = "sample_id"
+
+# set default values
+hard_min_counts = 200
+hard_min_feats  = 100
+hard_max_mito   = 0.5
+
+# specifications for SampleQC
+qc_names    = c('n_cells', 'log_counts', 'log_feats', 'logit_mito', 'logit_spliced')
+qc_lu       = c('no. of cells', 'no. of UMIs', 'no. of genes', 'mito. pct.', 'spliced pct.') %>% 
+  setNames(qc_names)
+```
+
+```{r load_qc_values, include = FALSE}
+qc_dt       = fread(qc_f) %>%
+  .[ log_counts > log10(hard_min_counts) ] %>%
+  .[ log_feats  > log10(hard_min_feats) ] %>%
+  .[ logit_mito < qlogis(hard_max_mito) ] %>% 
+  setnames(batch_var, "batch_var")
+kept_dt     = qc_dt[ keep == TRUE ]
+```
+
+```{r load_metadata, include = FALSE}
+# get nice ordering for samples
+meta_dt     = fread(meta_f)
+b_lvls      = meta_dt[[batch_var]] %>% intersect(unique(qc_dt$batch_var))
+assert_that( length(b_lvls) > 0 )
+n_batches   = length(b_lvls)
+```
+
+```{r make_cuts_dt, include = FALSE}
+cuts_dt     = make_cuts_dt(cuts_f, batch_var, b_lvls)
+```
+
+```{r setup_plot_sizes, include = FALSE}
+violin_h    = 0.4
+max_marg_h  = 12
+marg_h      = min((n_batches + 1) * violin_h, max_marg_h)
+```
+
+## Sample QC metrics{.tabset}
+
+An overview of quality control (QC) metrics for all samples, both before and after filtering. The QC metrics include:
+
+* `no. of cells` : Total number of barcodes called as cells for each sample.
+
+* `no. of UMIs` : Sum of counts across all features for each cell with log-transformed values displayed. 
+
+* `no. of genes` : Number of unique features with non-zero counts for each cell with log-transformed values displayed.
+
+* `mito pct.` : The proportion of reads that mapped to genes in the mitochondrial genome. High proportions are indicative of poor-quality cells (compromised membranes allow individual RNA molecules to escape while retaining mitochondria, leading to an increased relative abundance of mitochondrial transcript) or nuclei (incomplete removal of cytoplasm). Logit-transformed values are displayed as applying the logit (inverse logistic) transformation to mitochondrial proportions yields approximately Gaussian distributions. 
+
+* `spliced pct.` : The proportion of spliced reads. In single-nuclei RNA sequencing, high spliced proportions may indicate inadequate removal of cytoplasmic material from the nuclei.
+Logit-transformed values are displayed as applying the logit  (inverse logistic) transformation to spliced proportions results in approximately Gaussian distributions.
+
+
+```{r plot_qc_ranges_marginals, fig.height = marg_h, fig.width = 8, results = 'asis'}
+suppressWarnings({
+  cat("### Pre-QC\n")
+  print(plot_qc_ranges_marginals(qc_dt, b_lvls, qc_names, qc_lu, cuts_dt, batch_var))
+  cat("\n\n")
+  cat("### After light QC\n")
+  print(plot_qc_ranges_marginals(kept_dt, b_lvls, qc_names, qc_lu, cuts_dt, batch_var))
+  cat("\n\n")
+})
+```
+
+## QC metrics scatterplots{.tabset}
+
+Pairwise relationships of QC metrics at individual cell level.
+
+```{r plot_qc_metric_scatters, fig.height = 6, fig.width = 8, results = 'asis'}
+for (b in b_lvls) {
+  qc_tmp      = qc_dt[ batch_var == b ]
+  if (nrow(qc_tmp) == 1)
+    next
+  cat('### ', b, '\n')
+  print(plot_qc_metric_scatter(qc_tmp, qc_names, qc_lu, cuts_dt[ batch_var == b ], b))
+  cat('\n\n')
+}
+```
+
+## How many cells and samples retained?
+
+Table summarizing the number of cells before and after qc filtering. Some samples 
+may have been excluded from further analysis due to insufficient number of cells.
+
+```{r print_totals_excluded}
+calc_qc_summary(qc_dt, kept_dt, cuts_dt, qc_lu, batch_var) %>% knitr::kable()
+```
+
+## What were the reasons for excluding barcodes?{.tabset}
+
+An upset plot is generated for each sample to visualize the reasons for barcode exclusion. The plot shows the overlap between different exclusion criteria, with vertical bars representing the size of each intersection. Plots are omitted for samples where no barcodes were excluded.
+
+```{r plot_upsets_of_exclusions, fig.height = 4, fig.width = 6, results = 'asis'}
+for (bb in b_lvls) {
+  qc_tmp      = qc_dt[ batch_var == bb ]
+  if (nrow(qc_tmp) == 1 | sum(qc_tmp$keep) == nrow(qc_tmp))
+    next
+  cat('### ', bb, '\n')
+  suppressMessages( print(plot_upset_of_exclusions(qc_tmp, qc_names, qc_lu, cuts_dt)) )
+  cat('\n\n')
+}
+```
+
+## R session info
+
+Details of the R package versions used are given below.
+
+<details>
+```{r session_info, include=TRUE, echo=TRUE, results="markup"}
+devtools::session_info()
+```
+</details>

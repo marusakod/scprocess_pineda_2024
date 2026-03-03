@@ -1,0 +1,8 @@
+name: "dam_mice_2"
+output_dir: ../public
+navbar:
+  title: "dam_mice_2"
+output:
+  rmdformats::downcute:
+    highlight: textmate
+    code_folding: hide

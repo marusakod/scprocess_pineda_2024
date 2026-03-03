@@ -1,0 +1,138 @@
+---
+title: "Ambient RNA removal diagnostics"
+author:
+- name: Will Macnair
+  affiliation:
+  - Church of England
+date: '`r format(as.Date("2026-02-28"), "%B %d, %Y")`'
+output:
+  rmdformats::downcute:
+    highlight: textmate
+    code_folding: hide
+    toc_depth: 3
+    css: custom.css
+---
+
+```{r setup_knitr, include=FALSE}
+library('BiocStyle')
+knitr::opts_chunk$set(
+  autodep=TRUE, cache=TRUE, cache.lazy=FALSE, dev='png', 
+  fig.path = "figure/pineda_ambient.Rmd/", message = FALSE, warning = FALSE
+  )
+knitr::opts_knit$set(root.dir = '..', base.dir = '../public/', base.url = '')
+# workflowr::wflow_build(files='analysis/pineda_ambient.Rmd', view=F, verbose=T, delete_cache=F)
+```
+
+```{r setup_helpers, cache=FALSE, include = FALSE}
+source('code/utils.R')
+source('code/ambient.R')
+n_cores     = 4
+setDTthreads(n_cores)
+```
+
+```{r setup_input, include = FALSE}
+run_var     = "sample_id"
+amb_method  = "cellbender"
+demux_type  = "none"
+s_lvls      = "GSM5292143,GSM5292144,GSM5292145,GSM5292146,GSM5292147,GSM5292148,GSM5292149,GSM5292150,GSM5292151,GSM5292152,GSM5292153,GSM5292154,GSM5292155,GSM5292156,GSM5292157,GSM5292158,GSM5292159,GSM5292160,GSM5292161,GSM5292162,GSM5292163,GSM5292164,GSM5292165,GSM5292166,GSM5292167,GSM5292168,GSM5292169,GSM5292170,GSM5292171,GSM5292172,GSM5292173,GSM5292174,GSM5292175,GSM5292176,GSM5292177,GSM5292178,GSM5292179,GSM5292180,GSM5292181,GSM5292182,GSM5292183,GSM5292184,GSM5292185,GSM5292186,GSM5292187,GSM5292188,GSM5292189,GSM5292190,GSM5292191,GSM5292192,GSM5292193,GSM5292194,GSM5292195,GSM5292196,GSM5292197,GSM5292198,GSM5292199,GSM5292200,GSM5292201,GSM5292202,GSM5292203,GSM5292204,GSM5292205,GSM5292206,GSM5292207,GSM5292208,SRR27882073,SRR27882074,SRR27882075,SRR27882077,SRR27882078,SRR27882079,SRR27882080,SRR27882081,SRR27882082,SRR27882084,SRR27882085,SRR27882086,SRR27882088,SRR27882089,SRR27882090,SRR27882091,SRR27882092,SRR27882093,SRR27882094,SRR27882148,SRR27882149,SRR27882150,SRR27882151,SRR27882152,SRR27882153,SRR27882154,SRR27882156,SRR27882157,SRR27882158,SRR27882159,SRR27882160,SRR27882161,SRR27882162,SRR27882163,SRR27882164,SRR27882165,SRR27882166,SRR27882167,SRR27882168,SRR27882169,SRR27882170,SRR27882171,SRR27882172,SRR27882173,SRR27882174,SRR27882175,SRR27882177,SRR27882178,SRR27882179,SRR27882180,SRR27882181,SRR27882182,SRR27882183,SRR27882185,SRR27882186,SRR27882187,SRR27882188,SRR27882189,SRR27882190,SRR27882191,SRR27882192,SRR27882193,SRR27882194,SRR27882196,SRR27882197,SRR27882198,SRR27882199,SRR27882200,SRR27882201,SRR27882202,SRR27882203,SRR27882204,SRR27882205,SRR27882207,SRR27882208,SRR27882209,SRR27882210,SRR27882211,SRR27882212,SRR27882213,SRR27882214,SRR27882215,SRR27882216" %>%
+  str_split(pattern = ',') %>% unlist()
+date_stamp  = "2026-02-28"
+
+# files with barcode ranks and knee parameters
+map_dir     = 'output/pineda_mapping'
+amb_dir     = 'output/pineda_ambient'
+stats_f     = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_ambient/ambient_run_statistics_pineda_2024_2026-02-28.csv"
+
+if(demux_type == 'hto'){
+  map_subdir = 'rna/'
+}else{
+  map_subdir = ''
+}
+
+# get files with USA counts pre and post ambient removal
+map_yamls   = sapply(s_lvls, function(s)
+  sprintf("%s/af_%s/%sambient_params_%s_%s.yaml", map_dir, s, map_subdir, s, date_stamp)) %>%
+  setNames(s_lvls)
+amb_yamls   = sapply(s_lvls, function(s)
+  sprintf("%s/ambient_%s/ambient_%s_%s_output_paths.yaml", amb_dir, s, s, date_stamp)) %>%
+  setNames(s_lvls)
+usa_fs      = sapply(s_lvls, function(s)
+  sprintf("%s/ambient_%s/barcodes_qc_metrics_%s_%s.csv.gz", amb_dir, s, s, date_stamp)) %>%
+  setNames(s_lvls)
+ok_bcs_fs   = amb_yamls %>% sapply(function(f) read_yaml(f)$bcs_f ) %>% setNames(s_lvls)
+
+# check that these are ok
+assert_that(
+  all(file.exists(map_yamls)), all(file.exists(amb_yamls)), 
+  all(file.exists(usa_fs)), all(file.exists(ok_bcs_fs))
+  )
+assert_that( length(usa_fs) > 0 )
+assert_that( all(names(usa_fs) == names(ok_bcs_fs)) )
+```
+
+```{r load_metadata, include = FALSE}
+# get sample ids
+stats_dt    = stats_f %>% fread
+```
+
+```{r load_usa_fs, include = FALSE}
+usa_dt_ls   = usa_fs %>% lapply(get_usa_dt)
+ok_bcs_ls   = ok_bcs_fs %>% lapply(function(f) fread(f, header = FALSE)$V1 )
+tot_inc_ls  = map_yamls %>% lapply(function(f) read_yaml(f)$cb_total_droplets_included )
+assert_that(!any(sapply(tot_inc_ls, is.null)))
+```
+
+```{r define_plot_dims, include = FALSE}
+n_samples   = length(ok_bcs_ls)
+w_per_s     = 0.8
+dims_ls     = list(
+  reads_removed = list(h = 4, w = 1 + w_per_s * pmax(n_samples, 4)),
+  splice_vs_umi = list(h = 6, w = 5 + (amb_method != "none")*4)
+)
+plot_removed  = amb_method != "none"
+print_tbl     = amb_method == "cellbender"
+chunk_size    = 10
+idx_ls        = seq_along(usa_dt_ls)
+chunks_ls     = split(idx_ls, ceiling(idx_ls/chunk_size))
+```
+
+## Distributions of spliced pct. in empty and cell barcodes{.tabset}
+
+The plots show the relationship between the number of UMIs and the percentage of spliced reads, separated by sample, both before and after ambient RNA removal. Ambient RNA is typically characterized by a high proportion of spliced reads, making the spliced percentage a useful metric for evaluating the effectiveness of an ambient RNA removal method. By examining changes in spliced percentages, we can assess how well the method performed in reducing ambient RNA contamination.
+
+```{r plot_spliced_vs_umis, fig.height = dims_ls$splice_vs_umi$h, fig.width = dims_ls$splice_vs_umi$w, results = "asis"}
+for (ss in s_lvls) {
+  cat("### ", ss, "\n")
+  print( plot_spliced_vs_umis(ss, usa_dt_ls[[ss]], ok_bcs_ls[[ss]], tot_inc_ls[[ss]]) )
+  cat("\n\n")
+}
+```
+
+## How many reads were removed as ambient?{.tabset}
+Plots show what proportion of reads were removed from all barcodes called as cells.
+
+```{r plot_reads_removed_as_ambient, eval = plot_removed, fig.height = 4, fig.width = 10, results = "asis"}
+for (ii in seq_along(chunks_ls)) {
+  chunk       = chunks_ls[[ii]]
+  cat("### samples ", min(chunk), "-", max(chunk), "\n")
+  print(plot_reads_removed_as_ambient(usa_dt_ls[chunk], ok_bcs_ls[chunk]))
+  cat("\n\n")
+}
+```
+
+## Samples excluded by ambient removal step
+CellBender includes all barcodes in the analysis up to the `total_droplets` threshold covering both cell-containing droplets and empty droplets. If CellBender calls the majority of these included droplets as cells, it may indicate an underlying issue. This typically occurs in low-quality samples where cell-containing barcodes and empty droplets cannot be clearly distinguished in the barcode rank plot. The table below shows the proportion of included droplets that were classified as cells by CellBender. Samples where this proportion exceeded % were excluded from further analysis.
+
+```{r tbl_ambient_exclusions, results = "asis", eval = print_tbl}
+calc_ambient_exclusions(stats_dt, run_var) %>% knitr::kable()
+```
+
+## R session info
+
+Details of the R package versions used are given below.
+
+<details>
+```{r session_info, include=TRUE, echo=TRUE, results="markup"}
+devtools::session_info()
+```
+</details>

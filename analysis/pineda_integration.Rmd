@@ -1,0 +1,183 @@
+---
+title: "Integration diagnostics"
+author:
+- name: Will Macnair
+  affiliation: 
+  - Church of England
+date: '`r format(as.Date("2026-02-28"), "%B %d, %Y")`'
+output:
+  rmdformats::downcute:
+    highlight: textmate
+    code_folding: hide
+    toc_depth: 3
+    css: custom.css
+---
+
+
+
+```{r setup_knitr, include=FALSE}
+library('BiocStyle')
+knitr::opts_chunk$set( autodep=TRUE, cache=TRUE, cache.lazy=FALSE, dev='png', 
+fig.path = "figure/pineda_integration.Rmd/", message = FALSE, warning = FALSE
+)
+knitr::opts_knit$set(root.dir = '..', base.dir = '../public/', base.url = '')
+```
+
+
+```{r setup_helpers, cache=FALSE, include = FALSE}
+source('code/utils.R')
+source('code/integration.R')
+n_cores     = 1
+setDTthreads(n_cores)
+```
+
+
+```{r setup_input, include = FALSE}
+# inputs via reprocessing
+qc_f          = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_qc/qc_all_samples_pineda_2024_2026-02-28.csv.gz"
+
+# define QC lookups
+qc_names      = c('log_counts', 'log_feats', 'logit_mito', 'logit_spliced')
+qc_lu         = c('no. of UMIs', 'no. of genes', 'mito pct.', 'spliced pct.') %>% 
+  setNames(qc_names)
+
+# define integration inputs
+integration_f = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_integration/integrated_dt_pineda_2024_2026-02-28.csv.gz"
+int_embedding = "harmony"
+demux_type    = "none"
+batch_var     = "sample_id"
+res_ls        = "0.1,0.2,0.5,1,2" %>%
+  str_split(pattern = ',') %>% unlist() %>% as.numeric()
+dbl_cl_prop   = 0.5
+
+# sort out text
+if (int_embedding == 'harmony') {
+  int_txt = "with `Harmony` "
+} else {
+  int_txt = ''
+}
+if (demux_type == 'hto') {
+  dbl_txt = " and `HTODemux`(`Seurat`)"
+} else{
+  dbl_txt = ""
+}
+```
+
+
+```{r load_qc_results, include = FALSE}
+qc_melt       = fread(qc_f) %>% 
+  melt(id = 'cell_id', measure = qc_names, val = 'qc_val', var = 'qc_var') %>%
+  .[, qc_full := qc_lu[ qc_var ] ] %>%
+  .[, qc_var  := factor(qc_var, levels = qc_names) ] %>%
+  .[, qc_full := fct_reorder(qc_full, as.integer(qc_var)) ] %>% 
+  .[ !is.na(qc_val) ]
+```
+
+```{r load_integration_results, include = FALSE}
+int_all       = fread(integration_f)
+```
+
+```{r extract_dbl_checks, include = FALSE}
+int_dbl       = int_all %>% 
+  .[, .(batch_var = get(batch_var), cell_id, UMAP1 = dbl_UMAP1, UMAP2 = dbl_UMAP2, is_dbl, dbl_cluster)]
+```
+
+```{r extract_normal_integration, include = FALSE}
+int_dt        = int_all[ !is.na(UMAP1) ] %>% 
+  .[, c(batch_var, "cell_id", "embedding", "UMAP1", "UMAP2", 
+    str_subset(names(int_all), "RNA_snn_res")), with = FALSE]
+```
+
+```{r extract_clusters, include = FALSE}
+clusts_dt   = int_dt %>% 
+  melt(measure = patterns('RNA_snn_res'), var = 'resolution', val = 'cluster') %>% 
+  .[, .(embedding, batch_var = get(batch_var), cell_id, 
+    resolution = str_extract(resolution, "(?<=res\\.)(.+)"), cluster)]
+```
+
+Cells that passed quality control filtering were integrated `r int_txt`together with doublets identified using `scDblfinder``r dbl_txt`. Clustering of cells at a high resolution is then performed. Cells that appear in clusters which are enriched in doublets are excluded from further analysis.
+Integration of cells and clustering is repeated after removing doublet enriched clusters.
+
+## Doublets over UMAP
+
+The plot displays a binned UMAP with the proportion of doublets as well as the number of doublets in each bin. 
+
+```{r plot_doublet_integration, fig.height = 5, fig.width = 11}
+g_dbl   = plot_umap_doublets(int_dbl)
+g_dens  = plot_umap_density(int_dbl[, .(cell_id, UMAP1, UMAP2) ])
+g       = g_dbl + g_dens
+print(g)
+```
+
+## Doublet proportions in clusters
+
+The plot shows the proportion of doublets for each cluster in relation to the total number of cells in that cluster. Clusters with a doublet proportion exceeding `r dbl_cl_prop*100`% are excluded from further analysis.
+
+```{r plot_doublet_clusters, fig.height = 4, fig.width = 6}
+( plot_doublet_clusters(int_dbl, dbl_cl_prop) )
+```
+
+## Clusters over UMAP{.tabset}
+
+Clustering of data is performed at different resolution values. For each value the clusters are displayed over a UMAP together with a plot showing the density of cells. 
+
+After removing doublets, there were **`r nrow(int_dt)` QC-ed cells used for integration**.
+
+```{r plot_clusters_integration, fig.height = 7, fig.width = 9, results = "asis"}
+for (res in res_ls) {
+  cat('### ', res, '\n')
+  g_cl    = plot_umap_cluster(
+    umap_dt   = int_dt[, .(cell_id, UMAP1, UMAP2) ], 
+    clust_dt  = int_dt[, .(cell_id, cluster = get(paste0('RNA_snn_res.', res))) ],
+    name      = sprintf('res = %s', res))
+  g_dens  = plot_umap_density(int_dt[, .(cell_id, UMAP1, UMAP2) ])
+  g       = g_cl + g_dens
+  print(g)
+  cat('\n\n')
+}
+```
+
+## Evaluating cluster distribution across samples{.tabset}
+
+This plot visualizes the relationship between the entropy of clusters and the maximum proportion of cells from a single sample within each cluster (higher values suggest that a cluster predominantly contains cells from a single sample).
+Entropy measures how evenly distributed cells are across samples within each cluster—higher entropy indicates that cells from different samples are more evenly distributed, while lower entropy suggests that a cluster is dominated by cells from a small number of samples.
+
+```{r plot_entropy_selected_clusters, fig.height = 5, fig.width = 7, results = "asis"}
+n_clusts = res_ls %>% lapply(function(res){
+  tmp_dt = int_dt[, .(cluster = get(paste0('RNA_snn_res.', res)))]
+  length(unique(tmp_dt$cluster))
+})
+res_ls_pl = res_ls[n_clusts > 1]
+for (res in res_ls_pl) {
+  cat('### ', res, '\n')
+  input_dt  = int_dt[, .(batch_var = get(batch_var), cell_id, 
+    cluster = get(paste0('RNA_snn_res.', res)))]
+  suppressWarnings(print(plot_cluster_entropies(input_dt, batch_var, what = "norm")))
+  cat('\n\n')
+}
+```
+
+## Check QC metrics of clusters{.tabset}
+
+Distributions of QC metrics (library size, number of features, mitochondrial proportion, and spliced proportion) are shown for each cluster across different resolution values.
+
+```{r plot_qc_distns, fig.height = 8, fig.width = 10, results = 'asis'}
+for (res in res_ls) {
+  cat('### ', res, '\n')
+  suppressWarnings(print(plot_cluster_qc_distns(
+    qc_melt, 
+    clust_dt  = int_dt[, .(cell_id, cluster = get(paste0('RNA_snn_res.', res)))], 
+    name      = res)))
+  cat('\n\n')
+}
+```
+
+## R session info
+
+Details of the R package versions used are given below.
+
+<details>
+```{r session_info, include=TRUE, echo=TRUE, results="markup"}
+devtools::session_info()
+```
+</details>

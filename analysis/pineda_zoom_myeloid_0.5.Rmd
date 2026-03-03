@@ -1,0 +1,453 @@
+---
+title: "Zoom in and recluster: myeloid"
+author:
+- name: Will Macnair
+  affiliation:
+  - Church of England
+date: '`r format(as.Date("2026-02-28"), "%B %d, %Y")`'
+output:
+  rmdformats::downcute:
+    highlight: textmate
+    code_folding: hide
+    toc_depth: 3
+    css: custom.css
+---
+
+
+```{r setup_knitr, include=FALSE}
+library('BiocStyle')
+knitr::opts_chunk$set( autodep=TRUE, cache=TRUE, cache.lazy=FALSE, dev='png', warnings = FALSE, message = FALSE, 
+  fig.path = "figure/pineda_zoom_myeloid.Rmd/")
+knitr::opts_knit$set(root.dir = '..', base.dir = '../public/', base.url = '')
+
+```
+
+
+```{r setup_helpers, cache=FALSE, include = FALSE}
+source('code/utils.R')
+source('code/integration.R')
+source('code/marker_genes.R')
+source('code/hvgs.R')
+source('code/fgsea.R')
+library(stringi)
+n_cores = 1
+setDTthreads(n_cores)
+```
+
+
+```{r setup_input, include = FALSE}
+# define selected group
+zoom_dir      = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom"
+zoom_name     = "myeloid"
+sub_dir       = file.path(zoom_dir, zoom_name)
+
+batch_var     = "sample_id"
+# define files for calculating pseudobulk marker genes
+metadata_f    = "/pstore/data/brain-sc-analysis/studies/pineda_2024/data/metadata/pineda_2024_harmonized_metadata.csv"
+gtf_dt_f      = "/pstore/data/neurogenomics/resources/scdata/reference_genomes/human_2024/human_2024_genes_gtf.txt.gz"
+qc_f          = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_qc/qc_all_samples_pineda_2024_2026-02-28.csv.gz"
+cell_hvgs_f   = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/hvg_dt_pineda_2024_2026-02-28.csv.gz"
+int_f         = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/integrated_dt_pineda_2024_2026-02-28.csv.gz"
+pb_f          = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/pb_pineda_2024_0.5_2026-02-28.rds"
+pb_hvgs_f     = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/pb_hvgs_pineda_2024_0.5_2026-02-28.csv.gz"
+mkrs_f        = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/pb_marker_genes_pineda_2024_0.5_2026-02-28.csv.gz"
+empty_gs_f    = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/edger_empty_genes_pineda_2024_2026-02-28.csv.gz"
+pb_empty_f    = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_pseudobulk/pb_empties_pineda_2024_2026-02-28.rds"
+
+# fgsea files
+do_gsea       = as.logical("True")
+fgsea_go_bp_f = ""
+fgsea_go_cc_f = ""
+fgsea_go_mf_f = ""
+
+
+# custom markers for heatmap
+custom_mkr_names_str = "human_brain"
+custom_mkr_paths_str = "/pstore/data/neurogenomics/resources/scdata/marker_genes/human_brain.csv"
+if (custom_mkr_names_str != "") {
+  custom_mkr_names = str_split(custom_mkr_names_str, pattern = ',') %>% unlist()
+  custom_mkr_paths = str_split(custom_mkr_paths_str, pattern = ',') %>% unlist() %>%
+    setNames(custom_mkr_names)
+}
+
+# define QC lookups
+qc_names    = c('log_counts', 'log_feats', 'logit_mito', 'logit_spliced')
+qc_lu       = c('no. of UMIs', 'no. of genes', 'mito pct.', 'spliced pct.') %>% 
+  setNames(qc_names)
+
+# integration/clustering parameters
+res_ls  = "0.1 0.2 0.5 1 2" %>%
+ str_split(pattern = ' ') %>% unlist() %>% as.numeric()  
+
+# marker parameters
+not_ok_re     = "(lincRNA|lncRNA|pseudogene|antisense)"
+sel_res       = "0.5"
+min_cpm_mkr   = 50
+min_cells     = 10
+
+# parameters for gsea
+gsea_cut      = 0.1
+gsea_var_sel  = "z_score"
+ref_txome     = "human_2024"
+
+# define nice order for plotting
+cl_ord        = NULL
+
+# define metadata variables for plotting
+metadata_vars = "" %>% 
+  str_split(pattern = ",") %>% unlist()
+if (all(metadata_vars == ""))
+  metadata_vars = NULL
+
+# combine metadata variables for plot description
+metadata_txt = paste(metadata_vars, collapse = ', ') %>%
+  stri_replace_last_fixed(",", " and")
+```
+
+```{r load_metadata, include = FALSE}
+meta_dt       = metadata_f %>% fread
+if(!is.null(metadata_vars)){
+  assert_that( all(metadata_vars %in% names(meta_dt)) )
+}
+```
+
+```{r load_hvg_data, include = FALSE}
+cell_hvgs   = fread(cell_hvgs_f)
+edger_dt    = fread(empty_gs_f)
+pb          = readRDS(pb_empty_f)
+```
+
+```{r extract_integration_res, include = FALSE}
+integration_all = fread(int_f)
+int_dt      = integration_all[ !is.na(UMAP1) ] %>% 
+  .[, c(unique(c(batch_var, "sample_id")), "cell_id", "embedding", "UMAP1", "UMAP2", 
+    str_subset(names(integration_all), "RNA_snn_res")), with = FALSE]
+```
+
+```{r extract_sel_cls, include = FALSE}
+sel_cl_int_dt = copy(int_dt) %>%
+  .[, cluster := get(paste0("RNA_snn_res.", sel_res))] %>%
+  .[, .(sample_id, cell_id, UMAP1, UMAP2, cluster)] %>% 
+  merge(meta_dt, by = "sample_id")
+```
+
+```{r load_qc_results, include = FALSE}
+qc_melt     = fread(qc_f) %>% 
+  .[ cell_id %in% int_dt$cell_id ] %>% 
+  melt(id = 'cell_id', measure = qc_names, val = 'qc_val', var = 'qc_var') %>%
+  .[, qc_full := qc_lu[ qc_var ] ] %>%
+  .[, qc_var  := factor(qc_var, levels = qc_names) ] %>%
+  .[, qc_full := fct_reorder(qc_full, as.integer(qc_var)) ] %>% 
+  .[ !is.na(qc_val) ]
+```
+
+```{r load_gene_biotypes, include = FALSE}
+biotypes_dt   = load_gene_biotypes(gtf_dt_f)
+```
+
+```{r load_cpms, include = FALSE}
+cpms_dt     = readRDS(pb_f) %>% 
+  make_logcpms_all("sample_id", lib_size_method = "edger", 
+    min_cells = min_cells, n_cores = n_cores) %>% 
+  merge(biotypes_dt[, .(gene_id, gene_type)], by = "gene_id")
+```
+
+```{r load_mkr_hvgs, include = FALSE}
+pb_hvgs_dt  = fread(pb_hvgs_f) %>% 
+  .[ str_detect(gene_type, not_ok_re, negate = TRUE) ] %>% 
+  .[ order(-vst_var) ]
+top_hvgs    =  pb_hvgs_dt[ 1:50 ] %>% .[, geneset := "HVGs" ]
+```
+
+```{r load_mkr_ambient_genes, include = FALSE}
+ambient_dt  = fread(empty_gs_f ) %>% 
+  merge(biotypes_dt, by = "gene_id") %>% 
+  .[ str_detect(gene_type, not_ok_re, negate = TRUE) ] %>% 
+  .[ (logFC > 0) & (mean_logcpm.empties > log(min_cpm_mkr + 1)) ] %>% 
+  .[ order(PValue) ] %>% 
+  .[ gene_id %in% unique(cpms_dt$gene_id) ]
+ambient_gs  = ambient_dt[ 1:50 ] %>% .[, .(gene_id, symbol, vst_var = NA)] %>% 
+  .[, geneset := "ambient" ]
+```
+
+```{r load_pb_markers, include = FALSE}
+# calculate markers
+mkrs_dt     = fread(mkrs_f)
+if (is.null(cl_ord))
+  cl_ord      = sort(unique(mkrs_dt$cluster))
+```
+
+```{r load_heatmap_markers, include = FALSE}
+mkrs_ls   = list(HVGs = top_hvgs, ambient = ambient_gs)
+if (custom_mkr_names_str != "") {
+  # get some custom markers
+  custom_mkrs_dt_ls = lapply(custom_mkr_paths, FUN = process_custom_markers, 
+    biotypes_dt = biotypes_dt, hvgs_dt = pb_hvgs_dt, marker_calcs_dt = mkrs_dt)
+  
+  # remove NULL elements from list
+  custom_mkrs_dt_ls = Filter(Negate(is.null), custom_mkrs_dt_ls)
+  
+  # add to list
+  mkrs_ls = c(custom_mkrs_dt_ls, mkrs_ls)
+}
+```
+
+```{r calc_empty_hvgs, include = FALSE}
+vst_obj     = calc_vst_obj(pb, edger_dt)
+```
+
+```{r get_top_markers, include = FALSE}
+# select top markers
+top_dt      = mkrs_dt[ str_detect(gene_type, not_ok_re, negate = TRUE) ] %>% 
+  get_top_markers
+top_min_dt  = mkrs_dt[ str_detect(gene_type, not_ok_re, negate = TRUE) ] %>% 
+  .[ logcpm.sel >= log(min_cpm_mkr + 1) ] %>% 
+  get_top_markers
+```
+
+```{r calc_gsea_pb, include = FALSE}
+# do GSEA
+fgsea_fs      = c(fgsea_go_bp_f, fgsea_go_cc_f, fgsea_go_mf_f) %>% 
+  setNames(c("go_bp", "go_cc", "go_mf"))
+
+# load fgsea results
+gsea_ls       = lapply(fgsea_fs, function(f) if(file.exists(f)) {fread(f)} else {return(NULL)}) %>% setNames(names(fgsea_fs))
+```
+
+
+```{r plot_setup, include = FALSE}
+do_metadata   = length(metadata_vars) > 0
+# for ambient gene heatmaps
+base_w      = 1.5
+unit_w      = 0.5
+max_w       = 12
+n_batches   = ncol(pb)
+heatmap_w   = (n_batches * unit_w + base_w) %>% min(max_w)
+```
+
+## HVG selection diagnostics
+
+The selection of highly variable genes is a crucial step in the integration process and in
+identifying clusters in single-cell experiments. However, contamination from ambient RNA can act as a
+significant confounding factor. This section of the report provides plots to evaluate the influence of ambient RNA on the selection
+of highly variable genes and its potential impact on downstream analyses.
+
+### Are highly variable genes "ambient" ?
+
+The plot shows the extent to which highly variable genes identified using the `Seurat` VST method may
+be influenced by ambient RNA. The x-axis represents the `log2fc` values derived from the ambient gene estimation
+step in `scprocess` (see `scprocess` documentation for more details), while the y-axis shows the
+trend-normalized variance calculated using the `Seurat` VST method. Each point represents a gene,
+annotated based on whether it is among the top HVGs and whether it is identified as ambient by the
+ambient gene detection step. Labelled genes are top 10 most variable.
+
+```{r plot_std_var_vs_empty_log2fc, fig.height = 6, fig.width = 8}
+print(plot_hvg_stats_vs_empty_log2fc(cell_hvgs, edger_dt))
+```
+
+### Which genes are "ambient"?{.tabset}
+
+The plot shows the results of the `scprocess` ambient gene detection procedure. The y-axis
+is the `-log10` nominal p-value, with a dotted line indicating the threshold where the adjusted p-value
+is sufficiently small (< 0.01). Multiple plots are shown, each corresponding to a different
+minimum expression level filter applied to the ambient profiles.
+
+```{r plot_ambient_gene_calculations, fig.height = 6, fig.width = 6, results = 'asis'}
+cpm_ls  = c(100, 50, 10, 0)
+for (min_cpm in cpm_ls) {
+  if (min_cpm == 0) {
+    cat("#### all genes\n")
+  } else {
+    cat(sprintf("#### >= %d CPM expression in ambient\n", min_cpm))
+  }
+  print(plot_ambient_gene_calculations(edger_dt, min_cpm_empty = min_cpm))
+  cat("\n\n")
+}
+```
+
+### Which genes are variable across the ambient profiles?{.tabset}
+
+Examining how ambient genes vary across different samples can provide valuable insights.
+Such variation may highlight cases where certain samples require distinct treatment, for example,
+if case and control samples consistently exhibit different ambient profiles.
+
+The heatmaps display the pseudobulk expression of various genes across the ambient profiles of each sample in the dataset.
+The genes shown are the top 40 selected based on the following criteria:
+
+- highest variance across ambient profiles;
+- highest mean expression across ambient profiles;
+- highest `log2fc` in empty droplets vs cells in `scprocess`'s ambient gene detection procedure; 
+and
+- smallest p-value in empty droplets vs cells in `scprocess`'s ambient gene detection procedure.
+
+```{r plot_ambient_profiles, fig.height = 8, fig.width = heatmap_w, results = 'asis'}
+title_ls = c(
+  "var"           = "HVGs",
+  "mean"          = "Highest expression",
+  "log2fc.empty"  = "Highest log2fc",
+  "pval.empty"    = "Smallest p-value"
+)
+for (top_var in names(title_ls)) {
+  cat(sprintf("#### %s in ambient\n", title_ls[top_var]))
+  suppressMessages(draw(plot_heatmap_of_ambient_profiles(vst_obj, top_var = top_var, 
+    n_top = 40), heatmap_legend_side = "right", merge_legend = TRUE ))
+  cat("\n\n")
+}
+```
+
+
+## Clustering diagnostics
+
+### Clusters over UMAP{.tabset}
+
+Clustering of data is performed at different resolution values. For each value the clusters are displayed over a UMAP together with a plot showing the density of cells. 
+
+```{r plot_clusters_integration, fig.height = 7, fig.width = 9, results = "asis"}
+for (res in res_ls) {
+  cat('#### ', res, '\n')
+  g_cl    = plot_umap_cluster(
+    umap_dt   = int_dt[, .(cell_id, UMAP1, UMAP2) ], 
+    clust_dt  = int_dt[, .(cell_id, cluster = get(paste0('RNA_snn_res.', res))) ],
+    name      = sprintf('res = %s', res))
+  g_dens  = plot_umap_density(int_dt[, .(cell_id, UMAP1, UMAP2) ])
+  g       = g_cl + g_dens
+  print(g)
+  cat('\n\n')
+}
+```
+
+### Evaluating cluster distribution across samples{.tabset}
+
+This plot visualizes the relationship between the entropy of clusters and the maximum proportion of cells from a single sample within each cluster (higher values suggest that a cluster predominantly contains cells from a single sample).
+Entropy measures how evenly distributed cells are across samples within each cluster—higher entropy indicates that cells from different samples are more evenly distributed, while lower entropy suggests that a cluster is dominated by cells from a small number of samples.
+
+```{r plot_entropy_selected_clusters, fig.height = 5, fig.width = 7, results = "asis"}
+n_clusts = res_ls %>% lapply(function(res){
+  tmp_dt = int_dt[, .(cluster = get(paste0('RNA_snn_res.', res)))]
+  length(unique(tmp_dt$cluster))
+})
+
+res_ls_pl = res_ls[n_clusts > 1]
+for (res in res_ls_pl) {
+  cat('#### ', res, '\n')
+  input_dt  = int_dt[, .(batch_var = get(batch_var), cell_id, cluster = get(paste0('RNA_snn_res.', res)))]
+  suppressWarnings(print(plot_cluster_entropies(input_dt,batch_var, what = "norm")))
+  cat('\n\n')
+}
+```
+
+### QC metrics of clusters{.tabset}
+
+Distributions of QC metrics (library size, number of features, mitochondrial proportion, and spliced proportion) are shown for each cluster across different resolution values.
+
+```{r plot_qc_distns, fig.height = 8, fig.width = 10, results = 'asis'}
+for (res in res_ls) {
+  cat('#### ', res, '\n')
+  suppressWarnings(print(plot_cluster_qc_distns(
+    qc_melt, 
+    clust_dt  = int_dt[, .(cell_id, cluster = get(paste0('RNA_snn_res.', res)))], 
+    name      = res)))
+  cat('\n\n')
+}
+```
+
+
+
+
+```{r plot_clusters_by_metadata, eval = do_metadata, include = do_metadata, fig.height = (2*length(metadata_vars)) + 1, fig.width = 8, results = 'asis'}
+
+if (!is.null(metadata_vars))
+  (plot_clusters_by_metadata(meta_dt, sel_cl_int_dt, 
+    meta_vars = metadata_vars, cl_order = cl_ord))
+```
+
+
+
+
+```{r plot_metadata_over_UMAP, eval = do_metadata, include = do_metadata, fig.height = 5, fig.width = 8, results = 'asis'}
+for (meta_var in metadata_vars) {
+  cat('####', meta_var, '\n')
+  print(plot_clusters_annotated_by_densities(sel_cl_int_dt, meta_var))
+  cat('\n\n')
+}
+```
+
+
+## Marker genes
+
+To identify marker genes for each cluster (resolution: `r sel_res`), pseudobulk counts are generated by aggregating the expression values of cells
+within a specific cluster for each sample. Similarly, pseudobulk counts are generated for the remaining clusters
+by aggregating expression values separately for each sample. The resulting pseudobulk values for the target cluster
+are then compared to those of the remaining clusters using `edgeR`.
+
+### Heatmaps of marker genes{.tabset}
+
+The resulting `log2` fold change values (calculated using `edgeR`) per cluster are 
+shown for several genesets:
+
+- selected canonical marker genes, if specified in the config file;
+- the 50 most highly variable genes; and
+- the 50 genes most likely to represent ambient RNA contamination.
+
+```{r plot_marker_heatmaps, fig.height = 9, fig.width = 10, results = 'asis'}
+for (nn in names(mkrs_ls)) {
+  cat("#### ", nn, "\n")
+  suppressMessages(draw( plot_heatmap_of_selected_genes(mkrs_dt, mkrs_ls[[nn]]),
+    heatmap_legend_side = "bottom", annotation_legend_side = "bottom", merge_legend = TRUE ))
+  cat("\n\n")
+}
+```
+
+### Highly variable genes{.tabset}
+Normalized pseudobulk expression values for top 100 highly variable genes are shown 
+for each cluster, in descending order of variance (variance calculated using `DESeq2::vst`).
+
+```{r plot_hvgs_pb_hmny, fig.height = 8, fig.width = 8, results = "asis"}
+n_pages = 10
+per_p   = 10
+p       = 1
+for (i in seq(1, n_pages * per_p, by = per_p)) {
+  cat('#### page', p, '\n'); p = p + 1
+  sel_hvgs  = pb_hvgs_dt[ i:(i + 9) ]
+  print(plot_selected_genes(sel_hvgs, cpms_dt, cl_order = cl_ord))
+  cat('\n\n')
+}
+```
+
+### Top marker genes{.tabset}
+
+Normalized pseudobulk expression values of top 10 marker genes with FDR < 0.05 
+and a minimum expression of `r min_cpm_mkr` CPM are shown for each cluster.
+
+```{r plot_top_markers_pb_min, fig.height = 8, fig.width = 8, results = "asis"}
+for (sel_cl in cl_ord) {
+  cat('####', sel_cl, '\n')
+  print(plot_top_marker_genes(sel_cl, top_min_dt, cpms_dt, cl_order = cl_ord))
+  cat('\n\n')
+}
+```
+
+### GSEA characterisation of clusters{.tabset}
+Gene Set Enrichment Analysis (GSEA) was performed on marker genes for each cluster, using log fold change as the ranking variable. The top 10 pathways, grouped into five categories and selected based on a significance threshold of 0.05, are displayed for each cluster.
+
+```{r plot_gsea_results_pb, eval = do_gsea, fig.height = 12, fig.width = 8, results = "asis"}
+for (p in names(gsea_ls)) {
+  if (is.null(gsea_ls[[p]]))
+    next
+  cat('#### ', p, '\n')
+  dt    = gsea_ls[[p]] %>% .[ gsea_var == gsea_var_sel ]
+  plot_gsea_dotplot(dt, gsea_cut = gsea_cut, n_top_paths = 5, max_nes = 2,
+    size_range = c(10, 200), what = "pos_only", cl_order = cl_ord) %>% print
+  cat('\n\n')
+}
+```
+
+## R session info
+
+Details of the R package versions used are given below.
+
+<details>
+```{r session_info, include=TRUE, echo=TRUE, results="markup"}
+devtools::session_info()
+```
+</details>
