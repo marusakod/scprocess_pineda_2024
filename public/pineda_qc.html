@@ -1,0 +1,4115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+    
+        <meta name="date" content="2026-02-28" />
+    
+    <title>Cell-level QC</title>
+
+        <script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <script src="site_libs/navigation-1.1/codefolding.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+    
+    
+    
+        <link rel="stylesheet" href="custom.css" type="text/css" />
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+        <script>
+      $(document).ready(function () {
+	  	  	  window.initializeCodeFolding("hide" === "show");
+	        });
+    </script>
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a href="#sample-qc-metrics"
+            id="toc-sample-qc-metrics">Sample QC metrics</a>
+            <ul>
+            <li><a href="#pre-qc" id="toc-pre-qc">Pre-QC</a></li>
+            <li><a href="#after-light-qc" id="toc-after-light-qc">After
+            light QC</a></li>
+            </ul></li>
+            <li><a href="#qc-metrics-scatterplots"
+            id="toc-qc-metrics-scatterplots">QC metrics scatterplots</a>
+            <ul>
+            <li><a href="#gsm5292146"
+            id="toc-gsm5292146">GSM5292146</a></li>
+            <li><a href="#gsm5292147"
+            id="toc-gsm5292147">GSM5292147</a></li>
+            <li><a href="#gsm5292156"
+            id="toc-gsm5292156">GSM5292156</a></li>
+            <li><a href="#gsm5292157"
+            id="toc-gsm5292157">GSM5292157</a></li>
+            <li><a href="#gsm5292158"
+            id="toc-gsm5292158">GSM5292158</a></li>
+            <li><a href="#gsm5292200"
+            id="toc-gsm5292200">GSM5292200</a></li>
+            <li><a href="#srr27882183"
+            id="toc-srr27882183">SRR27882183</a></li>
+            <li><a href="#srr27882182"
+            id="toc-srr27882182">SRR27882182</a></li>
+            <li><a href="#srr27882181"
+            id="toc-srr27882181">SRR27882181</a></li>
+            <li><a href="#srr27882171"
+            id="toc-srr27882171">SRR27882171</a></li>
+            <li><a href="#srr27882170"
+            id="toc-srr27882170">SRR27882170</a></li>
+            <li><a href="#srr27882169"
+            id="toc-srr27882169">SRR27882169</a></li>
+            <li><a href="#srr27882094"
+            id="toc-srr27882094">SRR27882094</a></li>
+            <li><a href="#srr27882093"
+            id="toc-srr27882093">SRR27882093</a></li>
+            <li><a href="#srr27882092"
+            id="toc-srr27882092">SRR27882092</a></li>
+            <li><a href="#srr27882091"
+            id="toc-srr27882091">SRR27882091</a></li>
+            <li><a href="#srr27882090"
+            id="toc-srr27882090">SRR27882090</a></li>
+            <li><a href="#srr27882089"
+            id="toc-srr27882089">SRR27882089</a></li>
+            <li><a href="#srr27882088"
+            id="toc-srr27882088">SRR27882088</a></li>
+            <li><a href="#srr27882086"
+            id="toc-srr27882086">SRR27882086</a></li>
+            <li><a href="#srr27882085"
+            id="toc-srr27882085">SRR27882085</a></li>
+            <li><a href="#srr27882084"
+            id="toc-srr27882084">SRR27882084</a></li>
+            <li><a href="#srr27882158"
+            id="toc-srr27882158">SRR27882158</a></li>
+            <li><a href="#srr27882157"
+            id="toc-srr27882157">SRR27882157</a></li>
+            <li><a href="#srr27882156"
+            id="toc-srr27882156">SRR27882156</a></li>
+            <li><a href="#srr27882154"
+            id="toc-srr27882154">SRR27882154</a></li>
+            <li><a href="#srr27882153"
+            id="toc-srr27882153">SRR27882153</a></li>
+            <li><a href="#srr27882152"
+            id="toc-srr27882152">SRR27882152</a></li>
+            <li><a href="#srr27882151"
+            id="toc-srr27882151">SRR27882151</a></li>
+            <li><a href="#srr27882150"
+            id="toc-srr27882150">SRR27882150</a></li>
+            <li><a href="#srr27882149"
+            id="toc-srr27882149">SRR27882149</a></li>
+            <li><a href="#srr27882148"
+            id="toc-srr27882148">SRR27882148</a></li>
+            <li><a href="#gsm5292143"
+            id="toc-gsm5292143">GSM5292143</a></li>
+            <li><a href="#gsm5292144"
+            id="toc-gsm5292144">GSM5292144</a></li>
+            <li><a href="#gsm5292145"
+            id="toc-gsm5292145">GSM5292145</a></li>
+            <li><a href="#gsm5292148"
+            id="toc-gsm5292148">GSM5292148</a></li>
+            <li><a href="#gsm5292149"
+            id="toc-gsm5292149">GSM5292149</a></li>
+            <li><a href="#gsm5292150"
+            id="toc-gsm5292150">GSM5292150</a></li>
+            <li><a href="#gsm5292151"
+            id="toc-gsm5292151">GSM5292151</a></li>
+            <li><a href="#gsm5292152"
+            id="toc-gsm5292152">GSM5292152</a></li>
+            <li><a href="#gsm5292153"
+            id="toc-gsm5292153">GSM5292153</a></li>
+            <li><a href="#gsm5292154"
+            id="toc-gsm5292154">GSM5292154</a></li>
+            <li><a href="#gsm5292155"
+            id="toc-gsm5292155">GSM5292155</a></li>
+            <li><a href="#gsm5292194"
+            id="toc-gsm5292194">GSM5292194</a></li>
+            <li><a href="#gsm5292195"
+            id="toc-gsm5292195">GSM5292195</a></li>
+            <li><a href="#gsm5292196"
+            id="toc-gsm5292196">GSM5292196</a></li>
+            <li><a href="#gsm5292197"
+            id="toc-gsm5292197">GSM5292197</a></li>
+            <li><a href="#gsm5292198"
+            id="toc-gsm5292198">GSM5292198</a></li>
+            <li><a href="#gsm5292199"
+            id="toc-gsm5292199">GSM5292199</a></li>
+            <li><a href="#srr27882082"
+            id="toc-srr27882082">SRR27882082</a></li>
+            <li><a href="#srr27882081"
+            id="toc-srr27882081">SRR27882081</a></li>
+            <li><a href="#srr27882080"
+            id="toc-srr27882080">SRR27882080</a></li>
+            <li><a href="#srr27882079"
+            id="toc-srr27882079">SRR27882079</a></li>
+            <li><a href="#srr27882078"
+            id="toc-srr27882078">SRR27882078</a></li>
+            <li><a href="#srr27882077"
+            id="toc-srr27882077">SRR27882077</a></li>
+            <li><a href="#srr27882075"
+            id="toc-srr27882075">SRR27882075</a></li>
+            <li><a href="#srr27882074"
+            id="toc-srr27882074">SRR27882074</a></li>
+            <li><a href="#srr27882073"
+            id="toc-srr27882073">SRR27882073</a></li>
+            <li><a href="#srr27882180"
+            id="toc-srr27882180">SRR27882180</a></li>
+            <li><a href="#srr27882179"
+            id="toc-srr27882179">SRR27882179</a></li>
+            <li><a href="#srr27882178"
+            id="toc-srr27882178">SRR27882178</a></li>
+            <li><a href="#srr27882177"
+            id="toc-srr27882177">SRR27882177</a></li>
+            <li><a href="#srr27882175"
+            id="toc-srr27882175">SRR27882175</a></li>
+            <li><a href="#srr27882174"
+            id="toc-srr27882174">SRR27882174</a></li>
+            <li><a href="#srr27882173"
+            id="toc-srr27882173">SRR27882173</a></li>
+            <li><a href="#srr27882172"
+            id="toc-srr27882172">SRR27882172</a></li>
+            <li><a href="#gsm5292174"
+            id="toc-gsm5292174">GSM5292174</a></li>
+            <li><a href="#gsm5292175"
+            id="toc-gsm5292175">GSM5292175</a></li>
+            <li><a href="#gsm5292176"
+            id="toc-gsm5292176">GSM5292176</a></li>
+            <li><a href="#gsm5292177"
+            id="toc-gsm5292177">GSM5292177</a></li>
+            <li><a href="#gsm5292178"
+            id="toc-gsm5292178">GSM5292178</a></li>
+            <li><a href="#gsm5292179"
+            id="toc-gsm5292179">GSM5292179</a></li>
+            <li><a href="#gsm5292180"
+            id="toc-gsm5292180">GSM5292180</a></li>
+            <li><a href="#gsm5292181"
+            id="toc-gsm5292181">GSM5292181</a></li>
+            <li><a href="#gsm5292182"
+            id="toc-gsm5292182">GSM5292182</a></li>
+            <li><a href="#gsm5292183"
+            id="toc-gsm5292183">GSM5292183</a></li>
+            <li><a href="#gsm5292184"
+            id="toc-gsm5292184">GSM5292184</a></li>
+            <li><a href="#gsm5292185"
+            id="toc-gsm5292185">GSM5292185</a></li>
+            <li><a href="#gsm5292186"
+            id="toc-gsm5292186">GSM5292186</a></li>
+            <li><a href="#gsm5292187"
+            id="toc-gsm5292187">GSM5292187</a></li>
+            <li><a href="#gsm5292188"
+            id="toc-gsm5292188">GSM5292188</a></li>
+            <li><a href="#gsm5292193"
+            id="toc-gsm5292193">GSM5292193</a></li>
+            <li><a href="#gsm5292201"
+            id="toc-gsm5292201">GSM5292201</a></li>
+            <li><a href="#srr27882193"
+            id="toc-srr27882193">SRR27882193</a></li>
+            <li><a href="#srr27882192"
+            id="toc-srr27882192">SRR27882192</a></li>
+            <li><a href="#srr27882191"
+            id="toc-srr27882191">SRR27882191</a></li>
+            <li><a href="#srr27882190"
+            id="toc-srr27882190">SRR27882190</a></li>
+            <li><a href="#srr27882189"
+            id="toc-srr27882189">SRR27882189</a></li>
+            <li><a href="#srr27882188"
+            id="toc-srr27882188">SRR27882188</a></li>
+            <li><a href="#srr27882187"
+            id="toc-srr27882187">SRR27882187</a></li>
+            <li><a href="#srr27882186"
+            id="toc-srr27882186">SRR27882186</a></li>
+            <li><a href="#srr27882185"
+            id="toc-srr27882185">SRR27882185</a></li>
+            <li><a href="#srr27882165"
+            id="toc-srr27882165">SRR27882165</a></li>
+            <li><a href="#srr27882164"
+            id="toc-srr27882164">SRR27882164</a></li>
+            <li><a href="#srr27882163"
+            id="toc-srr27882163">SRR27882163</a></li>
+            <li><a href="#srr27882162"
+            id="toc-srr27882162">SRR27882162</a></li>
+            <li><a href="#srr27882161"
+            id="toc-srr27882161">SRR27882161</a></li>
+            <li><a href="#srr27882160"
+            id="toc-srr27882160">SRR27882160</a></li>
+            <li><a href="#srr27882159"
+            id="toc-srr27882159">SRR27882159</a></li>
+            <li><a href="#gsm5292164"
+            id="toc-gsm5292164">GSM5292164</a></li>
+            <li><a href="#gsm5292169"
+            id="toc-gsm5292169">GSM5292169</a></li>
+            <li><a href="#gsm5292173"
+            id="toc-gsm5292173">GSM5292173</a></li>
+            <li><a href="#gsm5292190"
+            id="toc-gsm5292190">GSM5292190</a></li>
+            <li><a href="#gsm5292191"
+            id="toc-gsm5292191">GSM5292191</a></li>
+            <li><a href="#gsm5292192"
+            id="toc-gsm5292192">GSM5292192</a></li>
+            <li><a href="#gsm5292202"
+            id="toc-gsm5292202">GSM5292202</a></li>
+            <li><a href="#gsm5292203"
+            id="toc-gsm5292203">GSM5292203</a></li>
+            <li><a href="#gsm5292204"
+            id="toc-gsm5292204">GSM5292204</a></li>
+            <li><a href="#gsm5292205"
+            id="toc-gsm5292205">GSM5292205</a></li>
+            <li><a href="#gsm5292206"
+            id="toc-gsm5292206">GSM5292206</a></li>
+            <li><a href="#gsm5292207"
+            id="toc-gsm5292207">GSM5292207</a></li>
+            <li><a href="#gsm5292208"
+            id="toc-gsm5292208">GSM5292208</a></li>
+            <li><a href="#srr27882214"
+            id="toc-srr27882214">SRR27882214</a></li>
+            <li><a href="#srr27882212"
+            id="toc-srr27882212">SRR27882212</a></li>
+            <li><a href="#srr27882203"
+            id="toc-srr27882203">SRR27882203</a></li>
+            <li><a href="#srr27882202"
+            id="toc-srr27882202">SRR27882202</a></li>
+            <li><a href="#srr27882201"
+            id="toc-srr27882201">SRR27882201</a></li>
+            <li><a href="#srr27882200"
+            id="toc-srr27882200">SRR27882200</a></li>
+            <li><a href="#srr27882199"
+            id="toc-srr27882199">SRR27882199</a></li>
+            <li><a href="#srr27882198"
+            id="toc-srr27882198">SRR27882198</a></li>
+            <li><a href="#srr27882197"
+            id="toc-srr27882197">SRR27882197</a></li>
+            <li><a href="#srr27882196"
+            id="toc-srr27882196">SRR27882196</a></li>
+            <li><a href="#srr27882194"
+            id="toc-srr27882194">SRR27882194</a></li>
+            <li><a href="#gsm5292159"
+            id="toc-gsm5292159">GSM5292159</a></li>
+            <li><a href="#gsm5292160"
+            id="toc-gsm5292160">GSM5292160</a></li>
+            <li><a href="#gsm5292161"
+            id="toc-gsm5292161">GSM5292161</a></li>
+            <li><a href="#gsm5292162"
+            id="toc-gsm5292162">GSM5292162</a></li>
+            <li><a href="#gsm5292163"
+            id="toc-gsm5292163">GSM5292163</a></li>
+            <li><a href="#gsm5292165"
+            id="toc-gsm5292165">GSM5292165</a></li>
+            <li><a href="#gsm5292166"
+            id="toc-gsm5292166">GSM5292166</a></li>
+            <li><a href="#gsm5292167"
+            id="toc-gsm5292167">GSM5292167</a></li>
+            <li><a href="#gsm5292168"
+            id="toc-gsm5292168">GSM5292168</a></li>
+            <li><a href="#gsm5292170"
+            id="toc-gsm5292170">GSM5292170</a></li>
+            <li><a href="#gsm5292171"
+            id="toc-gsm5292171">GSM5292171</a></li>
+            <li><a href="#gsm5292172"
+            id="toc-gsm5292172">GSM5292172</a></li>
+            <li><a href="#gsm5292189"
+            id="toc-gsm5292189">GSM5292189</a></li>
+            <li><a href="#srr27882168"
+            id="toc-srr27882168">SRR27882168</a></li>
+            <li><a href="#srr27882167"
+            id="toc-srr27882167">SRR27882167</a></li>
+            <li><a href="#srr27882166"
+            id="toc-srr27882166">SRR27882166</a></li>
+            <li><a href="#srr27882216"
+            id="toc-srr27882216">SRR27882216</a></li>
+            <li><a href="#srr27882215"
+            id="toc-srr27882215">SRR27882215</a></li>
+            <li><a href="#srr27882213"
+            id="toc-srr27882213">SRR27882213</a></li>
+            <li><a href="#srr27882211"
+            id="toc-srr27882211">SRR27882211</a></li>
+            <li><a href="#srr27882210"
+            id="toc-srr27882210">SRR27882210</a></li>
+            <li><a href="#srr27882209"
+            id="toc-srr27882209">SRR27882209</a></li>
+            <li><a href="#srr27882208"
+            id="toc-srr27882208">SRR27882208</a></li>
+            <li><a href="#srr27882207"
+            id="toc-srr27882207">SRR27882207</a></li>
+            <li><a href="#srr27882205"
+            id="toc-srr27882205">SRR27882205</a></li>
+            <li><a href="#srr27882204"
+            id="toc-srr27882204">SRR27882204</a></li>
+            </ul></li>
+            <li><a href="#how-many-cells-and-samples-retained"
+            id="toc-how-many-cells-and-samples-retained">How many cells
+            and samples retained?</a></li>
+            <li><a href="#what-were-the-reasons-for-excluding-barcodes"
+            id="toc-what-were-the-reasons-for-excluding-barcodes">What
+            were the reasons for excluding barcodes?</a>
+            <ul>
+            <li><a href="#gsm5292146-1"
+            id="toc-gsm5292146-1">GSM5292146</a></li>
+            <li><a href="#gsm5292147-1"
+            id="toc-gsm5292147-1">GSM5292147</a></li>
+            <li><a href="#gsm5292156-1"
+            id="toc-gsm5292156-1">GSM5292156</a></li>
+            <li><a href="#gsm5292157-1"
+            id="toc-gsm5292157-1">GSM5292157</a></li>
+            <li><a href="#gsm5292158-1"
+            id="toc-gsm5292158-1">GSM5292158</a></li>
+            <li><a href="#gsm5292200-1"
+            id="toc-gsm5292200-1">GSM5292200</a></li>
+            <li><a href="#srr27882183-1"
+            id="toc-srr27882183-1">SRR27882183</a></li>
+            <li><a href="#srr27882182-1"
+            id="toc-srr27882182-1">SRR27882182</a></li>
+            <li><a href="#srr27882181-1"
+            id="toc-srr27882181-1">SRR27882181</a></li>
+            <li><a href="#srr27882171-1"
+            id="toc-srr27882171-1">SRR27882171</a></li>
+            <li><a href="#srr27882170-1"
+            id="toc-srr27882170-1">SRR27882170</a></li>
+            <li><a href="#srr27882169-1"
+            id="toc-srr27882169-1">SRR27882169</a></li>
+            <li><a href="#srr27882094-1"
+            id="toc-srr27882094-1">SRR27882094</a></li>
+            <li><a href="#srr27882093-1"
+            id="toc-srr27882093-1">SRR27882093</a></li>
+            <li><a href="#srr27882092-1"
+            id="toc-srr27882092-1">SRR27882092</a></li>
+            <li><a href="#srr27882091-1"
+            id="toc-srr27882091-1">SRR27882091</a></li>
+            <li><a href="#srr27882090-1"
+            id="toc-srr27882090-1">SRR27882090</a></li>
+            <li><a href="#srr27882089-1"
+            id="toc-srr27882089-1">SRR27882089</a></li>
+            <li><a href="#srr27882088-1"
+            id="toc-srr27882088-1">SRR27882088</a></li>
+            <li><a href="#srr27882086-1"
+            id="toc-srr27882086-1">SRR27882086</a></li>
+            <li><a href="#srr27882085-1"
+            id="toc-srr27882085-1">SRR27882085</a></li>
+            <li><a href="#srr27882084-1"
+            id="toc-srr27882084-1">SRR27882084</a></li>
+            <li><a href="#srr27882158-1"
+            id="toc-srr27882158-1">SRR27882158</a></li>
+            <li><a href="#srr27882157-1"
+            id="toc-srr27882157-1">SRR27882157</a></li>
+            <li><a href="#srr27882156-1"
+            id="toc-srr27882156-1">SRR27882156</a></li>
+            <li><a href="#srr27882154-1"
+            id="toc-srr27882154-1">SRR27882154</a></li>
+            <li><a href="#srr27882153-1"
+            id="toc-srr27882153-1">SRR27882153</a></li>
+            <li><a href="#srr27882152-1"
+            id="toc-srr27882152-1">SRR27882152</a></li>
+            <li><a href="#srr27882151-1"
+            id="toc-srr27882151-1">SRR27882151</a></li>
+            <li><a href="#srr27882150-1"
+            id="toc-srr27882150-1">SRR27882150</a></li>
+            <li><a href="#srr27882149-1"
+            id="toc-srr27882149-1">SRR27882149</a></li>
+            <li><a href="#srr27882148-1"
+            id="toc-srr27882148-1">SRR27882148</a></li>
+            <li><a href="#gsm5292143-1"
+            id="toc-gsm5292143-1">GSM5292143</a></li>
+            <li><a href="#gsm5292144-1"
+            id="toc-gsm5292144-1">GSM5292144</a></li>
+            <li><a href="#gsm5292145-1"
+            id="toc-gsm5292145-1">GSM5292145</a></li>
+            <li><a href="#gsm5292148-1"
+            id="toc-gsm5292148-1">GSM5292148</a></li>
+            <li><a href="#gsm5292149-1"
+            id="toc-gsm5292149-1">GSM5292149</a></li>
+            <li><a href="#gsm5292150-1"
+            id="toc-gsm5292150-1">GSM5292150</a></li>
+            <li><a href="#gsm5292151-1"
+            id="toc-gsm5292151-1">GSM5292151</a></li>
+            <li><a href="#gsm5292152-1"
+            id="toc-gsm5292152-1">GSM5292152</a></li>
+            <li><a href="#gsm5292153-1"
+            id="toc-gsm5292153-1">GSM5292153</a></li>
+            <li><a href="#gsm5292154-1"
+            id="toc-gsm5292154-1">GSM5292154</a></li>
+            <li><a href="#gsm5292155-1"
+            id="toc-gsm5292155-1">GSM5292155</a></li>
+            <li><a href="#gsm5292194-1"
+            id="toc-gsm5292194-1">GSM5292194</a></li>
+            <li><a href="#gsm5292195-1"
+            id="toc-gsm5292195-1">GSM5292195</a></li>
+            <li><a href="#gsm5292196-1"
+            id="toc-gsm5292196-1">GSM5292196</a></li>
+            <li><a href="#gsm5292197-1"
+            id="toc-gsm5292197-1">GSM5292197</a></li>
+            <li><a href="#gsm5292198-1"
+            id="toc-gsm5292198-1">GSM5292198</a></li>
+            <li><a href="#gsm5292199-1"
+            id="toc-gsm5292199-1">GSM5292199</a></li>
+            <li><a href="#srr27882082-1"
+            id="toc-srr27882082-1">SRR27882082</a></li>
+            <li><a href="#srr27882081-1"
+            id="toc-srr27882081-1">SRR27882081</a></li>
+            <li><a href="#srr27882080-1"
+            id="toc-srr27882080-1">SRR27882080</a></li>
+            <li><a href="#srr27882079-1"
+            id="toc-srr27882079-1">SRR27882079</a></li>
+            <li><a href="#srr27882078-1"
+            id="toc-srr27882078-1">SRR27882078</a></li>
+            <li><a href="#srr27882077-1"
+            id="toc-srr27882077-1">SRR27882077</a></li>
+            <li><a href="#srr27882075-1"
+            id="toc-srr27882075-1">SRR27882075</a></li>
+            <li><a href="#srr27882074-1"
+            id="toc-srr27882074-1">SRR27882074</a></li>
+            <li><a href="#srr27882073-1"
+            id="toc-srr27882073-1">SRR27882073</a></li>
+            <li><a href="#srr27882180-1"
+            id="toc-srr27882180-1">SRR27882180</a></li>
+            <li><a href="#srr27882179-1"
+            id="toc-srr27882179-1">SRR27882179</a></li>
+            <li><a href="#srr27882178-1"
+            id="toc-srr27882178-1">SRR27882178</a></li>
+            <li><a href="#srr27882177-1"
+            id="toc-srr27882177-1">SRR27882177</a></li>
+            <li><a href="#srr27882175-1"
+            id="toc-srr27882175-1">SRR27882175</a></li>
+            <li><a href="#srr27882174-1"
+            id="toc-srr27882174-1">SRR27882174</a></li>
+            <li><a href="#srr27882173-1"
+            id="toc-srr27882173-1">SRR27882173</a></li>
+            <li><a href="#srr27882172-1"
+            id="toc-srr27882172-1">SRR27882172</a></li>
+            <li><a href="#gsm5292174-1"
+            id="toc-gsm5292174-1">GSM5292174</a></li>
+            <li><a href="#gsm5292175-1"
+            id="toc-gsm5292175-1">GSM5292175</a></li>
+            <li><a href="#gsm5292176-1"
+            id="toc-gsm5292176-1">GSM5292176</a></li>
+            <li><a href="#gsm5292177-1"
+            id="toc-gsm5292177-1">GSM5292177</a></li>
+            <li><a href="#gsm5292178-1"
+            id="toc-gsm5292178-1">GSM5292178</a></li>
+            <li><a href="#gsm5292179-1"
+            id="toc-gsm5292179-1">GSM5292179</a></li>
+            <li><a href="#gsm5292180-1"
+            id="toc-gsm5292180-1">GSM5292180</a></li>
+            <li><a href="#gsm5292181-1"
+            id="toc-gsm5292181-1">GSM5292181</a></li>
+            <li><a href="#gsm5292182-1"
+            id="toc-gsm5292182-1">GSM5292182</a></li>
+            <li><a href="#gsm5292183-1"
+            id="toc-gsm5292183-1">GSM5292183</a></li>
+            <li><a href="#gsm5292184-1"
+            id="toc-gsm5292184-1">GSM5292184</a></li>
+            <li><a href="#gsm5292185-1"
+            id="toc-gsm5292185-1">GSM5292185</a></li>
+            <li><a href="#gsm5292186-1"
+            id="toc-gsm5292186-1">GSM5292186</a></li>
+            <li><a href="#gsm5292187-1"
+            id="toc-gsm5292187-1">GSM5292187</a></li>
+            <li><a href="#gsm5292188-1"
+            id="toc-gsm5292188-1">GSM5292188</a></li>
+            <li><a href="#gsm5292193-1"
+            id="toc-gsm5292193-1">GSM5292193</a></li>
+            <li><a href="#gsm5292201-1"
+            id="toc-gsm5292201-1">GSM5292201</a></li>
+            <li><a href="#srr27882193-1"
+            id="toc-srr27882193-1">SRR27882193</a></li>
+            <li><a href="#srr27882192-1"
+            id="toc-srr27882192-1">SRR27882192</a></li>
+            <li><a href="#srr27882191-1"
+            id="toc-srr27882191-1">SRR27882191</a></li>
+            <li><a href="#srr27882190-1"
+            id="toc-srr27882190-1">SRR27882190</a></li>
+            <li><a href="#srr27882189-1"
+            id="toc-srr27882189-1">SRR27882189</a></li>
+            <li><a href="#srr27882188-1"
+            id="toc-srr27882188-1">SRR27882188</a></li>
+            <li><a href="#srr27882187-1"
+            id="toc-srr27882187-1">SRR27882187</a></li>
+            <li><a href="#srr27882186-1"
+            id="toc-srr27882186-1">SRR27882186</a></li>
+            <li><a href="#srr27882185-1"
+            id="toc-srr27882185-1">SRR27882185</a></li>
+            <li><a href="#srr27882165-1"
+            id="toc-srr27882165-1">SRR27882165</a></li>
+            <li><a href="#srr27882164-1"
+            id="toc-srr27882164-1">SRR27882164</a></li>
+            <li><a href="#srr27882163-1"
+            id="toc-srr27882163-1">SRR27882163</a></li>
+            <li><a href="#srr27882162-1"
+            id="toc-srr27882162-1">SRR27882162</a></li>
+            <li><a href="#srr27882161-1"
+            id="toc-srr27882161-1">SRR27882161</a></li>
+            <li><a href="#srr27882160-1"
+            id="toc-srr27882160-1">SRR27882160</a></li>
+            <li><a href="#srr27882159-1"
+            id="toc-srr27882159-1">SRR27882159</a></li>
+            <li><a href="#gsm5292164-1"
+            id="toc-gsm5292164-1">GSM5292164</a></li>
+            <li><a href="#gsm5292169-1"
+            id="toc-gsm5292169-1">GSM5292169</a></li>
+            <li><a href="#gsm5292173-1"
+            id="toc-gsm5292173-1">GSM5292173</a></li>
+            <li><a href="#gsm5292190-1"
+            id="toc-gsm5292190-1">GSM5292190</a></li>
+            <li><a href="#gsm5292191-1"
+            id="toc-gsm5292191-1">GSM5292191</a></li>
+            <li><a href="#gsm5292192-1"
+            id="toc-gsm5292192-1">GSM5292192</a></li>
+            <li><a href="#gsm5292202-1"
+            id="toc-gsm5292202-1">GSM5292202</a></li>
+            <li><a href="#gsm5292203-1"
+            id="toc-gsm5292203-1">GSM5292203</a></li>
+            <li><a href="#gsm5292204-1"
+            id="toc-gsm5292204-1">GSM5292204</a></li>
+            <li><a href="#gsm5292205-1"
+            id="toc-gsm5292205-1">GSM5292205</a></li>
+            <li><a href="#gsm5292206-1"
+            id="toc-gsm5292206-1">GSM5292206</a></li>
+            <li><a href="#gsm5292207-1"
+            id="toc-gsm5292207-1">GSM5292207</a></li>
+            <li><a href="#gsm5292208-1"
+            id="toc-gsm5292208-1">GSM5292208</a></li>
+            <li><a href="#srr27882214-1"
+            id="toc-srr27882214-1">SRR27882214</a></li>
+            <li><a href="#srr27882212-1"
+            id="toc-srr27882212-1">SRR27882212</a></li>
+            <li><a href="#srr27882203-1"
+            id="toc-srr27882203-1">SRR27882203</a></li>
+            <li><a href="#srr27882202-1"
+            id="toc-srr27882202-1">SRR27882202</a></li>
+            <li><a href="#srr27882201-1"
+            id="toc-srr27882201-1">SRR27882201</a></li>
+            <li><a href="#srr27882200-1"
+            id="toc-srr27882200-1">SRR27882200</a></li>
+            <li><a href="#srr27882199-1"
+            id="toc-srr27882199-1">SRR27882199</a></li>
+            <li><a href="#srr27882198-1"
+            id="toc-srr27882198-1">SRR27882198</a></li>
+            <li><a href="#srr27882197-1"
+            id="toc-srr27882197-1">SRR27882197</a></li>
+            <li><a href="#srr27882196-1"
+            id="toc-srr27882196-1">SRR27882196</a></li>
+            <li><a href="#srr27882194-1"
+            id="toc-srr27882194-1">SRR27882194</a></li>
+            <li><a href="#gsm5292159-1"
+            id="toc-gsm5292159-1">GSM5292159</a></li>
+            <li><a href="#gsm5292160-1"
+            id="toc-gsm5292160-1">GSM5292160</a></li>
+            <li><a href="#gsm5292161-1"
+            id="toc-gsm5292161-1">GSM5292161</a></li>
+            <li><a href="#gsm5292162-1"
+            id="toc-gsm5292162-1">GSM5292162</a></li>
+            <li><a href="#gsm5292163-1"
+            id="toc-gsm5292163-1">GSM5292163</a></li>
+            <li><a href="#gsm5292165-1"
+            id="toc-gsm5292165-1">GSM5292165</a></li>
+            <li><a href="#gsm5292166-1"
+            id="toc-gsm5292166-1">GSM5292166</a></li>
+            <li><a href="#gsm5292167-1"
+            id="toc-gsm5292167-1">GSM5292167</a></li>
+            <li><a href="#gsm5292168-1"
+            id="toc-gsm5292168-1">GSM5292168</a></li>
+            <li><a href="#gsm5292170-1"
+            id="toc-gsm5292170-1">GSM5292170</a></li>
+            <li><a href="#gsm5292171-1"
+            id="toc-gsm5292171-1">GSM5292171</a></li>
+            <li><a href="#gsm5292172-1"
+            id="toc-gsm5292172-1">GSM5292172</a></li>
+            <li><a href="#gsm5292189-1"
+            id="toc-gsm5292189-1">GSM5292189</a></li>
+            <li><a href="#srr27882168-1"
+            id="toc-srr27882168-1">SRR27882168</a></li>
+            <li><a href="#srr27882167-1"
+            id="toc-srr27882167-1">SRR27882167</a></li>
+            <li><a href="#srr27882166-1"
+            id="toc-srr27882166-1">SRR27882166</a></li>
+            <li><a href="#srr27882216-1"
+            id="toc-srr27882216-1">SRR27882216</a></li>
+            <li><a href="#srr27882215-1"
+            id="toc-srr27882215-1">SRR27882215</a></li>
+            <li><a href="#srr27882213-1"
+            id="toc-srr27882213-1">SRR27882213</a></li>
+            <li><a href="#srr27882211-1"
+            id="toc-srr27882211-1">SRR27882211</a></li>
+            <li><a href="#srr27882210-1"
+            id="toc-srr27882210-1">SRR27882210</a></li>
+            <li><a href="#srr27882209-1"
+            id="toc-srr27882209-1">SRR27882209</a></li>
+            <li><a href="#srr27882208-1"
+            id="toc-srr27882208-1">SRR27882208</a></li>
+            <li><a href="#srr27882207-1"
+            id="toc-srr27882207-1">SRR27882207</a></li>
+            <li><a href="#srr27882205-1"
+            id="toc-srr27882205-1">SRR27882205</a></li>
+            <li><a href="#srr27882204-1"
+            id="toc-srr27882204-1">SRR27882204</a></li>
+            </ul></li>
+            <li><a href="#r-session-info" id="toc-r-session-info">R
+            session info</a></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAABlJJREFUWAm1V3tsFEUcntnXvXu0tBWo1ZZHihBjCEWqkHiNaMLDRKOtQSKaiCFKQtS/SbxiFCHGCIkmkBSMwZhQNTFoQZD0DFiwtCDFAkdDqBBBKFj63rvdnfH7zfVo5aFBj0l2Z/dm5vd98/0es8dYjlpr62azufnDQNZcU1PciMfjWvb9rvZSMk4Ayfb36pLH13189GC8LAtIRLLPt+pzwrCuLq4ISEv/gHmitrAwfPbEkXc/ad4dL6iujrvyX0jcitgd/yZlZqftP6995Mr5TVLa22Tn8XVX2g/XLSRjUu7Q79jonS7I7hS7/0oOb5VyqF52n98oj7esXX07EjlxwXWisRmSnm3b29TTM8iYrjmFBWExubxwY/uhNas4r/WySl1fc5cetDMd7ydl+lMJJRw5WC8ud62Xx5rfepzwxgZmbhUYNS5Stvsj4yo2GXJEFBVHWDBkfdbR9HpYBaaUajDnBLKKpl1xRKYcgGtMCqEzTaSnThk/SQT0uJqTqFNBmXMCsZE48DzRZRMBRjv1GHNdk3HBImF9ZUvTyxM40pMKVc4JZBXQOLOFoDeKSxdp6HIQcO4rjYT9fn0pjbz9GLt7BAAODmjSVReXUMFzNW5x5vfxp2mIxZjIuQKJxAmFa+is2DQJJQ0JyBVExNOYcJnPxx/6/utnijmP555ALEagKAGGnGn64QORBjARcIA/yJk7JMJBLRrNtybTvH88KGjCf2jK86bhzmMcwDKFZEQvbIhxFYhChoMWMzU2iWznlIBEVJOsP+1bdX/ALx9l7jApADeDAEcMkE90JnUmmGl4USKQ0xhoW3JB5XY0YrxYWhLwMZZypUyjDGH35AbNwgUGiFBPpuGbHCpAOV1ZGXf2f/taftAv31DyeymN2d1IhAFAwTOmnzF/kKcdh3me7CYCOVNgycju84u8DeVlwfFq9/ZlTfldYrMUjOlrkjkD+rU+WzCROkcEchIDHR011syZW9JHD7y07N6JvhWMpz3pugaTkB6lWFVCKkhck0zzeMp2utq+uHrmfxOgoCO/Z8CXPlEQ1bdH8wgvhSIkEG0ICcQeExIFGdimjvKka7btJFZuaXOammIGKUCFQ53j9EN1dYKWqHf0t2w407W2tgs6h89ZnImjB55flh81tt9XirjjDuSl+oIPRQ0iWPgNZ5GqTqbBe3vSzEl5n5PhWKwocyR2HlqYN61qV18WjYjE8JLARZPQsUSim8foIRYTlGr02Ly7piASFRtKJ4VfieYhxdS2JcDVMN6xVOKZyrCGm8b108lrLRVzvptLH7IoEFLFANes6KnDi+uxfmvFnF17oALq5u1agu3/YfHkcSFzeSggV5eXRfIB7CHNcO5SUI+Ih5Ir7f4MAV9IqdFzdZgNpZw1Gcs1mNvgGbTbqQ9/cz7ZuuhgyYRQ49ljTyWHhr2DwpNHHFf+5gnWZ3Bharo+0TD5dNMw5vv9RlVpSRDHK4TlnoukhtYApuOHejSZQuo5g/A9BysdKRCyLl6062fN37OXMDlvUJtUrtmxo0avrW3wTrYs3jJ9RvRVChrmSmanPMpX2OXMsmDGh6AiEIwBAlvkOqIdBy+8JyAz8pz7QxiDth4KDy5uAlwzrWTnwC8Vc4KVAMZ3YUZ+IqoIjP3h5KFFX1ZMy3uW+7RhEDHgTi0zC9rS7uhPCDiNrGFyqBeERtKN/B0YlyFCkw0NJ5C0Ojv7zvT1a1WV1TuvZDdL4NTgB7CASYpsen6gqvG5jmTf5qHedADgkBl3D0nkSgNhZACDyi0FUKZRr3IdRjgN4WPPoFMIIegIK3mqd38fS80mcJKelM4szNyzZtQbkchGePuBRS8Eg9pHU8ojRQpSqs+ajAIwTjjUMQ/nvTNM0kicwYxZIYMh/891DYi+fvedB+c1xsm4lDU6ya+Axtz+RiAzEVYbajQOpq17F0R9QevNcEhfcU+xvyQQUalGJBSesqOkgPQ4YNyUZL9fSvUPDjoNAwN8/dwFjaczNkc3ptaMud1EIDtGcmXTcefO2cGSvKIFfp/2JIJxlq7xEl3nVPM4fDeIbPkD16/ptNc0bDu7qxbsu0R2JGywWMIjF2ft3tjfloAyQAGXiOn8hrqwbVvMXzaO+QeHXP6nF0wvX74Hf4NGG5GPjSlYoyM3P/0FbCT6zvM/yYoAAAAASUVORK5CYII=" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAABwNJREFUWAmtV1tsFFUY/s6Z2d22zLYlZakUCRVaQcqlWIiCiS1gTEB9UAO+GR9En3iQGI0xJiSiRB98MjEq8cEQTSBeHhQM0V7whtEGDWC90BYitxahtNtu25058/v/ZzvLbilawJNM5+yZ89+//1LgJhYRNLW1uDfBAvpGiIk2O5auvfFxqIH3ZJ8/u06GN6Z9+wVl5SjcD1IbZa/UPkPyYl2uR4dreoD2bnbYxTlBBRytkHXtAREphP5KuH4lddx9h70yxX05t7yYXwGb6W8nx1jibpl2rFlGBxcG9M18okOrn7Bnk/BAO/4bI0UeEE1zjBp3UmvjOxJXJdaKN/ZiIu4tOZrAb4aTdZAZArKmWeiiJZ6jt5tiagdCS9+6cgO1Ne6Mvhe+ixTIfyDVhipnK9p+P0Edqx9RW/YZtQVGmOLChRxNNlyPsTEgPQKMB3dbEHa0h1awYmQ83enTd2vmUtvKd1Glv2RkzBb+kZGRrKtjzG60Wguhd/lJZBingbcfWWe72vjT75bJDrhYtvA0hrurETDr5HyF2Knb1MM4ab//xIoOqueA0edRnkkinTyJdYvqLFDZO4zUPFCvVoDjJq4T7TE61IWh4x5KqxX5KVKkX8WZ/t2ov2cb3MHt4dhIyOxIJxJOOF6xRx/99BksXLoecWcXytILMNBDqKpnGZWPquYfPxY8iXGR9fK+SgFrgcRPXPjVqhehL+3EmZ5RGJQi1QBU8TPThQnOQzm+5UXGIcetUeEAfP13VwzpI+w1jGJWdSliNfvVhiMPiOsllJag4M/UGHiqM6dlBb2OTLKHHV6KkvogrJ4XhBWniWK/Gp1MQyf93FOeUXKmKk/FzJxbQtKLjFXYT4USupy8fQVir2ynVEBiZMG0qtOHMS/AW4Gwrk7BG3C1F0B5nqNKE0CME4MfVRLPnXkBKe+ipvoFhNQywOhdghvLi0F8ReyVXV4BKTBRbbe5f64zR/DHsdZw1hJfeWlHl/GNRJzDxrd5m192z78TMaVnKELZoINZS4BzQ7vtnZljSnha/pPCbkuxzXcupYwI5tIeCpGc0Yp9tWHZQy/rmYhRfNgg4bHJBYLzGkxsRJF4XKlE2jBOHNSv3kY7Tj6vthzPFl61BrYwqFlmEQhtSVXmLiksxLmtRgYXI1ULU61JJ4eVKmG3/5sCVgpbMT6OMJ2E08/29Xf3w6v4FnHdCjfWgXu/O8Z5mLdCkeRs2khHe1DqOtQwbHWTAnM5S2HNmhALYo5KjkPFrMMKjZl6HxhWIAb0BqE+/73GrBRQUsKYiBu4JX8ycI6wtw+i5ef3NZpsrKVSHYCP37jwGDgeE1SA0S/xtl5SU2fs1ApEp0qTLVRjgyycDSsLHMSwmFltZMStR3uLLg6BdLhDa5dC6ryU2pHBe1BVO9tUcwfitJt2CLJZUHoG6T7Op75u0IyK31TCPcwFqgPk/KCaD3dFOuZBCO7xvCT/j048b3I3c7F2+WuOW7qdgkucFYlcQ4qop3yzTX7WaKfOCccye3Ts1Etq0+a/BHCF1yPgF3tAUkR6OrtGmo6gl94qqcXKh3rDyrOkPa58URoWcov2Mo6M+0QjrqKB+b7++oMa9Sz+ZkM0mie6aAtnGUvhmxaI+TogPOSQedgWioGSHFLn3v4kLh4HRspNmOGv41k+55siLFp2z6xYeJjhljFcbmxJlr4ga06TbevSByz/glQq4BJx46/c+237PbBqEYKxX3HpmKZEnQnr65X20hqJYaNcLoFOLiJk2LuBbyg7Q0OEn+hm0P3honxFD6rdxYorKpeIoi4YSSvyQHQIbM5t4+YNxLj/OxhVOOE4585qGpjnq+wSx6Q9CtNxTjd5klB+g6Mv36r0+b9cZFi44WYkHdG2ZWb3TtOUOXyVAlKlpGvJIAJ3eBMyfYS5C0qRZGtC85j+4sOasDe9xznPYezhhO/2Q6eP2fSOvYHOjtuQ1a9Q1VKynVDaMc8E0tptdxUsTFpFIYjcZKcbnoaQTNdiqCwNlL4G7oziSqGnT1ALf34vhk4R5zU3qYV9ONp9K88RtouShE68JwaU8dFw5W617shWa9ykeaBIn2hcsvPgL00k45QdTCZuSVcTRNs+8fnyLvooQfR5iujAnR9bxfY2xOVOxFS8SK3Le0l48VyYu1M8HRe5JD8wKPTjYnifaK3Wfn/GChYQ8ZAi6WRzWgqLV5YrsVLnZaVSoXU1g9gOIDwFySiGi+Zdrnzr7J3r+SMuszlcQCRn8lNGcTuSy2jOI7o9mxjZo+vR3ej3tN+ifRSOyUTS0+VMOid93cCubeiy/6TImS0QxRSCq2vxKr45zV+FQnjWH6D2xg+E9EatLcLAdHTgtGGD80D6jM0+aOl4wJgO/f96R2aJKCQ3yvgftRhdFMOpd6oAAAAASUVORK5CYII=" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+      <div class="btn-group pull-right">
+     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+     <ul class="dropdown-menu" style="min-width: 50px;">
+	    	    <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+	    <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+	    	    	         </ul>
+   </div>
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">dam_mice_2</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">Cell-level QC</h1>
+      
+      <p class="authors">
+           <span class="glyphicon glyphicon-user"></span> Will Macnair
+           - Church of England
+               <br>
+      </p>
+         <p class="date"><span class="glyphicon glyphicon-calendar"></span> February
+28, 2026</p>
+           
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<div id="sample-qc-metrics" class="section level2 tabset">
+<h2 class="tabset">Sample QC metrics</h2>
+<p>An overview of quality control (QC) metrics for all samples, both
+before and after filtering. The QC metrics include:</p>
+<ul>
+<li><p><code>no. of cells</code> : Total number of barcodes called as
+cells for each sample.</p></li>
+<li><p><code>no. of UMIs</code> : Sum of counts across all features for
+each cell with log-transformed values displayed.</p></li>
+<li><p><code>no. of genes</code> : Number of unique features with
+non-zero counts for each cell with log-transformed values
+displayed.</p></li>
+<li><p><code>mito pct.</code> : The proportion of reads that mapped to
+genes in the mitochondrial genome. High proportions are indicative of
+poor-quality cells (compromised membranes allow individual RNA molecules
+to escape while retaining mitochondria, leading to an increased relative
+abundance of mitochondrial transcript) or nuclei (incomplete removal of
+cytoplasm). Logit-transformed values are displayed as applying the logit
+(inverse logistic) transformation to mitochondrial proportions yields
+approximately Gaussian distributions.</p></li>
+<li><p><code>spliced pct.</code> : The proportion of spliced reads. In
+single-nuclei RNA sequencing, high spliced proportions may indicate
+inadequate removal of cytoplasmic material from the nuclei.
+Logit-transformed values are displayed as applying the logit (inverse
+logistic) transformation to spliced proportions results in approximately
+Gaussian distributions.</p></li>
+</ul>
+<pre class="r"><code>suppressWarnings({
+  cat(&quot;### Pre-QC\n&quot;)
+  print(plot_qc_ranges_marginals(qc_dt, b_lvls, qc_names, qc_lu, cuts_dt, batch_var))
+  cat(&quot;\n\n&quot;)
+  cat(&quot;### After light QC\n&quot;)
+  print(plot_qc_ranges_marginals(kept_dt, b_lvls, qc_names, qc_lu, cuts_dt, batch_var))
+  cat(&quot;\n\n&quot;)
+})</code></pre>
+<div id="pre-qc" class="section level3">
+<h3>Pre-QC</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_ranges_marginals-1.png" width="768" /></p>
+</div>
+<div id="after-light-qc" class="section level3">
+<h3>After light QC</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_ranges_marginals-2.png" width="768" /></p>
+</div>
+</div>
+<div id="qc-metrics-scatterplots" class="section level2 tabset">
+<h2 class="tabset">QC metrics scatterplots</h2>
+<p>Pairwise relationships of QC metrics at individual cell level.</p>
+<pre class="r"><code>for (b in b_lvls) {
+  qc_tmp      = qc_dt[ batch_var == b ]
+  if (nrow(qc_tmp) == 1)
+    next
+  cat(&#39;### &#39;, b, &#39;\n&#39;)
+  print(plot_qc_metric_scatter(qc_tmp, qc_names, qc_lu, cuts_dt[ batch_var == b ], b))
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="gsm5292146" class="section level3">
+<h3>GSM5292146</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-1.png" width="768" /></p>
+</div>
+<div id="gsm5292147" class="section level3">
+<h3>GSM5292147</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-2.png" width="768" /></p>
+</div>
+<div id="gsm5292156" class="section level3">
+<h3>GSM5292156</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-3.png" width="768" /></p>
+</div>
+<div id="gsm5292157" class="section level3">
+<h3>GSM5292157</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-4.png" width="768" /></p>
+</div>
+<div id="gsm5292158" class="section level3">
+<h3>GSM5292158</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-5.png" width="768" /></p>
+</div>
+<div id="gsm5292200" class="section level3">
+<h3>GSM5292200</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-6.png" width="768" /></p>
+</div>
+<div id="srr27882183" class="section level3">
+<h3>SRR27882183</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-7.png" width="768" /></p>
+</div>
+<div id="srr27882182" class="section level3">
+<h3>SRR27882182</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-8.png" width="768" /></p>
+</div>
+<div id="srr27882181" class="section level3">
+<h3>SRR27882181</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-9.png" width="768" /></p>
+</div>
+<div id="srr27882171" class="section level3">
+<h3>SRR27882171</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-10.png" width="768" /></p>
+</div>
+<div id="srr27882170" class="section level3">
+<h3>SRR27882170</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-11.png" width="768" /></p>
+</div>
+<div id="srr27882169" class="section level3">
+<h3>SRR27882169</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-12.png" width="768" /></p>
+</div>
+<div id="srr27882094" class="section level3">
+<h3>SRR27882094</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-13.png" width="768" /></p>
+</div>
+<div id="srr27882093" class="section level3">
+<h3>SRR27882093</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-14.png" width="768" /></p>
+</div>
+<div id="srr27882092" class="section level3">
+<h3>SRR27882092</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-15.png" width="768" /></p>
+</div>
+<div id="srr27882091" class="section level3">
+<h3>SRR27882091</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-16.png" width="768" /></p>
+</div>
+<div id="srr27882090" class="section level3">
+<h3>SRR27882090</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-17.png" width="768" /></p>
+</div>
+<div id="srr27882089" class="section level3">
+<h3>SRR27882089</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-18.png" width="768" /></p>
+</div>
+<div id="srr27882088" class="section level3">
+<h3>SRR27882088</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-19.png" width="768" /></p>
+</div>
+<div id="srr27882086" class="section level3">
+<h3>SRR27882086</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-20.png" width="768" /></p>
+</div>
+<div id="srr27882085" class="section level3">
+<h3>SRR27882085</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-21.png" width="768" /></p>
+</div>
+<div id="srr27882084" class="section level3">
+<h3>SRR27882084</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-22.png" width="768" /></p>
+</div>
+<div id="srr27882158" class="section level3">
+<h3>SRR27882158</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-23.png" width="768" /></p>
+</div>
+<div id="srr27882157" class="section level3">
+<h3>SRR27882157</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-24.png" width="768" /></p>
+</div>
+<div id="srr27882156" class="section level3">
+<h3>SRR27882156</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-25.png" width="768" /></p>
+</div>
+<div id="srr27882154" class="section level3">
+<h3>SRR27882154</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-26.png" width="768" /></p>
+</div>
+<div id="srr27882153" class="section level3">
+<h3>SRR27882153</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-27.png" width="768" /></p>
+</div>
+<div id="srr27882152" class="section level3">
+<h3>SRR27882152</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-28.png" width="768" /></p>
+</div>
+<div id="srr27882151" class="section level3">
+<h3>SRR27882151</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-29.png" width="768" /></p>
+</div>
+<div id="srr27882150" class="section level3">
+<h3>SRR27882150</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-30.png" width="768" /></p>
+</div>
+<div id="srr27882149" class="section level3">
+<h3>SRR27882149</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-31.png" width="768" /></p>
+</div>
+<div id="srr27882148" class="section level3">
+<h3>SRR27882148</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-32.png" width="768" /></p>
+</div>
+<div id="gsm5292143" class="section level3">
+<h3>GSM5292143</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-33.png" width="768" /></p>
+</div>
+<div id="gsm5292144" class="section level3">
+<h3>GSM5292144</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-34.png" width="768" /></p>
+</div>
+<div id="gsm5292145" class="section level3">
+<h3>GSM5292145</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-35.png" width="768" /></p>
+</div>
+<div id="gsm5292148" class="section level3">
+<h3>GSM5292148</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-36.png" width="768" /></p>
+</div>
+<div id="gsm5292149" class="section level3">
+<h3>GSM5292149</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-37.png" width="768" /></p>
+</div>
+<div id="gsm5292150" class="section level3">
+<h3>GSM5292150</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-38.png" width="768" /></p>
+</div>
+<div id="gsm5292151" class="section level3">
+<h3>GSM5292151</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-39.png" width="768" /></p>
+</div>
+<div id="gsm5292152" class="section level3">
+<h3>GSM5292152</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-40.png" width="768" /></p>
+</div>
+<div id="gsm5292153" class="section level3">
+<h3>GSM5292153</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-41.png" width="768" /></p>
+</div>
+<div id="gsm5292154" class="section level3">
+<h3>GSM5292154</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-42.png" width="768" /></p>
+</div>
+<div id="gsm5292155" class="section level3">
+<h3>GSM5292155</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-43.png" width="768" /></p>
+</div>
+<div id="gsm5292194" class="section level3">
+<h3>GSM5292194</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-44.png" width="768" /></p>
+</div>
+<div id="gsm5292195" class="section level3">
+<h3>GSM5292195</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-45.png" width="768" /></p>
+</div>
+<div id="gsm5292196" class="section level3">
+<h3>GSM5292196</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-46.png" width="768" /></p>
+</div>
+<div id="gsm5292197" class="section level3">
+<h3>GSM5292197</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-47.png" width="768" /></p>
+</div>
+<div id="gsm5292198" class="section level3">
+<h3>GSM5292198</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-48.png" width="768" /></p>
+</div>
+<div id="gsm5292199" class="section level3">
+<h3>GSM5292199</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-49.png" width="768" /></p>
+</div>
+<div id="srr27882082" class="section level3">
+<h3>SRR27882082</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-50.png" width="768" /></p>
+</div>
+<div id="srr27882081" class="section level3">
+<h3>SRR27882081</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-51.png" width="768" /></p>
+</div>
+<div id="srr27882080" class="section level3">
+<h3>SRR27882080</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-52.png" width="768" /></p>
+</div>
+<div id="srr27882079" class="section level3">
+<h3>SRR27882079</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-53.png" width="768" /></p>
+</div>
+<div id="srr27882078" class="section level3">
+<h3>SRR27882078</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-54.png" width="768" /></p>
+</div>
+<div id="srr27882077" class="section level3">
+<h3>SRR27882077</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-55.png" width="768" /></p>
+</div>
+<div id="srr27882075" class="section level3">
+<h3>SRR27882075</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-56.png" width="768" /></p>
+</div>
+<div id="srr27882074" class="section level3">
+<h3>SRR27882074</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-57.png" width="768" /></p>
+</div>
+<div id="srr27882073" class="section level3">
+<h3>SRR27882073</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-58.png" width="768" /></p>
+</div>
+<div id="srr27882180" class="section level3">
+<h3>SRR27882180</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-59.png" width="768" /></p>
+</div>
+<div id="srr27882179" class="section level3">
+<h3>SRR27882179</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-60.png" width="768" /></p>
+</div>
+<div id="srr27882178" class="section level3">
+<h3>SRR27882178</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-61.png" width="768" /></p>
+</div>
+<div id="srr27882177" class="section level3">
+<h3>SRR27882177</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-62.png" width="768" /></p>
+</div>
+<div id="srr27882175" class="section level3">
+<h3>SRR27882175</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-63.png" width="768" /></p>
+</div>
+<div id="srr27882174" class="section level3">
+<h3>SRR27882174</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-64.png" width="768" /></p>
+</div>
+<div id="srr27882173" class="section level3">
+<h3>SRR27882173</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-65.png" width="768" /></p>
+</div>
+<div id="srr27882172" class="section level3">
+<h3>SRR27882172</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-66.png" width="768" /></p>
+</div>
+<div id="gsm5292174" class="section level3">
+<h3>GSM5292174</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-67.png" width="768" /></p>
+</div>
+<div id="gsm5292175" class="section level3">
+<h3>GSM5292175</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-68.png" width="768" /></p>
+</div>
+<div id="gsm5292176" class="section level3">
+<h3>GSM5292176</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-69.png" width="768" /></p>
+</div>
+<div id="gsm5292177" class="section level3">
+<h3>GSM5292177</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-70.png" width="768" /></p>
+</div>
+<div id="gsm5292178" class="section level3">
+<h3>GSM5292178</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-71.png" width="768" /></p>
+</div>
+<div id="gsm5292179" class="section level3">
+<h3>GSM5292179</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-72.png" width="768" /></p>
+</div>
+<div id="gsm5292180" class="section level3">
+<h3>GSM5292180</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-73.png" width="768" /></p>
+</div>
+<div id="gsm5292181" class="section level3">
+<h3>GSM5292181</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-74.png" width="768" /></p>
+</div>
+<div id="gsm5292182" class="section level3">
+<h3>GSM5292182</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-75.png" width="768" /></p>
+</div>
+<div id="gsm5292183" class="section level3">
+<h3>GSM5292183</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-76.png" width="768" /></p>
+</div>
+<div id="gsm5292184" class="section level3">
+<h3>GSM5292184</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-77.png" width="768" /></p>
+</div>
+<div id="gsm5292185" class="section level3">
+<h3>GSM5292185</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-78.png" width="768" /></p>
+</div>
+<div id="gsm5292186" class="section level3">
+<h3>GSM5292186</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-79.png" width="768" /></p>
+</div>
+<div id="gsm5292187" class="section level3">
+<h3>GSM5292187</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-80.png" width="768" /></p>
+</div>
+<div id="gsm5292188" class="section level3">
+<h3>GSM5292188</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-81.png" width="768" /></p>
+</div>
+<div id="gsm5292193" class="section level3">
+<h3>GSM5292193</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-82.png" width="768" /></p>
+</div>
+<div id="gsm5292201" class="section level3">
+<h3>GSM5292201</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-83.png" width="768" /></p>
+</div>
+<div id="srr27882193" class="section level3">
+<h3>SRR27882193</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-84.png" width="768" /></p>
+</div>
+<div id="srr27882192" class="section level3">
+<h3>SRR27882192</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-85.png" width="768" /></p>
+</div>
+<div id="srr27882191" class="section level3">
+<h3>SRR27882191</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-86.png" width="768" /></p>
+</div>
+<div id="srr27882190" class="section level3">
+<h3>SRR27882190</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-87.png" width="768" /></p>
+</div>
+<div id="srr27882189" class="section level3">
+<h3>SRR27882189</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-88.png" width="768" /></p>
+</div>
+<div id="srr27882188" class="section level3">
+<h3>SRR27882188</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-89.png" width="768" /></p>
+</div>
+<div id="srr27882187" class="section level3">
+<h3>SRR27882187</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-90.png" width="768" /></p>
+</div>
+<div id="srr27882186" class="section level3">
+<h3>SRR27882186</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-91.png" width="768" /></p>
+</div>
+<div id="srr27882185" class="section level3">
+<h3>SRR27882185</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-92.png" width="768" /></p>
+</div>
+<div id="srr27882165" class="section level3">
+<h3>SRR27882165</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-93.png" width="768" /></p>
+</div>
+<div id="srr27882164" class="section level3">
+<h3>SRR27882164</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-94.png" width="768" /></p>
+</div>
+<div id="srr27882163" class="section level3">
+<h3>SRR27882163</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-95.png" width="768" /></p>
+</div>
+<div id="srr27882162" class="section level3">
+<h3>SRR27882162</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-96.png" width="768" /></p>
+</div>
+<div id="srr27882161" class="section level3">
+<h3>SRR27882161</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-97.png" width="768" /></p>
+</div>
+<div id="srr27882160" class="section level3">
+<h3>SRR27882160</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-98.png" width="768" /></p>
+</div>
+<div id="srr27882159" class="section level3">
+<h3>SRR27882159</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-99.png" width="768" /></p>
+</div>
+<div id="gsm5292164" class="section level3">
+<h3>GSM5292164</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-100.png" width="768" /></p>
+</div>
+<div id="gsm5292169" class="section level3">
+<h3>GSM5292169</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-101.png" width="768" /></p>
+</div>
+<div id="gsm5292173" class="section level3">
+<h3>GSM5292173</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-102.png" width="768" /></p>
+</div>
+<div id="gsm5292190" class="section level3">
+<h3>GSM5292190</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-103.png" width="768" /></p>
+</div>
+<div id="gsm5292191" class="section level3">
+<h3>GSM5292191</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-104.png" width="768" /></p>
+</div>
+<div id="gsm5292192" class="section level3">
+<h3>GSM5292192</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-105.png" width="768" /></p>
+</div>
+<div id="gsm5292202" class="section level3">
+<h3>GSM5292202</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-106.png" width="768" /></p>
+</div>
+<div id="gsm5292203" class="section level3">
+<h3>GSM5292203</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-107.png" width="768" /></p>
+</div>
+<div id="gsm5292204" class="section level3">
+<h3>GSM5292204</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-108.png" width="768" /></p>
+</div>
+<div id="gsm5292205" class="section level3">
+<h3>GSM5292205</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-109.png" width="768" /></p>
+</div>
+<div id="gsm5292206" class="section level3">
+<h3>GSM5292206</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-110.png" width="768" /></p>
+</div>
+<div id="gsm5292207" class="section level3">
+<h3>GSM5292207</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-111.png" width="768" /></p>
+</div>
+<div id="gsm5292208" class="section level3">
+<h3>GSM5292208</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-112.png" width="768" /></p>
+</div>
+<div id="srr27882214" class="section level3">
+<h3>SRR27882214</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-113.png" width="768" /></p>
+</div>
+<div id="srr27882212" class="section level3">
+<h3>SRR27882212</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-114.png" width="768" /></p>
+</div>
+<div id="srr27882203" class="section level3">
+<h3>SRR27882203</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-115.png" width="768" /></p>
+</div>
+<div id="srr27882202" class="section level3">
+<h3>SRR27882202</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-116.png" width="768" /></p>
+</div>
+<div id="srr27882201" class="section level3">
+<h3>SRR27882201</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-117.png" width="768" /></p>
+</div>
+<div id="srr27882200" class="section level3">
+<h3>SRR27882200</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-118.png" width="768" /></p>
+</div>
+<div id="srr27882199" class="section level3">
+<h3>SRR27882199</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-119.png" width="768" /></p>
+</div>
+<div id="srr27882198" class="section level3">
+<h3>SRR27882198</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-120.png" width="768" /></p>
+</div>
+<div id="srr27882197" class="section level3">
+<h3>SRR27882197</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-121.png" width="768" /></p>
+</div>
+<div id="srr27882196" class="section level3">
+<h3>SRR27882196</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-122.png" width="768" /></p>
+</div>
+<div id="srr27882194" class="section level3">
+<h3>SRR27882194</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-123.png" width="768" /></p>
+</div>
+<div id="gsm5292159" class="section level3">
+<h3>GSM5292159</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-124.png" width="768" /></p>
+</div>
+<div id="gsm5292160" class="section level3">
+<h3>GSM5292160</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-125.png" width="768" /></p>
+</div>
+<div id="gsm5292161" class="section level3">
+<h3>GSM5292161</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-126.png" width="768" /></p>
+</div>
+<div id="gsm5292162" class="section level3">
+<h3>GSM5292162</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-127.png" width="768" /></p>
+</div>
+<div id="gsm5292163" class="section level3">
+<h3>GSM5292163</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-128.png" width="768" /></p>
+</div>
+<div id="gsm5292165" class="section level3">
+<h3>GSM5292165</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-129.png" width="768" /></p>
+</div>
+<div id="gsm5292166" class="section level3">
+<h3>GSM5292166</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-130.png" width="768" /></p>
+</div>
+<div id="gsm5292167" class="section level3">
+<h3>GSM5292167</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-131.png" width="768" /></p>
+</div>
+<div id="gsm5292168" class="section level3">
+<h3>GSM5292168</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-132.png" width="768" /></p>
+</div>
+<div id="gsm5292170" class="section level3">
+<h3>GSM5292170</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-133.png" width="768" /></p>
+</div>
+<div id="gsm5292171" class="section level3">
+<h3>GSM5292171</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-134.png" width="768" /></p>
+</div>
+<div id="gsm5292172" class="section level3">
+<h3>GSM5292172</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-135.png" width="768" /></p>
+</div>
+<div id="gsm5292189" class="section level3">
+<h3>GSM5292189</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-136.png" width="768" /></p>
+</div>
+<div id="srr27882168" class="section level3">
+<h3>SRR27882168</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-137.png" width="768" /></p>
+</div>
+<div id="srr27882167" class="section level3">
+<h3>SRR27882167</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-138.png" width="768" /></p>
+</div>
+<div id="srr27882166" class="section level3">
+<h3>SRR27882166</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-139.png" width="768" /></p>
+</div>
+<div id="srr27882216" class="section level3">
+<h3>SRR27882216</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-140.png" width="768" /></p>
+</div>
+<div id="srr27882215" class="section level3">
+<h3>SRR27882215</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-141.png" width="768" /></p>
+</div>
+<div id="srr27882213" class="section level3">
+<h3>SRR27882213</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-142.png" width="768" /></p>
+</div>
+<div id="srr27882211" class="section level3">
+<h3>SRR27882211</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-143.png" width="768" /></p>
+</div>
+<div id="srr27882210" class="section level3">
+<h3>SRR27882210</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-144.png" width="768" /></p>
+</div>
+<div id="srr27882209" class="section level3">
+<h3>SRR27882209</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-145.png" width="768" /></p>
+</div>
+<div id="srr27882208" class="section level3">
+<h3>SRR27882208</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-146.png" width="768" /></p>
+</div>
+<div id="srr27882207" class="section level3">
+<h3>SRR27882207</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-147.png" width="768" /></p>
+</div>
+<div id="srr27882205" class="section level3">
+<h3>SRR27882205</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-148.png" width="768" /></p>
+</div>
+<div id="srr27882204" class="section level3">
+<h3>SRR27882204</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_qc_metric_scatters-149.png" width="768" /></p>
+</div>
+</div>
+<div id="how-many-cells-and-samples-retained" class="section level2">
+<h2>How many cells and samples retained?</h2>
+<p>Table summarizing the number of cells before and after qc filtering.
+Some samples may have been excluded from further analysis due to
+insufficient number of cells.</p>
+<pre class="r"><code>calc_qc_summary(qc_dt, kept_dt, cuts_dt, qc_lu, batch_var) %&gt;% knitr::kable()</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="6%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="6%" />
+<col width="7%" />
+<col width="15%" />
+<col width="16%" />
+<col width="15%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">sample_id</th>
+<th align="left">excluded</th>
+<th align="right">N pre-QC</th>
+<th align="right">N post-QC</th>
+<th align="right">N excluded</th>
+<th align="right">pct. excluded</th>
+<th align="right">pct. excluded by no. of UMIs</th>
+<th align="right">pct. excluded by no. of genes</th>
+<th align="right">pct. excluded by mito. pct.</th>
+<th align="right">pct. excluded by spliced pct.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">SRR27882190</td>
+<td align="left">FALSE</td>
+<td align="right">10912</td>
+<td align="right">2929</td>
+<td align="right">7983</td>
+<td align="right">73.2</td>
+<td align="right">71.1</td>
+<td align="right">69.3</td>
+<td align="right">7.7</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292179</td>
+<td align="left">FALSE</td>
+<td align="right">2254</td>
+<td align="right">961</td>
+<td align="right">1293</td>
+<td align="right">57.4</td>
+<td align="right">25.0</td>
+<td align="right">24.4</td>
+<td align="right">50.9</td>
+<td align="right">2.5</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882203</td>
+<td align="left">FALSE</td>
+<td align="right">2729</td>
+<td align="right">1197</td>
+<td align="right">1532</td>
+<td align="right">56.1</td>
+<td align="right">14.0</td>
+<td align="right">17.0</td>
+<td align="right">47.1</td>
+<td align="right">2.7</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292169</td>
+<td align="left">FALSE</td>
+<td align="right">2973</td>
+<td align="right">1358</td>
+<td align="right">1615</td>
+<td align="right">54.3</td>
+<td align="right">35.2</td>
+<td align="right">33.1</td>
+<td align="right">48.3</td>
+<td align="right">0.3</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292195</td>
+<td align="left">FALSE</td>
+<td align="right">3655</td>
+<td align="right">1678</td>
+<td align="right">1977</td>
+<td align="right">54.1</td>
+<td align="right">14.0</td>
+<td align="right">12.9</td>
+<td align="right">47.3</td>
+<td align="right">5.4</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882162</td>
+<td align="left">FALSE</td>
+<td align="right">1384</td>
+<td align="right">715</td>
+<td align="right">669</td>
+<td align="right">48.3</td>
+<td align="right">5.6</td>
+<td align="right">7.6</td>
+<td align="right">45.4</td>
+<td align="right">1.4</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882168</td>
+<td align="left">FALSE</td>
+<td align="right">6587</td>
+<td align="right">3476</td>
+<td align="right">3111</td>
+<td align="right">47.2</td>
+<td align="right">13.2</td>
+<td align="right">13.6</td>
+<td align="right">42.0</td>
+<td align="right">0.6</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292204</td>
+<td align="left">FALSE</td>
+<td align="right">4374</td>
+<td align="right">2361</td>
+<td align="right">2013</td>
+<td align="right">46.0</td>
+<td align="right">4.0</td>
+<td align="right">4.0</td>
+<td align="right">44.5</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292206</td>
+<td align="left">FALSE</td>
+<td align="right">3361</td>
+<td align="right">2023</td>
+<td align="right">1338</td>
+<td align="right">39.8</td>
+<td align="right">23.4</td>
+<td align="right">18.2</td>
+<td align="right">21.9</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882197</td>
+<td align="left">FALSE</td>
+<td align="right">3717</td>
+<td align="right">2377</td>
+<td align="right">1340</td>
+<td align="right">36.1</td>
+<td align="right">17.0</td>
+<td align="right">15.4</td>
+<td align="right">24.9</td>
+<td align="right">0.9</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292182</td>
+<td align="left">FALSE</td>
+<td align="right">1843</td>
+<td align="right">1203</td>
+<td align="right">640</td>
+<td align="right">34.7</td>
+<td align="right">8.8</td>
+<td align="right">8.6</td>
+<td align="right">31.8</td>
+<td align="right">1.6</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292159</td>
+<td align="left">FALSE</td>
+<td align="right">5205</td>
+<td align="right">3558</td>
+<td align="right">1647</td>
+<td align="right">31.6</td>
+<td align="right">12.2</td>
+<td align="right">10.3</td>
+<td align="right">27.4</td>
+<td align="right">4.0</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292185</td>
+<td align="left">FALSE</td>
+<td align="right">4434</td>
+<td align="right">3109</td>
+<td align="right">1325</td>
+<td align="right">29.9</td>
+<td align="right">9.4</td>
+<td align="right">8.0</td>
+<td align="right">24.8</td>
+<td align="right">0.5</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292200</td>
+<td align="left">FALSE</td>
+<td align="right">6843</td>
+<td align="right">4813</td>
+<td align="right">2030</td>
+<td align="right">29.7</td>
+<td align="right">10.9</td>
+<td align="right">9.5</td>
+<td align="right">24.6</td>
+<td align="right">5.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882165</td>
+<td align="left">FALSE</td>
+<td align="right">8289</td>
+<td align="right">5898</td>
+<td align="right">2391</td>
+<td align="right">28.8</td>
+<td align="right">10.5</td>
+<td align="right">9.6</td>
+<td align="right">22.7</td>
+<td align="right">7.0</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292198</td>
+<td align="left">FALSE</td>
+<td align="right">7768</td>
+<td align="right">5645</td>
+<td align="right">2123</td>
+<td align="right">27.3</td>
+<td align="right">8.4</td>
+<td align="right">6.3</td>
+<td align="right">18.4</td>
+<td align="right">21.9</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882170</td>
+<td align="left">FALSE</td>
+<td align="right">8945</td>
+<td align="right">6577</td>
+<td align="right">2368</td>
+<td align="right">26.5</td>
+<td align="right">10.3</td>
+<td align="right">9.3</td>
+<td align="right">18.1</td>
+<td align="right">19.0</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292193</td>
+<td align="left">FALSE</td>
+<td align="right">6079</td>
+<td align="right">4480</td>
+<td align="right">1599</td>
+<td align="right">26.3</td>
+<td align="right">8.6</td>
+<td align="right">8.3</td>
+<td align="right">20.0</td>
+<td align="right">7.9</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292173</td>
+<td align="left">FALSE</td>
+<td align="right">3788</td>
+<td align="right">2795</td>
+<td align="right">993</td>
+<td align="right">26.2</td>
+<td align="right">12.9</td>
+<td align="right">11.4</td>
+<td align="right">18.7</td>
+<td align="right">0.4</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292190</td>
+<td align="left">FALSE</td>
+<td align="right">5413</td>
+<td align="right">4015</td>
+<td align="right">1398</td>
+<td align="right">25.8</td>
+<td align="right">10.3</td>
+<td align="right">9.5</td>
+<td align="right">19.1</td>
+<td align="right">1.8</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292189</td>
+<td align="left">FALSE</td>
+<td align="right">9446</td>
+<td align="right">7059</td>
+<td align="right">2387</td>
+<td align="right">25.3</td>
+<td align="right">15.9</td>
+<td align="right">12.8</td>
+<td align="right">8.7</td>
+<td align="right">12.2</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882183</td>
+<td align="left">FALSE</td>
+<td align="right">17079</td>
+<td align="right">12810</td>
+<td align="right">4269</td>
+<td align="right">25.0</td>
+<td align="right">24.3</td>
+<td align="right">19.3</td>
+<td align="right">1.3</td>
+<td align="right">0.2</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882200</td>
+<td align="left">FALSE</td>
+<td align="right">8994</td>
+<td align="right">6792</td>
+<td align="right">2202</td>
+<td align="right">24.5</td>
+<td align="right">7.0</td>
+<td align="right">7.2</td>
+<td align="right">20.1</td>
+<td align="right">0.2</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882160</td>
+<td align="left">FALSE</td>
+<td align="right">8908</td>
+<td align="right">6883</td>
+<td align="right">2025</td>
+<td align="right">22.7</td>
+<td align="right">10.6</td>
+<td align="right">8.9</td>
+<td align="right">15.6</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292196</td>
+<td align="left">FALSE</td>
+<td align="right">7221</td>
+<td align="right">5609</td>
+<td align="right">1612</td>
+<td align="right">22.3</td>
+<td align="right">10.4</td>
+<td align="right">7.4</td>
+<td align="right">13.5</td>
+<td align="right">11.5</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882192</td>
+<td align="left">FALSE</td>
+<td align="right">5120</td>
+<td align="right">4005</td>
+<td align="right">1115</td>
+<td align="right">21.8</td>
+<td align="right">8.1</td>
+<td align="right">8.8</td>
+<td align="right">16.6</td>
+<td align="right">1.8</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292161</td>
+<td align="left">FALSE</td>
+<td align="right">6486</td>
+<td align="right">5099</td>
+<td align="right">1387</td>
+<td align="right">21.4</td>
+<td align="right">7.8</td>
+<td align="right">7.0</td>
+<td align="right">16.9</td>
+<td align="right">3.6</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292192</td>
+<td align="left">FALSE</td>
+<td align="right">5053</td>
+<td align="right">4020</td>
+<td align="right">1033</td>
+<td align="right">20.4</td>
+<td align="right">13.5</td>
+<td align="right">12.5</td>
+<td align="right">13.9</td>
+<td align="right">0.8</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292177</td>
+<td align="left">FALSE</td>
+<td align="right">4070</td>
+<td align="right">3245</td>
+<td align="right">825</td>
+<td align="right">20.3</td>
+<td align="right">12.5</td>
+<td align="right">10.3</td>
+<td align="right">11.1</td>
+<td align="right">3.4</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882199</td>
+<td align="left">FALSE</td>
+<td align="right">21084</td>
+<td align="right">16821</td>
+<td align="right">4263</td>
+<td align="right">20.2</td>
+<td align="right">9.5</td>
+<td align="right">8.6</td>
+<td align="right">14.9</td>
+<td align="right">1.2</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882172</td>
+<td align="left">FALSE</td>
+<td align="right">14988</td>
+<td align="right">12215</td>
+<td align="right">2773</td>
+<td align="right">18.5</td>
+<td align="right">9.4</td>
+<td align="right">7.9</td>
+<td align="right">10.8</td>
+<td align="right">11.7</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882081</td>
+<td align="left">FALSE</td>
+<td align="right">8095</td>
+<td align="right">6617</td>
+<td align="right">1478</td>
+<td align="right">18.3</td>
+<td align="right">8.1</td>
+<td align="right">7.7</td>
+<td align="right">13.0</td>
+<td align="right">11.0</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292165</td>
+<td align="left">FALSE</td>
+<td align="right">10904</td>
+<td align="right">9008</td>
+<td align="right">1896</td>
+<td align="right">17.4</td>
+<td align="right">7.1</td>
+<td align="right">6.7</td>
+<td align="right">14.6</td>
+<td align="right">0.6</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882171</td>
+<td align="left">FALSE</td>
+<td align="right">12692</td>
+<td align="right">10498</td>
+<td align="right">2194</td>
+<td align="right">17.3</td>
+<td align="right">8.0</td>
+<td align="right">6.6</td>
+<td align="right">10.6</td>
+<td align="right">6.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882214</td>
+<td align="left">FALSE</td>
+<td align="right">6549</td>
+<td align="right">5414</td>
+<td align="right">1135</td>
+<td align="right">17.3</td>
+<td align="right">6.7</td>
+<td align="right">6.7</td>
+<td align="right">12.9</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882188</td>
+<td align="left">FALSE</td>
+<td align="right">6182</td>
+<td align="right">5118</td>
+<td align="right">1064</td>
+<td align="right">17.2</td>
+<td align="right">12.1</td>
+<td align="right">11.2</td>
+<td align="right">8.2</td>
+<td align="right">0.6</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292194</td>
+<td align="left">FALSE</td>
+<td align="right">12425</td>
+<td align="right">10328</td>
+<td align="right">2097</td>
+<td align="right">16.9</td>
+<td align="right">9.0</td>
+<td align="right">5.7</td>
+<td align="right">9.0</td>
+<td align="right">9.0</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882175</td>
+<td align="left">FALSE</td>
+<td align="right">5298</td>
+<td align="right">4402</td>
+<td align="right">896</td>
+<td align="right">16.9</td>
+<td align="right">10.5</td>
+<td align="right">9.1</td>
+<td align="right">10.1</td>
+<td align="right">7.0</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882073</td>
+<td align="left">FALSE</td>
+<td align="right">5822</td>
+<td align="right">4842</td>
+<td align="right">980</td>
+<td align="right">16.8</td>
+<td align="right">10.8</td>
+<td align="right">8.8</td>
+<td align="right">9.2</td>
+<td align="right">1.0</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292207</td>
+<td align="left">FALSE</td>
+<td align="right">3668</td>
+<td align="right">3055</td>
+<td align="right">613</td>
+<td align="right">16.7</td>
+<td align="right">12.4</td>
+<td align="right">9.8</td>
+<td align="right">2.6</td>
+<td align="right">5.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882189</td>
+<td align="left">FALSE</td>
+<td align="right">27458</td>
+<td align="right">22887</td>
+<td align="right">4571</td>
+<td align="right">16.6</td>
+<td align="right">16.3</td>
+<td align="right">12.2</td>
+<td align="right">0.8</td>
+<td align="right">0.2</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292171</td>
+<td align="left">FALSE</td>
+<td align="right">2663</td>
+<td align="right">2220</td>
+<td align="right">443</td>
+<td align="right">16.6</td>
+<td align="right">9.3</td>
+<td align="right">8.6</td>
+<td align="right">10.5</td>
+<td align="right">2.9</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292197</td>
+<td align="left">FALSE</td>
+<td align="right">9407</td>
+<td align="right">7912</td>
+<td align="right">1495</td>
+<td align="right">15.9</td>
+<td align="right">7.0</td>
+<td align="right">5.9</td>
+<td align="right">11.1</td>
+<td align="right">5.0</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882169</td>
+<td align="left">FALSE</td>
+<td align="right">11735</td>
+<td align="right">9922</td>
+<td align="right">1813</td>
+<td align="right">15.4</td>
+<td align="right">7.9</td>
+<td align="right">6.5</td>
+<td align="right">7.2</td>
+<td align="right">9.8</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882077</td>
+<td align="left">FALSE</td>
+<td align="right">14215</td>
+<td align="right">12041</td>
+<td align="right">2174</td>
+<td align="right">15.3</td>
+<td align="right">4.3</td>
+<td align="right">3.2</td>
+<td align="right">10.9</td>
+<td align="right">13.8</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292199</td>
+<td align="left">FALSE</td>
+<td align="right">8616</td>
+<td align="right">7299</td>
+<td align="right">1317</td>
+<td align="right">15.3</td>
+<td align="right">5.8</td>
+<td align="right">4.0</td>
+<td align="right">9.1</td>
+<td align="right">12.2</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882205</td>
+<td align="left">FALSE</td>
+<td align="right">7728</td>
+<td align="right">6587</td>
+<td align="right">1141</td>
+<td align="right">14.8</td>
+<td align="right">7.5</td>
+<td align="right">7.2</td>
+<td align="right">9.8</td>
+<td align="right">1.4</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882082</td>
+<td align="left">FALSE</td>
+<td align="right">11720</td>
+<td align="right">10025</td>
+<td align="right">1695</td>
+<td align="right">14.5</td>
+<td align="right">7.5</td>
+<td align="right">5.8</td>
+<td align="right">7.9</td>
+<td align="right">10.4</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292176</td>
+<td align="left">FALSE</td>
+<td align="right">7542</td>
+<td align="right">6447</td>
+<td align="right">1095</td>
+<td align="right">14.5</td>
+<td align="right">11.7</td>
+<td align="right">9.0</td>
+<td align="right">3.5</td>
+<td align="right">1.6</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882216</td>
+<td align="left">FALSE</td>
+<td align="right">8536</td>
+<td align="right">7303</td>
+<td align="right">1233</td>
+<td align="right">14.4</td>
+<td align="right">5.4</td>
+<td align="right">5.1</td>
+<td align="right">11.2</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882163</td>
+<td align="left">FALSE</td>
+<td align="right">11192</td>
+<td align="right">9593</td>
+<td align="right">1599</td>
+<td align="right">14.3</td>
+<td align="right">8.5</td>
+<td align="right">7.2</td>
+<td align="right">9.6</td>
+<td align="right">3.6</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882150</td>
+<td align="left">FALSE</td>
+<td align="right">8670</td>
+<td align="right">7438</td>
+<td align="right">1232</td>
+<td align="right">14.2</td>
+<td align="right">9.7</td>
+<td align="right">7.9</td>
+<td align="right">1.7</td>
+<td align="right">5.8</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292203</td>
+<td align="left">FALSE</td>
+<td align="right">5097</td>
+<td align="right">4376</td>
+<td align="right">721</td>
+<td align="right">14.1</td>
+<td align="right">7.0</td>
+<td align="right">6.2</td>
+<td align="right">10.0</td>
+<td align="right">0.7</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882158</td>
+<td align="left">FALSE</td>
+<td align="right">7103</td>
+<td align="right">6162</td>
+<td align="right">941</td>
+<td align="right">13.2</td>
+<td align="right">8.7</td>
+<td align="right">7.5</td>
+<td align="right">3.5</td>
+<td align="right">5.9</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882161</td>
+<td align="left">FALSE</td>
+<td align="right">5906</td>
+<td align="right">5140</td>
+<td align="right">766</td>
+<td align="right">13.0</td>
+<td align="right">8.0</td>
+<td align="right">7.2</td>
+<td align="right">7.1</td>
+<td align="right">3.3</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882094</td>
+<td align="left">FALSE</td>
+<td align="right">10333</td>
+<td align="right">9005</td>
+<td align="right">1328</td>
+<td align="right">12.9</td>
+<td align="right">8.7</td>
+<td align="right">7.2</td>
+<td align="right">1.9</td>
+<td align="right">5.5</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882181</td>
+<td align="left">FALSE</td>
+<td align="right">13748</td>
+<td align="right">11984</td>
+<td align="right">1764</td>
+<td align="right">12.8</td>
+<td align="right">3.3</td>
+<td align="right">3.1</td>
+<td align="right">10.3</td>
+<td align="right">10.2</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882159</td>
+<td align="left">FALSE</td>
+<td align="right">6881</td>
+<td align="right">6001</td>
+<td align="right">880</td>
+<td align="right">12.8</td>
+<td align="right">7.2</td>
+<td align="right">6.4</td>
+<td align="right">8.6</td>
+<td align="right">2.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882182</td>
+<td align="left">FALSE</td>
+<td align="right">10809</td>
+<td align="right">9441</td>
+<td align="right">1368</td>
+<td align="right">12.7</td>
+<td align="right">9.4</td>
+<td align="right">8.7</td>
+<td align="right">6.1</td>
+<td align="right">2.2</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882180</td>
+<td align="left">FALSE</td>
+<td align="right">15818</td>
+<td align="right">13840</td>
+<td align="right">1978</td>
+<td align="right">12.5</td>
+<td align="right">6.2</td>
+<td align="right">4.9</td>
+<td align="right">7.8</td>
+<td align="right">8.5</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882092</td>
+<td align="left">FALSE</td>
+<td align="right">11841</td>
+<td align="right">10395</td>
+<td align="right">1446</td>
+<td align="right">12.2</td>
+<td align="right">7.3</td>
+<td align="right">5.7</td>
+<td align="right">1.9</td>
+<td align="right">6.7</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882157</td>
+<td align="left">FALSE</td>
+<td align="right">9256</td>
+<td align="right">8147</td>
+<td align="right">1109</td>
+<td align="right">12.0</td>
+<td align="right">5.3</td>
+<td align="right">4.3</td>
+<td align="right">1.3</td>
+<td align="right">8.6</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292156</td>
+<td align="left">FALSE</td>
+<td align="right">7433</td>
+<td align="right">6589</td>
+<td align="right">844</td>
+<td align="right">11.4</td>
+<td align="right">7.6</td>
+<td align="right">6.2</td>
+<td align="right">3.7</td>
+<td align="right">2.9</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882201</td>
+<td align="left">FALSE</td>
+<td align="right">12137</td>
+<td align="right">10770</td>
+<td align="right">1367</td>
+<td align="right">11.3</td>
+<td align="right">4.8</td>
+<td align="right">5.1</td>
+<td align="right">7.8</td>
+<td align="right">1.7</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882156</td>
+<td align="left">FALSE</td>
+<td align="right">8944</td>
+<td align="right">7966</td>
+<td align="right">978</td>
+<td align="right">10.9</td>
+<td align="right">7.4</td>
+<td align="right">6.0</td>
+<td align="right">1.0</td>
+<td align="right">5.0</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292175</td>
+<td align="left">FALSE</td>
+<td align="right">7430</td>
+<td align="right">6634</td>
+<td align="right">796</td>
+<td align="right">10.7</td>
+<td align="right">5.2</td>
+<td align="right">4.3</td>
+<td align="right">5.3</td>
+<td align="right">5.7</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882093</td>
+<td align="left">FALSE</td>
+<td align="right">11990</td>
+<td align="right">10731</td>
+<td align="right">1259</td>
+<td align="right">10.5</td>
+<td align="right">7.3</td>
+<td align="right">5.9</td>
+<td align="right">1.2</td>
+<td align="right">4.5</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292150</td>
+<td align="left">FALSE</td>
+<td align="right">12051</td>
+<td align="right">10826</td>
+<td align="right">1225</td>
+<td align="right">10.2</td>
+<td align="right">8.0</td>
+<td align="right">6.2</td>
+<td align="right">1.7</td>
+<td align="right">3.4</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882174</td>
+<td align="left">FALSE</td>
+<td align="right">9724</td>
+<td align="right">8734</td>
+<td align="right">990</td>
+<td align="right">10.2</td>
+<td align="right">7.3</td>
+<td align="right">5.6</td>
+<td align="right">3.7</td>
+<td align="right">1.9</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292162</td>
+<td align="left">FALSE</td>
+<td align="right">9671</td>
+<td align="right">8709</td>
+<td align="right">962</td>
+<td align="right">9.9</td>
+<td align="right">3.7</td>
+<td align="right">2.7</td>
+<td align="right">5.6</td>
+<td align="right">7.3</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882177</td>
+<td align="left">FALSE</td>
+<td align="right">10668</td>
+<td align="right">9643</td>
+<td align="right">1025</td>
+<td align="right">9.6</td>
+<td align="right">4.3</td>
+<td align="right">4.2</td>
+<td align="right">6.5</td>
+<td align="right">6.1</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882086</td>
+<td align="left">FALSE</td>
+<td align="right">8392</td>
+<td align="right">7604</td>
+<td align="right">788</td>
+<td align="right">9.4</td>
+<td align="right">5.8</td>
+<td align="right">4.9</td>
+<td align="right">0.6</td>
+<td align="right">5.0</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292181</td>
+<td align="left">FALSE</td>
+<td align="right">6573</td>
+<td align="right">5955</td>
+<td align="right">618</td>
+<td align="right">9.4</td>
+<td align="right">6.6</td>
+<td align="right">5.3</td>
+<td align="right">1.0</td>
+<td align="right">4.6</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882079</td>
+<td align="left">FALSE</td>
+<td align="right">10190</td>
+<td align="right">9244</td>
+<td align="right">946</td>
+<td align="right">9.3</td>
+<td align="right">4.9</td>
+<td align="right">4.2</td>
+<td align="right">5.9</td>
+<td align="right">6.1</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882075</td>
+<td align="left">FALSE</td>
+<td align="right">14749</td>
+<td align="right">13388</td>
+<td align="right">1361</td>
+<td align="right">9.2</td>
+<td align="right">5.2</td>
+<td align="right">4.3</td>
+<td align="right">4.7</td>
+<td align="right">5.0</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882091</td>
+<td align="left">FALSE</td>
+<td align="right">12066</td>
+<td align="right">10962</td>
+<td align="right">1104</td>
+<td align="right">9.1</td>
+<td align="right">4.8</td>
+<td align="right">3.6</td>
+<td align="right">0.7</td>
+<td align="right">5.8</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292178</td>
+<td align="left">FALSE</td>
+<td align="right">6630</td>
+<td align="right">6036</td>
+<td align="right">594</td>
+<td align="right">9.0</td>
+<td align="right">4.2</td>
+<td align="right">3.9</td>
+<td align="right">5.2</td>
+<td align="right">4.1</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882080</td>
+<td align="left">FALSE</td>
+<td align="right">10818</td>
+<td align="right">9864</td>
+<td align="right">954</td>
+<td align="right">8.8</td>
+<td align="right">5.7</td>
+<td align="right">5.0</td>
+<td align="right">2.5</td>
+<td align="right">5.2</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292158</td>
+<td align="left">FALSE</td>
+<td align="right">8334</td>
+<td align="right">7621</td>
+<td align="right">713</td>
+<td align="right">8.6</td>
+<td align="right">6.9</td>
+<td align="right">5.3</td>
+<td align="right">2.3</td>
+<td align="right">2.0</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292152</td>
+<td align="left">FALSE</td>
+<td align="right">5029</td>
+<td align="right">4599</td>
+<td align="right">430</td>
+<td align="right">8.6</td>
+<td align="right">5.4</td>
+<td align="right">4.3</td>
+<td align="right">2.4</td>
+<td align="right">4.3</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882166</td>
+<td align="left">FALSE</td>
+<td align="right">6434</td>
+<td align="right">5888</td>
+<td align="right">546</td>
+<td align="right">8.5</td>
+<td align="right">5.4</td>
+<td align="right">5.2</td>
+<td align="right">4.4</td>
+<td align="right">1.3</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292184</td>
+<td align="left">FALSE</td>
+<td align="right">5549</td>
+<td align="right">5078</td>
+<td align="right">471</td>
+<td align="right">8.5</td>
+<td align="right">5.1</td>
+<td align="right">4.4</td>
+<td align="right">4.1</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292160</td>
+<td align="left">FALSE</td>
+<td align="right">12538</td>
+<td align="right">11482</td>
+<td align="right">1056</td>
+<td align="right">8.4</td>
+<td align="right">5.4</td>
+<td align="right">4.2</td>
+<td align="right">2.6</td>
+<td align="right">3.7</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882154</td>
+<td align="left">FALSE</td>
+<td align="right">10678</td>
+<td align="right">9792</td>
+<td align="right">886</td>
+<td align="right">8.3</td>
+<td align="right">5.8</td>
+<td align="right">4.3</td>
+<td align="right">1.0</td>
+<td align="right">3.4</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882211</td>
+<td align="left">FALSE</td>
+<td align="right">8684</td>
+<td align="right">7974</td>
+<td align="right">710</td>
+<td align="right">8.2</td>
+<td align="right">4.4</td>
+<td align="right">5.3</td>
+<td align="right">4.1</td>
+<td align="right">2.1</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882085</td>
+<td align="left">FALSE</td>
+<td align="right">7350</td>
+<td align="right">6764</td>
+<td align="right">586</td>
+<td align="right">8.0</td>
+<td align="right">5.2</td>
+<td align="right">4.8</td>
+<td align="right">1.9</td>
+<td align="right">3.9</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882191</td>
+<td align="left">FALSE</td>
+<td align="right">5197</td>
+<td align="right">4782</td>
+<td align="right">415</td>
+<td align="right">8.0</td>
+<td align="right">4.6</td>
+<td align="right">4.8</td>
+<td align="right">4.9</td>
+<td align="right">2.3</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882185</td>
+<td align="left">FALSE</td>
+<td align="right">12895</td>
+<td align="right">11881</td>
+<td align="right">1014</td>
+<td align="right">7.9</td>
+<td align="right">3.8</td>
+<td align="right">2.9</td>
+<td align="right">2.9</td>
+<td align="right">5.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882179</td>
+<td align="left">FALSE</td>
+<td align="right">9922</td>
+<td align="right">9135</td>
+<td align="right">787</td>
+<td align="right">7.9</td>
+<td align="right">3.9</td>
+<td align="right">3.0</td>
+<td align="right">4.2</td>
+<td align="right">6.1</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292167</td>
+<td align="left">FALSE</td>
+<td align="right">6821</td>
+<td align="right">6291</td>
+<td align="right">530</td>
+<td align="right">7.8</td>
+<td align="right">6.8</td>
+<td align="right">5.2</td>
+<td align="right">1.6</td>
+<td align="right">0.7</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292168</td>
+<td align="left">FALSE</td>
+<td align="right">3676</td>
+<td align="right">3391</td>
+<td align="right">285</td>
+<td align="right">7.8</td>
+<td align="right">4.6</td>
+<td align="right">4.5</td>
+<td align="right">4.9</td>
+<td align="right">0.1</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292188</td>
+<td align="left">FALSE</td>
+<td align="right">5879</td>
+<td align="right">5424</td>
+<td align="right">455</td>
+<td align="right">7.7</td>
+<td align="right">6.2</td>
+<td align="right">5.2</td>
+<td align="right">1.5</td>
+<td align="right">1.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882090</td>
+<td align="left">FALSE</td>
+<td align="right">8007</td>
+<td align="right">7400</td>
+<td align="right">607</td>
+<td align="right">7.6</td>
+<td align="right">5.5</td>
+<td align="right">5.0</td>
+<td align="right">0.7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882153</td>
+<td align="left">FALSE</td>
+<td align="right">8628</td>
+<td align="right">7981</td>
+<td align="right">647</td>
+<td align="right">7.5</td>
+<td align="right">5.2</td>
+<td align="right">4.5</td>
+<td align="right">1.0</td>
+<td align="right">3.4</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292155</td>
+<td align="left">FALSE</td>
+<td align="right">6601</td>
+<td align="right">6114</td>
+<td align="right">487</td>
+<td align="right">7.4</td>
+<td align="right">4.1</td>
+<td align="right">2.8</td>
+<td align="right">1.5</td>
+<td align="right">5.2</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292146</td>
+<td align="left">FALSE</td>
+<td align="right">10398</td>
+<td align="right">9646</td>
+<td align="right">752</td>
+<td align="right">7.2</td>
+<td align="right">3.7</td>
+<td align="right">2.6</td>
+<td align="right">2.2</td>
+<td align="right">5.0</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882207</td>
+<td align="left">FALSE</td>
+<td align="right">7070</td>
+<td align="right">6561</td>
+<td align="right">509</td>
+<td align="right">7.2</td>
+<td align="right">4.9</td>
+<td align="right">4.3</td>
+<td align="right">1.3</td>
+<td align="right">3.3</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292191</td>
+<td align="left">FALSE</td>
+<td align="right">8859</td>
+<td align="right">8233</td>
+<td align="right">626</td>
+<td align="right">7.1</td>
+<td align="right">2.6</td>
+<td align="right">2.2</td>
+<td align="right">1.0</td>
+<td align="right">5.9</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292187</td>
+<td align="left">FALSE</td>
+<td align="right">7203</td>
+<td align="right">6690</td>
+<td align="right">513</td>
+<td align="right">7.1</td>
+<td align="right">5.6</td>
+<td align="right">4.9</td>
+<td align="right">1.5</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882198</td>
+<td align="left">FALSE</td>
+<td align="right">4879</td>
+<td align="right">4533</td>
+<td align="right">346</td>
+<td align="right">7.1</td>
+<td align="right">3.1</td>
+<td align="right">2.8</td>
+<td align="right">4.2</td>
+<td align="right">5.0</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882209</td>
+<td align="left">FALSE</td>
+<td align="right">8418</td>
+<td align="right">7826</td>
+<td align="right">592</td>
+<td align="right">7.0</td>
+<td align="right">3.8</td>
+<td align="right">3.6</td>
+<td align="right">2.7</td>
+<td align="right">4.0</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292148</td>
+<td align="left">FALSE</td>
+<td align="right">11077</td>
+<td align="right">10320</td>
+<td align="right">757</td>
+<td align="right">6.8</td>
+<td align="right">3.9</td>
+<td align="right">3.5</td>
+<td align="right">2.6</td>
+<td align="right">4.1</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882167</td>
+<td align="left">FALSE</td>
+<td align="right">9423</td>
+<td align="right">8783</td>
+<td align="right">640</td>
+<td align="right">6.8</td>
+<td align="right">4.6</td>
+<td align="right">3.8</td>
+<td align="right">3.2</td>
+<td align="right">2.0</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882149</td>
+<td align="left">FALSE</td>
+<td align="right">9245</td>
+<td align="right">8612</td>
+<td align="right">633</td>
+<td align="right">6.8</td>
+<td align="right">4.2</td>
+<td align="right">3.4</td>
+<td align="right">0.3</td>
+<td align="right">3.5</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292186</td>
+<td align="left">FALSE</td>
+<td align="right">8565</td>
+<td align="right">7984</td>
+<td align="right">581</td>
+<td align="right">6.8</td>
+<td align="right">4.0</td>
+<td align="right">2.9</td>
+<td align="right">2.4</td>
+<td align="right">3.5</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292151</td>
+<td align="left">FALSE</td>
+<td align="right">10250</td>
+<td align="right">9564</td>
+<td align="right">686</td>
+<td align="right">6.7</td>
+<td align="right">5.1</td>
+<td align="right">3.2</td>
+<td align="right">0.7</td>
+<td align="right">2.5</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292149</td>
+<td align="left">FALSE</td>
+<td align="right">14344</td>
+<td align="right">13397</td>
+<td align="right">947</td>
+<td align="right">6.6</td>
+<td align="right">3.8</td>
+<td align="right">2.8</td>
+<td align="right">2.4</td>
+<td align="right">4.1</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292180</td>
+<td align="left">FALSE</td>
+<td align="right">7656</td>
+<td align="right">7150</td>
+<td align="right">506</td>
+<td align="right">6.6</td>
+<td align="right">3.0</td>
+<td align="right">2.6</td>
+<td align="right">4.4</td>
+<td align="right">2.9</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882196</td>
+<td align="left">FALSE</td>
+<td align="right">4869</td>
+<td align="right">4556</td>
+<td align="right">313</td>
+<td align="right">6.4</td>
+<td align="right">3.8</td>
+<td align="right">3.2</td>
+<td align="right">1.9</td>
+<td align="right">3.5</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882178</td>
+<td align="left">FALSE</td>
+<td align="right">12062</td>
+<td align="right">11304</td>
+<td align="right">758</td>
+<td align="right">6.3</td>
+<td align="right">4.2</td>
+<td align="right">3.4</td>
+<td align="right">2.2</td>
+<td align="right">3.1</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292170</td>
+<td align="left">FALSE</td>
+<td align="right">4021</td>
+<td align="right">3766</td>
+<td align="right">255</td>
+<td align="right">6.3</td>
+<td align="right">4.7</td>
+<td align="right">4.4</td>
+<td align="right">1.4</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882164</td>
+<td align="left">FALSE</td>
+<td align="right">14729</td>
+<td align="right">13826</td>
+<td align="right">903</td>
+<td align="right">6.1</td>
+<td align="right">3.9</td>
+<td align="right">2.9</td>
+<td align="right">2.5</td>
+<td align="right">1.9</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292143</td>
+<td align="left">FALSE</td>
+<td align="right">10348</td>
+<td align="right">9732</td>
+<td align="right">616</td>
+<td align="right">6.0</td>
+<td align="right">4.2</td>
+<td align="right">3.4</td>
+<td align="right">1.6</td>
+<td align="right">2.7</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882187</td>
+<td align="left">FALSE</td>
+<td align="right">9207</td>
+<td align="right">8650</td>
+<td align="right">557</td>
+<td align="right">6.0</td>
+<td align="right">3.9</td>
+<td align="right">3.2</td>
+<td align="right">2.7</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882212</td>
+<td align="left">FALSE</td>
+<td align="right">8641</td>
+<td align="right">8122</td>
+<td align="right">519</td>
+<td align="right">6.0</td>
+<td align="right">4.7</td>
+<td align="right">4.1</td>
+<td align="right">1.0</td>
+<td align="right">2.0</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292147</td>
+<td align="left">FALSE</td>
+<td align="right">12168</td>
+<td align="right">11447</td>
+<td align="right">721</td>
+<td align="right">5.9</td>
+<td align="right">3.6</td>
+<td align="right">2.5</td>
+<td align="right">1.8</td>
+<td align="right">3.8</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292157</td>
+<td align="left">FALSE</td>
+<td align="right">8897</td>
+<td align="right">8385</td>
+<td align="right">512</td>
+<td align="right">5.8</td>
+<td align="right">3.0</td>
+<td align="right">2.1</td>
+<td align="right">0.9</td>
+<td align="right">3.6</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882208</td>
+<td align="left">FALSE</td>
+<td align="right">8891</td>
+<td align="right">8382</td>
+<td align="right">509</td>
+<td align="right">5.7</td>
+<td align="right">3.7</td>
+<td align="right">3.8</td>
+<td align="right">2.6</td>
+<td align="right">1.3</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882074</td>
+<td align="left">FALSE</td>
+<td align="right">8758</td>
+<td align="right">8261</td>
+<td align="right">497</td>
+<td align="right">5.7</td>
+<td align="right">4.4</td>
+<td align="right">3.7</td>
+<td align="right">1.7</td>
+<td align="right">1.6</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292163</td>
+<td align="left">FALSE</td>
+<td align="right">13090</td>
+<td align="right">12359</td>
+<td align="right">731</td>
+<td align="right">5.6</td>
+<td align="right">3.7</td>
+<td align="right">2.4</td>
+<td align="right">1.1</td>
+<td align="right">2.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882194</td>
+<td align="left">FALSE</td>
+<td align="right">4994</td>
+<td align="right">4720</td>
+<td align="right">274</td>
+<td align="right">5.5</td>
+<td align="right">2.7</td>
+<td align="right">2.2</td>
+<td align="right">2.8</td>
+<td align="right">3.8</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292201</td>
+<td align="left">FALSE</td>
+<td align="right">6508</td>
+<td align="right">6155</td>
+<td align="right">353</td>
+<td align="right">5.4</td>
+<td align="right">2.9</td>
+<td align="right">2.4</td>
+<td align="right">2.9</td>
+<td align="right">3.2</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292183</td>
+<td align="left">FALSE</td>
+<td align="right">1720</td>
+<td align="right">1627</td>
+<td align="right">93</td>
+<td align="right">5.4</td>
+<td align="right">3.0</td>
+<td align="right">3.2</td>
+<td align="right">0.2</td>
+<td align="right">2.2</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292153</td>
+<td align="left">FALSE</td>
+<td align="right">7785</td>
+<td align="right">7373</td>
+<td align="right">412</td>
+<td align="right">5.3</td>
+<td align="right">4.5</td>
+<td align="right">3.5</td>
+<td align="right">0.9</td>
+<td align="right">1.2</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292144</td>
+<td align="left">FALSE</td>
+<td align="right">13721</td>
+<td align="right">13012</td>
+<td align="right">709</td>
+<td align="right">5.2</td>
+<td align="right">3.7</td>
+<td align="right">3.1</td>
+<td align="right">1.3</td>
+<td align="right">2.0</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882088</td>
+<td align="left">FALSE</td>
+<td align="right">8509</td>
+<td align="right">8067</td>
+<td align="right">442</td>
+<td align="right">5.2</td>
+<td align="right">2.2</td>
+<td align="right">1.8</td>
+<td align="right">0.2</td>
+<td align="right">3.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882204</td>
+<td align="left">FALSE</td>
+<td align="right">13518</td>
+<td align="right">12846</td>
+<td align="right">672</td>
+<td align="right">5.0</td>
+<td align="right">3.6</td>
+<td align="right">2.7</td>
+<td align="right">0.8</td>
+<td align="right">2.0</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292174</td>
+<td align="left">FALSE</td>
+<td align="right">7198</td>
+<td align="right">6838</td>
+<td align="right">360</td>
+<td align="right">5.0</td>
+<td align="right">3.8</td>
+<td align="right">3.1</td>
+<td align="right">1.1</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882152</td>
+<td align="left">FALSE</td>
+<td align="right">8563</td>
+<td align="right">8149</td>
+<td align="right">414</td>
+<td align="right">4.8</td>
+<td align="right">3.6</td>
+<td align="right">2.9</td>
+<td align="right">0.5</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292205</td>
+<td align="left">FALSE</td>
+<td align="right">8031</td>
+<td align="right">7654</td>
+<td align="right">377</td>
+<td align="right">4.7</td>
+<td align="right">2.4</td>
+<td align="right">1.9</td>
+<td align="right">0.9</td>
+<td align="right">3.2</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882084</td>
+<td align="left">FALSE</td>
+<td align="right">7167</td>
+<td align="right">6829</td>
+<td align="right">338</td>
+<td align="right">4.7</td>
+<td align="right">2.5</td>
+<td align="right">2.3</td>
+<td align="right">1.1</td>
+<td align="right">3.2</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882173</td>
+<td align="left">FALSE</td>
+<td align="right">9927</td>
+<td align="right">9493</td>
+<td align="right">434</td>
+<td align="right">4.4</td>
+<td align="right">2.8</td>
+<td align="right">2.6</td>
+<td align="right">1.7</td>
+<td align="right">2.2</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882151</td>
+<td align="left">FALSE</td>
+<td align="right">9167</td>
+<td align="right">8772</td>
+<td align="right">395</td>
+<td align="right">4.3</td>
+<td align="right">2.8</td>
+<td align="right">2.2</td>
+<td align="right">0.4</td>
+<td align="right">2.0</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292172</td>
+<td align="left">FALSE</td>
+<td align="right">5249</td>
+<td align="right">5023</td>
+<td align="right">226</td>
+<td align="right">4.3</td>
+<td align="right">1.9</td>
+<td align="right">1.7</td>
+<td align="right">2.1</td>
+<td align="right">1.3</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292166</td>
+<td align="left">FALSE</td>
+<td align="right">9080</td>
+<td align="right">8695</td>
+<td align="right">385</td>
+<td align="right">4.2</td>
+<td align="right">3.1</td>
+<td align="right">2.1</td>
+<td align="right">0.9</td>
+<td align="right">1.7</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882213</td>
+<td align="left">FALSE</td>
+<td align="right">8590</td>
+<td align="right">8244</td>
+<td align="right">346</td>
+<td align="right">4.0</td>
+<td align="right">1.8</td>
+<td align="right">1.6</td>
+<td align="right">1.8</td>
+<td align="right">2.7</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882210</td>
+<td align="left">FALSE</td>
+<td align="right">5861</td>
+<td align="right">5640</td>
+<td align="right">221</td>
+<td align="right">3.8</td>
+<td align="right">1.6</td>
+<td align="right">1.6</td>
+<td align="right">1.6</td>
+<td align="right">2.6</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292145</td>
+<td align="left">FALSE</td>
+<td align="right">6349</td>
+<td align="right">6116</td>
+<td align="right">233</td>
+<td align="right">3.7</td>
+<td align="right">2.9</td>
+<td align="right">3.4</td>
+<td align="right">0.4</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882089</td>
+<td align="left">FALSE</td>
+<td align="right">8051</td>
+<td align="right">7762</td>
+<td align="right">289</td>
+<td align="right">3.6</td>
+<td align="right">2.0</td>
+<td align="right">1.4</td>
+<td align="right">0.2</td>
+<td align="right">2.0</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882186</td>
+<td align="left">FALSE</td>
+<td align="right">9149</td>
+<td align="right">8826</td>
+<td align="right">323</td>
+<td align="right">3.5</td>
+<td align="right">2.2</td>
+<td align="right">1.8</td>
+<td align="right">1.5</td>
+<td align="right">1.4</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882202</td>
+<td align="left">FALSE</td>
+<td align="right">7345</td>
+<td align="right">7090</td>
+<td align="right">255</td>
+<td align="right">3.5</td>
+<td align="right">1.8</td>
+<td align="right">1.7</td>
+<td align="right">1.6</td>
+<td align="right">1.2</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882148</td>
+<td align="left">FALSE</td>
+<td align="right">7712</td>
+<td align="right">7452</td>
+<td align="right">260</td>
+<td align="right">3.4</td>
+<td align="right">2.0</td>
+<td align="right">1.9</td>
+<td align="right">0.7</td>
+<td align="right">1.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882215</td>
+<td align="left">FALSE</td>
+<td align="right">6847</td>
+<td align="right">6617</td>
+<td align="right">230</td>
+<td align="right">3.4</td>
+<td align="right">1.9</td>
+<td align="right">1.7</td>
+<td align="right">1.2</td>
+<td align="right">1.8</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292202</td>
+<td align="left">FALSE</td>
+<td align="right">7689</td>
+<td align="right">7465</td>
+<td align="right">224</td>
+<td align="right">2.9</td>
+<td align="right">2.0</td>
+<td align="right">1.7</td>
+<td align="right">0.6</td>
+<td align="right">1.0</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882193</td>
+<td align="left">FALSE</td>
+<td align="right">6295</td>
+<td align="right">6120</td>
+<td align="right">175</td>
+<td align="right">2.8</td>
+<td align="right">1.6</td>
+<td align="right">1.4</td>
+<td align="right">1.1</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292154</td>
+<td align="left">FALSE</td>
+<td align="right">6756</td>
+<td align="right">6572</td>
+<td align="right">184</td>
+<td align="right">2.7</td>
+<td align="right">2.1</td>
+<td align="right">1.7</td>
+<td align="right">0.2</td>
+<td align="right">0.6</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882078</td>
+<td align="left">FALSE</td>
+<td align="right">10122</td>
+<td align="right">9856</td>
+<td align="right">266</td>
+<td align="right">2.6</td>
+<td align="right">2.1</td>
+<td align="right">1.7</td>
+<td align="right">0.6</td>
+<td align="right">0.9</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292164</td>
+<td align="left">FALSE</td>
+<td align="right">11633</td>
+<td align="right">11341</td>
+<td align="right">292</td>
+<td align="right">2.5</td>
+<td align="right">1.4</td>
+<td align="right">1.0</td>
+<td align="right">0.1</td>
+<td align="right">1.4</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292208</td>
+<td align="left">FALSE</td>
+<td align="right">8830</td>
+<td align="right">8687</td>
+<td align="right">143</td>
+<td align="right">1.6</td>
+<td align="right">1.0</td>
+<td align="right">0.7</td>
+<td align="right">0.1</td>
+<td align="right">0.8</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="what-were-the-reasons-for-excluding-barcodes"
+class="section level2 tabset">
+<h2 class="tabset">What were the reasons for excluding barcodes?</h2>
+<p>An upset plot is generated for each sample to visualize the reasons
+for barcode exclusion. The plot shows the overlap between different
+exclusion criteria, with vertical bars representing the size of each
+intersection. Plots are omitted for samples where no barcodes were
+excluded.</p>
+<pre class="r"><code>for (bb in b_lvls) {
+  qc_tmp      = qc_dt[ batch_var == bb ]
+  if (nrow(qc_tmp) == 1 | sum(qc_tmp$keep) == nrow(qc_tmp))
+    next
+  cat(&#39;### &#39;, bb, &#39;\n&#39;)
+  suppressMessages( print(plot_upset_of_exclusions(qc_tmp, qc_names, qc_lu, cuts_dt)) )
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="gsm5292146-1" class="section level3">
+<h3>GSM5292146</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-1.png" width="576" /></p>
+</div>
+<div id="gsm5292147-1" class="section level3">
+<h3>GSM5292147</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-2.png" width="576" /></p>
+</div>
+<div id="gsm5292156-1" class="section level3">
+<h3>GSM5292156</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-3.png" width="576" /></p>
+</div>
+<div id="gsm5292157-1" class="section level3">
+<h3>GSM5292157</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-4.png" width="576" /></p>
+</div>
+<div id="gsm5292158-1" class="section level3">
+<h3>GSM5292158</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-5.png" width="576" /></p>
+</div>
+<div id="gsm5292200-1" class="section level3">
+<h3>GSM5292200</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-6.png" width="576" /></p>
+</div>
+<div id="srr27882183-1" class="section level3">
+<h3>SRR27882183</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-7.png" width="576" /></p>
+</div>
+<div id="srr27882182-1" class="section level3">
+<h3>SRR27882182</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-8.png" width="576" /></p>
+</div>
+<div id="srr27882181-1" class="section level3">
+<h3>SRR27882181</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-9.png" width="576" /></p>
+</div>
+<div id="srr27882171-1" class="section level3">
+<h3>SRR27882171</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-10.png" width="576" /></p>
+</div>
+<div id="srr27882170-1" class="section level3">
+<h3>SRR27882170</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-11.png" width="576" /></p>
+</div>
+<div id="srr27882169-1" class="section level3">
+<h3>SRR27882169</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-12.png" width="576" /></p>
+</div>
+<div id="srr27882094-1" class="section level3">
+<h3>SRR27882094</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-13.png" width="576" /></p>
+</div>
+<div id="srr27882093-1" class="section level3">
+<h3>SRR27882093</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-14.png" width="576" /></p>
+</div>
+<div id="srr27882092-1" class="section level3">
+<h3>SRR27882092</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-15.png" width="576" /></p>
+</div>
+<div id="srr27882091-1" class="section level3">
+<h3>SRR27882091</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-16.png" width="576" /></p>
+</div>
+<div id="srr27882090-1" class="section level3">
+<h3>SRR27882090</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-17.png" width="576" /></p>
+</div>
+<div id="srr27882089-1" class="section level3">
+<h3>SRR27882089</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-18.png" width="576" /></p>
+</div>
+<div id="srr27882088-1" class="section level3">
+<h3>SRR27882088</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-19.png" width="576" /></p>
+</div>
+<div id="srr27882086-1" class="section level3">
+<h3>SRR27882086</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-20.png" width="576" /></p>
+</div>
+<div id="srr27882085-1" class="section level3">
+<h3>SRR27882085</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-21.png" width="576" /></p>
+</div>
+<div id="srr27882084-1" class="section level3">
+<h3>SRR27882084</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-22.png" width="576" /></p>
+</div>
+<div id="srr27882158-1" class="section level3">
+<h3>SRR27882158</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-23.png" width="576" /></p>
+</div>
+<div id="srr27882157-1" class="section level3">
+<h3>SRR27882157</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-24.png" width="576" /></p>
+</div>
+<div id="srr27882156-1" class="section level3">
+<h3>SRR27882156</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-25.png" width="576" /></p>
+</div>
+<div id="srr27882154-1" class="section level3">
+<h3>SRR27882154</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-26.png" width="576" /></p>
+</div>
+<div id="srr27882153-1" class="section level3">
+<h3>SRR27882153</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-27.png" width="576" /></p>
+</div>
+<div id="srr27882152-1" class="section level3">
+<h3>SRR27882152</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-28.png" width="576" /></p>
+</div>
+<div id="srr27882151-1" class="section level3">
+<h3>SRR27882151</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-29.png" width="576" /></p>
+</div>
+<div id="srr27882150-1" class="section level3">
+<h3>SRR27882150</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-30.png" width="576" /></p>
+</div>
+<div id="srr27882149-1" class="section level3">
+<h3>SRR27882149</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-31.png" width="576" /></p>
+</div>
+<div id="srr27882148-1" class="section level3">
+<h3>SRR27882148</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-32.png" width="576" /></p>
+</div>
+<div id="gsm5292143-1" class="section level3">
+<h3>GSM5292143</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-33.png" width="576" /></p>
+</div>
+<div id="gsm5292144-1" class="section level3">
+<h3>GSM5292144</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-34.png" width="576" /></p>
+</div>
+<div id="gsm5292145-1" class="section level3">
+<h3>GSM5292145</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-35.png" width="576" /></p>
+</div>
+<div id="gsm5292148-1" class="section level3">
+<h3>GSM5292148</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-36.png" width="576" /></p>
+</div>
+<div id="gsm5292149-1" class="section level3">
+<h3>GSM5292149</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-37.png" width="576" /></p>
+</div>
+<div id="gsm5292150-1" class="section level3">
+<h3>GSM5292150</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-38.png" width="576" /></p>
+</div>
+<div id="gsm5292151-1" class="section level3">
+<h3>GSM5292151</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-39.png" width="576" /></p>
+</div>
+<div id="gsm5292152-1" class="section level3">
+<h3>GSM5292152</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-40.png" width="576" /></p>
+</div>
+<div id="gsm5292153-1" class="section level3">
+<h3>GSM5292153</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-41.png" width="576" /></p>
+</div>
+<div id="gsm5292154-1" class="section level3">
+<h3>GSM5292154</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-42.png" width="576" /></p>
+</div>
+<div id="gsm5292155-1" class="section level3">
+<h3>GSM5292155</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-43.png" width="576" /></p>
+</div>
+<div id="gsm5292194-1" class="section level3">
+<h3>GSM5292194</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-44.png" width="576" /></p>
+</div>
+<div id="gsm5292195-1" class="section level3">
+<h3>GSM5292195</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-45.png" width="576" /></p>
+</div>
+<div id="gsm5292196-1" class="section level3">
+<h3>GSM5292196</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-46.png" width="576" /></p>
+</div>
+<div id="gsm5292197-1" class="section level3">
+<h3>GSM5292197</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-47.png" width="576" /></p>
+</div>
+<div id="gsm5292198-1" class="section level3">
+<h3>GSM5292198</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-48.png" width="576" /></p>
+</div>
+<div id="gsm5292199-1" class="section level3">
+<h3>GSM5292199</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-49.png" width="576" /></p>
+</div>
+<div id="srr27882082-1" class="section level3">
+<h3>SRR27882082</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-50.png" width="576" /></p>
+</div>
+<div id="srr27882081-1" class="section level3">
+<h3>SRR27882081</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-51.png" width="576" /></p>
+</div>
+<div id="srr27882080-1" class="section level3">
+<h3>SRR27882080</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-52.png" width="576" /></p>
+</div>
+<div id="srr27882079-1" class="section level3">
+<h3>SRR27882079</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-53.png" width="576" /></p>
+</div>
+<div id="srr27882078-1" class="section level3">
+<h3>SRR27882078</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-54.png" width="576" /></p>
+</div>
+<div id="srr27882077-1" class="section level3">
+<h3>SRR27882077</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-55.png" width="576" /></p>
+</div>
+<div id="srr27882075-1" class="section level3">
+<h3>SRR27882075</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-56.png" width="576" /></p>
+</div>
+<div id="srr27882074-1" class="section level3">
+<h3>SRR27882074</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-57.png" width="576" /></p>
+</div>
+<div id="srr27882073-1" class="section level3">
+<h3>SRR27882073</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-58.png" width="576" /></p>
+</div>
+<div id="srr27882180-1" class="section level3">
+<h3>SRR27882180</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-59.png" width="576" /></p>
+</div>
+<div id="srr27882179-1" class="section level3">
+<h3>SRR27882179</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-60.png" width="576" /></p>
+</div>
+<div id="srr27882178-1" class="section level3">
+<h3>SRR27882178</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-61.png" width="576" /></p>
+</div>
+<div id="srr27882177-1" class="section level3">
+<h3>SRR27882177</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-62.png" width="576" /></p>
+</div>
+<div id="srr27882175-1" class="section level3">
+<h3>SRR27882175</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-63.png" width="576" /></p>
+</div>
+<div id="srr27882174-1" class="section level3">
+<h3>SRR27882174</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-64.png" width="576" /></p>
+</div>
+<div id="srr27882173-1" class="section level3">
+<h3>SRR27882173</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-65.png" width="576" /></p>
+</div>
+<div id="srr27882172-1" class="section level3">
+<h3>SRR27882172</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-66.png" width="576" /></p>
+</div>
+<div id="gsm5292174-1" class="section level3">
+<h3>GSM5292174</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-67.png" width="576" /></p>
+</div>
+<div id="gsm5292175-1" class="section level3">
+<h3>GSM5292175</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-68.png" width="576" /></p>
+</div>
+<div id="gsm5292176-1" class="section level3">
+<h3>GSM5292176</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-69.png" width="576" /></p>
+</div>
+<div id="gsm5292177-1" class="section level3">
+<h3>GSM5292177</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-70.png" width="576" /></p>
+</div>
+<div id="gsm5292178-1" class="section level3">
+<h3>GSM5292178</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-71.png" width="576" /></p>
+</div>
+<div id="gsm5292179-1" class="section level3">
+<h3>GSM5292179</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-72.png" width="576" /></p>
+</div>
+<div id="gsm5292180-1" class="section level3">
+<h3>GSM5292180</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-73.png" width="576" /></p>
+</div>
+<div id="gsm5292181-1" class="section level3">
+<h3>GSM5292181</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-74.png" width="576" /></p>
+</div>
+<div id="gsm5292182-1" class="section level3">
+<h3>GSM5292182</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-75.png" width="576" /></p>
+</div>
+<div id="gsm5292183-1" class="section level3">
+<h3>GSM5292183</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-76.png" width="576" /></p>
+</div>
+<div id="gsm5292184-1" class="section level3">
+<h3>GSM5292184</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-77.png" width="576" /></p>
+</div>
+<div id="gsm5292185-1" class="section level3">
+<h3>GSM5292185</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-78.png" width="576" /></p>
+</div>
+<div id="gsm5292186-1" class="section level3">
+<h3>GSM5292186</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-79.png" width="576" /></p>
+</div>
+<div id="gsm5292187-1" class="section level3">
+<h3>GSM5292187</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-80.png" width="576" /></p>
+</div>
+<div id="gsm5292188-1" class="section level3">
+<h3>GSM5292188</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-81.png" width="576" /></p>
+</div>
+<div id="gsm5292193-1" class="section level3">
+<h3>GSM5292193</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-82.png" width="576" /></p>
+</div>
+<div id="gsm5292201-1" class="section level3">
+<h3>GSM5292201</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-83.png" width="576" /></p>
+</div>
+<div id="srr27882193-1" class="section level3">
+<h3>SRR27882193</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-84.png" width="576" /></p>
+</div>
+<div id="srr27882192-1" class="section level3">
+<h3>SRR27882192</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-85.png" width="576" /></p>
+</div>
+<div id="srr27882191-1" class="section level3">
+<h3>SRR27882191</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-86.png" width="576" /></p>
+</div>
+<div id="srr27882190-1" class="section level3">
+<h3>SRR27882190</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-87.png" width="576" /></p>
+</div>
+<div id="srr27882189-1" class="section level3">
+<h3>SRR27882189</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-88.png" width="576" /></p>
+</div>
+<div id="srr27882188-1" class="section level3">
+<h3>SRR27882188</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-89.png" width="576" /></p>
+</div>
+<div id="srr27882187-1" class="section level3">
+<h3>SRR27882187</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-90.png" width="576" /></p>
+</div>
+<div id="srr27882186-1" class="section level3">
+<h3>SRR27882186</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-91.png" width="576" /></p>
+</div>
+<div id="srr27882185-1" class="section level3">
+<h3>SRR27882185</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-92.png" width="576" /></p>
+</div>
+<div id="srr27882165-1" class="section level3">
+<h3>SRR27882165</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-93.png" width="576" /></p>
+</div>
+<div id="srr27882164-1" class="section level3">
+<h3>SRR27882164</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-94.png" width="576" /></p>
+</div>
+<div id="srr27882163-1" class="section level3">
+<h3>SRR27882163</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-95.png" width="576" /></p>
+</div>
+<div id="srr27882162-1" class="section level3">
+<h3>SRR27882162</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-96.png" width="576" /></p>
+</div>
+<div id="srr27882161-1" class="section level3">
+<h3>SRR27882161</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-97.png" width="576" /></p>
+</div>
+<div id="srr27882160-1" class="section level3">
+<h3>SRR27882160</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-98.png" width="576" /></p>
+</div>
+<div id="srr27882159-1" class="section level3">
+<h3>SRR27882159</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-99.png" width="576" /></p>
+</div>
+<div id="gsm5292164-1" class="section level3">
+<h3>GSM5292164</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-100.png" width="576" /></p>
+</div>
+<div id="gsm5292169-1" class="section level3">
+<h3>GSM5292169</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-101.png" width="576" /></p>
+</div>
+<div id="gsm5292173-1" class="section level3">
+<h3>GSM5292173</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-102.png" width="576" /></p>
+</div>
+<div id="gsm5292190-1" class="section level3">
+<h3>GSM5292190</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-103.png" width="576" /></p>
+</div>
+<div id="gsm5292191-1" class="section level3">
+<h3>GSM5292191</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-104.png" width="576" /></p>
+</div>
+<div id="gsm5292192-1" class="section level3">
+<h3>GSM5292192</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-105.png" width="576" /></p>
+</div>
+<div id="gsm5292202-1" class="section level3">
+<h3>GSM5292202</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-106.png" width="576" /></p>
+</div>
+<div id="gsm5292203-1" class="section level3">
+<h3>GSM5292203</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-107.png" width="576" /></p>
+</div>
+<div id="gsm5292204-1" class="section level3">
+<h3>GSM5292204</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-108.png" width="576" /></p>
+</div>
+<div id="gsm5292205-1" class="section level3">
+<h3>GSM5292205</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-109.png" width="576" /></p>
+</div>
+<div id="gsm5292206-1" class="section level3">
+<h3>GSM5292206</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-110.png" width="576" /></p>
+</div>
+<div id="gsm5292207-1" class="section level3">
+<h3>GSM5292207</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-111.png" width="576" /></p>
+</div>
+<div id="gsm5292208-1" class="section level3">
+<h3>GSM5292208</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-112.png" width="576" /></p>
+</div>
+<div id="srr27882214-1" class="section level3">
+<h3>SRR27882214</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-113.png" width="576" /></p>
+</div>
+<div id="srr27882212-1" class="section level3">
+<h3>SRR27882212</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-114.png" width="576" /></p>
+</div>
+<div id="srr27882203-1" class="section level3">
+<h3>SRR27882203</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-115.png" width="576" /></p>
+</div>
+<div id="srr27882202-1" class="section level3">
+<h3>SRR27882202</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-116.png" width="576" /></p>
+</div>
+<div id="srr27882201-1" class="section level3">
+<h3>SRR27882201</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-117.png" width="576" /></p>
+</div>
+<div id="srr27882200-1" class="section level3">
+<h3>SRR27882200</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-118.png" width="576" /></p>
+</div>
+<div id="srr27882199-1" class="section level3">
+<h3>SRR27882199</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-119.png" width="576" /></p>
+</div>
+<div id="srr27882198-1" class="section level3">
+<h3>SRR27882198</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-120.png" width="576" /></p>
+</div>
+<div id="srr27882197-1" class="section level3">
+<h3>SRR27882197</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-121.png" width="576" /></p>
+</div>
+<div id="srr27882196-1" class="section level3">
+<h3>SRR27882196</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-122.png" width="576" /></p>
+</div>
+<div id="srr27882194-1" class="section level3">
+<h3>SRR27882194</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-123.png" width="576" /></p>
+</div>
+<div id="gsm5292159-1" class="section level3">
+<h3>GSM5292159</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-124.png" width="576" /></p>
+</div>
+<div id="gsm5292160-1" class="section level3">
+<h3>GSM5292160</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-125.png" width="576" /></p>
+</div>
+<div id="gsm5292161-1" class="section level3">
+<h3>GSM5292161</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-126.png" width="576" /></p>
+</div>
+<div id="gsm5292162-1" class="section level3">
+<h3>GSM5292162</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-127.png" width="576" /></p>
+</div>
+<div id="gsm5292163-1" class="section level3">
+<h3>GSM5292163</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-128.png" width="576" /></p>
+</div>
+<div id="gsm5292165-1" class="section level3">
+<h3>GSM5292165</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-129.png" width="576" /></p>
+</div>
+<div id="gsm5292166-1" class="section level3">
+<h3>GSM5292166</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-130.png" width="576" /></p>
+</div>
+<div id="gsm5292167-1" class="section level3">
+<h3>GSM5292167</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-131.png" width="576" /></p>
+</div>
+<div id="gsm5292168-1" class="section level3">
+<h3>GSM5292168</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-132.png" width="576" /></p>
+</div>
+<div id="gsm5292170-1" class="section level3">
+<h3>GSM5292170</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-133.png" width="576" /></p>
+</div>
+<div id="gsm5292171-1" class="section level3">
+<h3>GSM5292171</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-134.png" width="576" /></p>
+</div>
+<div id="gsm5292172-1" class="section level3">
+<h3>GSM5292172</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-135.png" width="576" /></p>
+</div>
+<div id="gsm5292189-1" class="section level3">
+<h3>GSM5292189</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-136.png" width="576" /></p>
+</div>
+<div id="srr27882168-1" class="section level3">
+<h3>SRR27882168</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-137.png" width="576" /></p>
+</div>
+<div id="srr27882167-1" class="section level3">
+<h3>SRR27882167</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-138.png" width="576" /></p>
+</div>
+<div id="srr27882166-1" class="section level3">
+<h3>SRR27882166</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-139.png" width="576" /></p>
+</div>
+<div id="srr27882216-1" class="section level3">
+<h3>SRR27882216</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-140.png" width="576" /></p>
+</div>
+<div id="srr27882215-1" class="section level3">
+<h3>SRR27882215</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-141.png" width="576" /></p>
+</div>
+<div id="srr27882213-1" class="section level3">
+<h3>SRR27882213</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-142.png" width="576" /></p>
+</div>
+<div id="srr27882211-1" class="section level3">
+<h3>SRR27882211</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-143.png" width="576" /></p>
+</div>
+<div id="srr27882210-1" class="section level3">
+<h3>SRR27882210</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-144.png" width="576" /></p>
+</div>
+<div id="srr27882209-1" class="section level3">
+<h3>SRR27882209</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-145.png" width="576" /></p>
+</div>
+<div id="srr27882208-1" class="section level3">
+<h3>SRR27882208</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-146.png" width="576" /></p>
+</div>
+<div id="srr27882207-1" class="section level3">
+<h3>SRR27882207</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-147.png" width="576" /></p>
+</div>
+<div id="srr27882205-1" class="section level3">
+<h3>SRR27882205</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-148.png" width="576" /></p>
+</div>
+<div id="srr27882204-1" class="section level3">
+<h3>SRR27882204</h3>
+<p><img src="figure/pineda_qc.Rmd/plot_upsets_of_exclusions-149.png" width="576" /></p>
+</div>
+</div>
+<div id="r-session-info" class="section level2">
+<h2>R session info</h2>
+<p>Details of the R package versions used are given below.</p>
+<details>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.4.3 (2025-02-28)
+##  os       Red Hat Enterprise Linux 8.10 (Ootpa)
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Zurich
+##  date     2026-03-02
+##  pandoc   3.8.2.1 @ /home/macnairw/packages/scprocess/.snakemake/conda/4fef11cadd34f9d2d13a0d6139d09340_/bin/ (via rmarkdown)
+##  quarto   NA
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package              * version   date (UTC) lib source
+##  abind                * 1.4-8     2024-09-12 [1] CRAN (R 4.4.3)
+##  assertthat           * 0.2.1     2019-03-21 [1] CRAN (R 4.4.3)
+##  beachmat               2.22.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  beeswarm               0.4.0     2021-06-01 [1] CRAN (R 4.4.3)
+##  Biobase              * 2.66.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocGenerics         * 0.52.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocIO                 1.16.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocManager            1.30.27   2025-11-14 [1] CRAN (R 4.4.3)
+##  BiocNeighbors          2.0.0     2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  BiocParallel         * 1.40.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocSingular           1.22.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  BiocStyle            * 2.34.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  Biostrings             2.74.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  bitops                 1.0-9     2024-10-03 [1] CRAN (R 4.4.3)
+##  bluster                1.16.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  bookdown               0.45      2025-10-03 [1] CRAN (R 4.4.3)
+##  bslib                  0.9.0     2025-01-30 [1] CRAN (R 4.4.3)
+##  ca                     0.71.1    2020-01-24 [1] CRAN (R 4.4.3)
+##  cachem                 1.1.0     2024-05-16 [1] CRAN (R 4.4.3)
+##  callr                  3.7.6     2024-03-25 [1] CRAN (R 4.4.3)
+##  cellranger             1.1.0     2016-07-27 [1] CRAN (R 4.4.3)
+##  circlize             * 0.4.16    2024-02-20 [1] CRAN (R 4.4.3)
+##  cli                    3.6.5     2025-04-23 [1] CRAN (R 4.4.3)
+##  clue                   0.3-66    2024-11-13 [1] CRAN (R 4.4.3)
+##  cluster                2.1.8.1   2025-03-12 [1] CRAN (R 4.4.3)
+##  codetools              0.2-20    2024-03-31 [1] CRAN (R 4.4.3)
+##  colorspace             2.1-2     2025-09-22 [1] CRAN (R 4.4.3)
+##  ComplexHeatmap       * 2.22.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  crayon                 1.5.3     2024-06-20 [1] CRAN (R 4.4.3)
+##  curl                   7.0.0     2025-08-19 [1] CRAN (R 4.4.3)
+##  data.table           * 1.17.8    2025-07-10 [1] CRAN (R 4.4.3)
+##  DelayedArray         * 0.32.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  devtools               2.4.6     2025-10-03 [1] CRAN (R 4.4.3)
+##  digest                 0.6.39    2025-11-19 [1] CRAN (R 4.4.3)
+##  doParallel             1.0.17    2022-02-07 [1] CRAN (R 4.4.3)
+##  dplyr                * 1.1.4     2023-11-17 [1] CRAN (R 4.4.3)
+##  dqrng                  0.3.2     2023-11-29 [1] CRAN (R 4.4.3)
+##  edgeR                  4.4.0     2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  ellipsis               0.3.2     2021-04-29 [1] CRAN (R 4.4.3)
+##  evaluate               1.0.5     2025-08-27 [1] CRAN (R 4.4.3)
+##  farver                 2.1.2     2024-05-13 [1] CRAN (R 4.4.3)
+##  fastmap                1.2.0     2024-05-15 [1] CRAN (R 4.4.3)
+##  forcats              * 1.0.1     2025-09-25 [1] CRAN (R 4.4.3)
+##  foreach                1.5.2     2022-02-02 [1] CRAN (R 4.4.3)
+##  fs                     1.6.6     2025-04-12 [1] CRAN (R 4.4.3)
+##  generics               0.1.4     2025-05-09 [1] CRAN (R 4.4.3)
+##  GenomeInfoDb         * 1.42.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  GenomeInfoDbData       1.2.13    2026-02-17 [1] Bioconductor
+##  GenomicAlignments      1.42.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  GenomicRanges        * 1.58.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  GetoptLong             1.0.5     2020-12-15 [1] CRAN (R 4.4.3)
+##  getPass                0.2-4     2023-12-10 [1] CRAN (R 4.4.3)
+##  ggbeeswarm           * 0.7.2     2023-04-29 [1] CRAN (R 4.4.3)
+##  ggh4x                * 0.3.1     2025-05-30 [1] CRAN (R 4.4.3)
+##  ggplot.multistats    * 1.0.1     2024-09-25 [1] CRAN (R 4.4.3)
+##  ggplot2              * 4.0.1     2025-11-14 [1] CRAN (R 4.4.3)
+##  ggrepel              * 0.9.6     2024-09-07 [1] CRAN (R 4.4.3)
+##  git2r                  0.35.0    2024-10-20 [1] CRAN (R 4.4.3)
+##  GlobalOptions          0.1.2     2020-06-10 [1] CRAN (R 4.4.3)
+##  glue                   1.8.0     2024-09-30 [1] CRAN (R 4.4.3)
+##  gridExtra              2.3       2017-09-09 [1] CRAN (R 4.4.3)
+##  gtable                 0.3.6     2024-10-25 [1] CRAN (R 4.4.3)
+##  HDF5Array            * 1.34.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  hexbin                 1.28.5    2024-11-13 [1] CRAN (R 4.4.3)
+##  hms                    1.1.4     2025-10-17 [1] CRAN (R 4.4.3)
+##  htmltools              0.5.8.1   2024-04-04 [1] CRAN (R 4.4.3)
+##  httpuv                 1.6.16    2025-04-16 [1] CRAN (R 4.4.3)
+##  httr                   1.4.7     2023-08-15 [1] CRAN (R 4.4.3)
+##  igraph                 2.1.4     2025-01-23 [1] CRAN (R 4.4.3)
+##  IRanges              * 2.40.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  irlba                  2.3.5.1   2022-10-03 [1] CRAN (R 4.4.3)
+##  iterators              1.0.14    2022-02-05 [1] CRAN (R 4.4.3)
+##  jquerylib              0.1.4     2021-04-26 [1] CRAN (R 4.4.3)
+##  jsonlite               2.0.0     2025-03-27 [1] CRAN (R 4.4.3)
+##  knitr                  1.50      2025-03-16 [1] CRAN (R 4.4.3)
+##  labeling               0.4.3     2023-08-29 [1] CRAN (R 4.4.3)
+##  later                  1.4.4     2025-08-27 [1] CRAN (R 4.4.3)
+##  lattice                0.22-7    2025-04-02 [1] CRAN (R 4.4.3)
+##  lifecycle              1.0.4     2023-11-07 [1] CRAN (R 4.4.3)
+##  limma                  3.62.1    2024-11-03 [1] Bioconductor 3.20 (R 4.4.2)
+##  locfit                 1.5-9.12  2025-03-05 [1] CRAN (R 4.4.3)
+##  lubridate            * 1.9.4     2024-12-08 [1] CRAN (R 4.4.3)
+##  magrittr             * 2.0.4     2025-09-12 [1] CRAN (R 4.4.3)
+##  MASS                   7.3-65    2025-02-28 [1] CRAN (R 4.4.3)
+##  Matrix               * 1.7-4     2025-08-28 [1] CRAN (R 4.4.3)
+##  MatrixGenerics       * 1.18.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  matrixStats          * 1.5.0     2025-01-07 [1] CRAN (R 4.4.3)
+##  memoise                2.0.1     2021-11-26 [1] CRAN (R 4.4.3)
+##  metapod                1.14.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  otel                   0.2.0     2025-08-29 [1] CRAN (R 4.4.3)
+##  patchwork            * 1.3.2     2025-08-25 [1] CRAN (R 4.4.3)
+##  pillar                 1.11.1    2025-09-17 [1] CRAN (R 4.4.3)
+##  pkgbuild               1.4.8     2025-05-26 [1] CRAN (R 4.4.3)
+##  pkgconfig              2.0.3     2019-09-22 [1] CRAN (R 4.4.3)
+##  pkgload                1.4.1     2025-09-23 [1] CRAN (R 4.4.3)
+##  plyr                   1.8.9     2023-10-02 [1] CRAN (R 4.4.3)
+##  png                    0.1-8     2022-11-29 [1] CRAN (R 4.4.3)
+##  processx               3.8.6     2025-02-21 [1] CRAN (R 4.4.3)
+##  promises               1.5.0     2025-11-01 [1] CRAN (R 4.4.3)
+##  ps                     1.9.1     2025-04-12 [1] CRAN (R 4.4.3)
+##  purrr                * 1.2.0     2025-11-04 [1] CRAN (R 4.4.3)
+##  R.methodsS3            1.8.2     2022-06-13 [1] CRAN (R 4.4.3)
+##  R.oo                   1.27.1    2025-05-02 [1] CRAN (R 4.4.3)
+##  R.utils                2.13.0    2025-02-24 [1] CRAN (R 4.4.3)
+##  R6                     2.6.1     2025-02-15 [1] CRAN (R 4.4.3)
+##  RColorBrewer         * 1.1-3     2022-04-03 [1] CRAN (R 4.4.3)
+##  Rcpp                   1.1.0     2025-07-02 [1] CRAN (R 4.4.3)
+##  RCurl                  1.98-1.17 2025-03-22 [1] CRAN (R 4.4.3)
+##  readr                * 2.1.6     2025-11-14 [1] CRAN (R 4.4.3)
+##  readxl               * 1.4.5     2025-03-07 [1] CRAN (R 4.4.3)
+##  registry               0.5-1     2019-03-05 [1] CRAN (R 4.4.3)
+##  remotes                2.5.0     2024-03-17 [1] CRAN (R 4.4.3)
+##  restfulr               0.0.16    2025-06-27 [1] CRAN (R 4.4.3)
+##  rhdf5                * 2.50.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  rhdf5filters           1.18.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  Rhdf5lib               1.28.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  rjson                  0.2.23    2024-09-16 [1] CRAN (R 4.4.3)
+##  rlang                  1.1.6     2025-04-11 [1] CRAN (R 4.4.3)
+##  rmarkdown              2.30      2025-09-28 [1] CRAN (R 4.4.3)
+##  rmdformats             1.0.4     2022-05-17 [1] CRAN (R 4.4.3)
+##  rprojroot              2.1.1     2025-08-26 [1] CRAN (R 4.4.3)
+##  Rsamtools              2.22.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  rstudioapi             0.17.1    2024-10-22 [1] CRAN (R 4.4.3)
+##  rsvd                   1.0.5     2021-04-16 [1] CRAN (R 4.4.1)
+##  rtracklayer            1.66.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  S4Arrays             * 1.6.0     2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  S4Vectors            * 0.44.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  S7                     0.2.1     2025-11-14 [1] CRAN (R 4.4.3)
+##  sass                   0.4.10    2025-04-11 [1] CRAN (R 4.4.3)
+##  ScaledMatrix           1.14.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  scales               * 1.4.0     2025-04-24 [1] CRAN (R 4.4.3)
+##  scater               * 1.34.1    2025-03-03 [1] Bioconductor 3.20 (R 4.4.2)
+##  scDblFinder          * 1.23.4    2025-08-22 [1] Bioconductor 3.22 (R 4.4.3)
+##  scran                  1.34.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  scuttle              * 1.16.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  seriation            * 1.5.8     2025-08-20 [1] CRAN (R 4.4.3)
+##  sessioninfo            1.2.3     2025-02-05 [1] CRAN (R 4.4.3)
+##  shape                  1.4.6.1   2024-02-23 [1] CRAN (R 4.4.3)
+##  SingleCellExperiment * 1.28.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  SparseArray          * 1.6.0     2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  statmod                1.5.1     2025-10-09 [1] CRAN (R 4.4.3)
+##  strex                * 2.0.1     2024-10-03 [1] CRAN (R 4.4.3)
+##  stringi                1.8.7     2025-03-27 [1] CRAN (R 4.4.3)
+##  stringr              * 1.6.0     2025-11-04 [1] CRAN (R 4.4.3)
+##  SummarizedExperiment * 1.36.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  tibble               * 3.3.0     2025-06-08 [1] CRAN (R 4.4.3)
+##  tidyr                * 1.3.1     2024-01-24 [1] CRAN (R 4.4.3)
+##  tidyselect             1.2.1     2024-03-11 [1] CRAN (R 4.4.3)
+##  tidyverse            * 2.0.0     2023-02-22 [1] CRAN (R 4.4.3)
+##  timechange             0.3.0     2024-01-18 [1] CRAN (R 4.4.3)
+##  TSP                    1.2.6     2025-11-27 [1] CRAN (R 4.4.3)
+##  tzdb                   0.5.0     2025-03-15 [1] CRAN (R 4.4.3)
+##  UCSC.utils             1.2.0     2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  UpSetR               * 1.4.0     2019-05-22 [1] CRAN (R 4.4.3)
+##  usethis                3.2.1     2025-09-06 [1] CRAN (R 4.4.3)
+##  vctrs                  0.6.5     2023-12-01 [1] CRAN (R 4.4.3)
+##  vipor                  0.4.7     2023-12-18 [1] CRAN (R 4.4.3)
+##  viridis              * 0.6.5     2024-01-29 [1] CRAN (R 4.4.3)
+##  viridisLite          * 0.4.2     2023-05-02 [1] CRAN (R 4.4.3)
+##  whisker                0.4.1     2022-12-05 [1] CRAN (R 4.4.3)
+##  withr                  3.0.2     2024-10-28 [1] CRAN (R 4.4.3)
+##  workflowr            * 1.7.2     2025-08-18 [1] CRAN (R 4.4.3)
+##  xfun                   0.54      2025-10-30 [1] CRAN (R 4.4.3)
+##  xgboost                3.1.2.1   2026-01-06 [1] local
+##  XML                    3.99-0.20 2025-11-08 [1] CRAN (R 4.4.3)
+##  XVector                0.46.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  yaml                 * 2.3.11    2025-11-28 [1] CRAN (R 4.4.3)
+##  zlibbioc               1.52.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+## 
+##  [1] /home/macnairw/packages/scprocess/.snakemake/conda/4fef11cadd34f9d2d13a0d6139d09340_/lib/R/library
+##  * ── Packages attached to the search path.
+## 
+## ──────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
+
+   
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>

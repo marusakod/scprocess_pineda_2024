@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+    
+        <meta name="date" content="2026-02-28" />
+    
+    <title>Zoom in and recluster: myeloid</title>
+
+        <script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <script src="site_libs/navigation-1.1/codefolding.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+    
+    
+    
+        <link rel="stylesheet" href="custom.css" type="text/css" />
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+        <script>
+      $(document).ready(function () {
+	  	  	  window.initializeCodeFolding("hide" === "show");
+	        });
+    </script>
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a href="#hvg-selection-diagnostics"
+            id="toc-hvg-selection-diagnostics">HVG selection
+            diagnostics</a>
+            <ul>
+            <li><a href="#are-highly-variable-genes-ambient"
+            id="toc-are-highly-variable-genes-ambient">Are highly
+            variable genes “ambient” ?</a></li>
+            <li><a href="#which-genes-are-ambient"
+            id="toc-which-genes-are-ambient">Which genes are
+            “ambient”?</a></li>
+            <li><a
+            href="#which-genes-are-variable-across-the-ambient-profiles"
+            id="toc-which-genes-are-variable-across-the-ambient-profiles">Which
+            genes are variable across the ambient profiles?</a></li>
+            </ul></li>
+            <li><a href="#clustering-diagnostics"
+            id="toc-clustering-diagnostics">Clustering diagnostics</a>
+            <ul>
+            <li><a href="#clusters-over-umap"
+            id="toc-clusters-over-umap">Clusters over UMAP</a></li>
+            <li><a
+            href="#evaluating-cluster-distribution-across-samples"
+            id="toc-evaluating-cluster-distribution-across-samples">Evaluating
+            cluster distribution across samples</a></li>
+            <li><a href="#qc-metrics-of-clusters"
+            id="toc-qc-metrics-of-clusters">QC metrics of
+            clusters</a></li>
+            </ul></li>
+            <li><a href="#marker-genes" id="toc-marker-genes">Marker
+            genes</a>
+            <ul>
+            <li><a href="#heatmaps-of-marker-genes"
+            id="toc-heatmaps-of-marker-genes">Heatmaps of marker
+            genes</a></li>
+            <li><a href="#highly-variable-genes"
+            id="toc-highly-variable-genes">Highly variable
+            genes</a></li>
+            <li><a href="#top-marker-genes"
+            id="toc-top-marker-genes">Top marker genes</a></li>
+            <li><a href="#gsea-characterisation-of-clusters"
+            id="toc-gsea-characterisation-of-clusters">GSEA
+            characterisation of clusters</a></li>
+            </ul></li>
+            <li><a href="#r-session-info" id="toc-r-session-info">R
+            session info</a></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAABlJJREFUWAm1V3tsFEUcntnXvXu0tBWo1ZZHihBjCEWqkHiNaMLDRKOtQSKaiCFKQtS/SbxiFCHGCIkmkBSMwZhQNTFoQZD0DFiwtCDFAkdDqBBBKFj63rvdnfH7zfVo5aFBj0l2Z/dm5vd98/0es8dYjlpr62azufnDQNZcU1PciMfjWvb9rvZSMk4Ayfb36pLH13189GC8LAtIRLLPt+pzwrCuLq4ISEv/gHmitrAwfPbEkXc/ad4dL6iujrvyX0jcitgd/yZlZqftP6995Mr5TVLa22Tn8XVX2g/XLSRjUu7Q79jonS7I7hS7/0oOb5VyqF52n98oj7esXX07EjlxwXWisRmSnm3b29TTM8iYrjmFBWExubxwY/uhNas4r/WySl1fc5cetDMd7ydl+lMJJRw5WC8ud62Xx5rfepzwxgZmbhUYNS5Stvsj4yo2GXJEFBVHWDBkfdbR9HpYBaaUajDnBLKKpl1xRKYcgGtMCqEzTaSnThk/SQT0uJqTqFNBmXMCsZE48DzRZRMBRjv1GHNdk3HBImF9ZUvTyxM40pMKVc4JZBXQOLOFoDeKSxdp6HIQcO4rjYT9fn0pjbz9GLt7BAAODmjSVReXUMFzNW5x5vfxp2mIxZjIuQKJxAmFa+is2DQJJQ0JyBVExNOYcJnPxx/6/utnijmP555ALEagKAGGnGn64QORBjARcIA/yJk7JMJBLRrNtybTvH88KGjCf2jK86bhzmMcwDKFZEQvbIhxFYhChoMWMzU2iWznlIBEVJOsP+1bdX/ALx9l7jApADeDAEcMkE90JnUmmGl4USKQ0xhoW3JB5XY0YrxYWhLwMZZypUyjDGH35AbNwgUGiFBPpuGbHCpAOV1ZGXf2f/taftAv31DyeymN2d1IhAFAwTOmnzF/kKcdh3me7CYCOVNgycju84u8DeVlwfFq9/ZlTfldYrMUjOlrkjkD+rU+WzCROkcEchIDHR011syZW9JHD7y07N6JvhWMpz3pugaTkB6lWFVCKkhck0zzeMp2utq+uHrmfxOgoCO/Z8CXPlEQ1bdH8wgvhSIkEG0ICcQeExIFGdimjvKka7btJFZuaXOammIGKUCFQ53j9EN1dYKWqHf0t2w407W2tgs6h89ZnImjB55flh81tt9XirjjDuSl+oIPRQ0iWPgNZ5GqTqbBe3vSzEl5n5PhWKwocyR2HlqYN61qV18WjYjE8JLARZPQsUSim8foIRYTlGr02Ly7piASFRtKJ4VfieYhxdS2JcDVMN6xVOKZyrCGm8b108lrLRVzvptLH7IoEFLFANes6KnDi+uxfmvFnF17oALq5u1agu3/YfHkcSFzeSggV5eXRfIB7CHNcO5SUI+Ih5Ir7f4MAV9IqdFzdZgNpZw1Gcs1mNvgGbTbqQ9/cz7ZuuhgyYRQ49ljTyWHhr2DwpNHHFf+5gnWZ3Bharo+0TD5dNMw5vv9RlVpSRDHK4TlnoukhtYApuOHejSZQuo5g/A9BysdKRCyLl6062fN37OXMDlvUJtUrtmxo0avrW3wTrYs3jJ9RvRVChrmSmanPMpX2OXMsmDGh6AiEIwBAlvkOqIdBy+8JyAz8pz7QxiDth4KDy5uAlwzrWTnwC8Vc4KVAMZ3YUZ+IqoIjP3h5KFFX1ZMy3uW+7RhEDHgTi0zC9rS7uhPCDiNrGFyqBeERtKN/B0YlyFCkw0NJ5C0Ojv7zvT1a1WV1TuvZDdL4NTgB7CASYpsen6gqvG5jmTf5qHedADgkBl3D0nkSgNhZACDyi0FUKZRr3IdRjgN4WPPoFMIIegIK3mqd38fS80mcJKelM4szNyzZtQbkchGePuBRS8Eg9pHU8ojRQpSqs+ajAIwTjjUMQ/nvTNM0kicwYxZIYMh/891DYi+fvedB+c1xsm4lDU6ya+Axtz+RiAzEVYbajQOpq17F0R9QevNcEhfcU+xvyQQUalGJBSesqOkgPQ4YNyUZL9fSvUPDjoNAwN8/dwFjaczNkc3ptaMud1EIDtGcmXTcefO2cGSvKIFfp/2JIJxlq7xEl3nVPM4fDeIbPkD16/ptNc0bDu7qxbsu0R2JGywWMIjF2ft3tjfloAyQAGXiOn8hrqwbVvMXzaO+QeHXP6nF0wvX74Hf4NGG5GPjSlYoyM3P/0FbCT6zvM/yYoAAAAASUVORK5CYII=" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+      <div class="btn-group pull-right">
+     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+     <ul class="dropdown-menu" style="min-width: 50px;">
+	    	    <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+	    <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+	    	    	         </ul>
+   </div>
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">dam_mice_2</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">Zoom in and recluster: myeloid</h1>
+      
+      <p class="authors">
+           <span class="glyphicon glyphicon-user"></span> Will Macnair
+           - Church of England
+               <br>
+      </p>
+         <p class="date"><span class="glyphicon glyphicon-calendar"></span> February
+28, 2026</p>
+           
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<div id="hvg-selection-diagnostics" class="section level2">
+<h2>HVG selection diagnostics</h2>
+<p>The selection of highly variable genes is a crucial step in the
+integration process and in identifying clusters in single-cell
+experiments. However, contamination from ambient RNA can act as a
+significant confounding factor. This section of the report provides
+plots to evaluate the influence of ambient RNA on the selection of
+highly variable genes and its potential impact on downstream
+analyses.</p>
+<div id="are-highly-variable-genes-ambient" class="section level3">
+<h3>Are highly variable genes “ambient” ?</h3>
+<p>The plot shows the extent to which highly variable genes identified
+using the <code>Seurat</code> VST method may be influenced by ambient
+RNA. The x-axis represents the <code>log2fc</code> values derived from
+the ambient gene estimation step in <code>scprocess</code> (see
+<code>scprocess</code> documentation for more details), while the y-axis
+shows the trend-normalized variance calculated using the
+<code>Seurat</code> VST method. Each point represents a gene, annotated
+based on whether it is among the top HVGs and whether it is identified
+as ambient by the ambient gene detection step. Labelled genes are top 10
+most variable.</p>
+<pre class="r"><code>print(plot_hvg_stats_vs_empty_log2fc(cell_hvgs, edger_dt))</code></pre>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_std_var_vs_empty_log2fc-1.png" width="768" /></p>
+</div>
+<div id="which-genes-are-ambient" class="section level3 tabset">
+<h3 class="tabset">Which genes are “ambient”?</h3>
+<p>The plot shows the results of the <code>scprocess</code> ambient gene
+detection procedure. The y-axis is the <code>-log10</code> nominal
+p-value, with a dotted line indicating the threshold where the adjusted
+p-value is sufficiently small (&lt; 0.01). Multiple plots are shown,
+each corresponding to a different minimum expression level filter
+applied to the ambient profiles.</p>
+<pre class="r"><code>cpm_ls  = c(100, 50, 10, 0)
+for (min_cpm in cpm_ls) {
+  if (min_cpm == 0) {
+    cat(&quot;#### all genes\n&quot;)
+  } else {
+    cat(sprintf(&quot;#### &gt;= %d CPM expression in ambient\n&quot;, min_cpm))
+  }
+  print(plot_ambient_gene_calculations(edger_dt, min_cpm_empty = min_cpm))
+  cat(&quot;\n\n&quot;)
+}</code></pre>
+<div id="cpm-expression-in-ambient" class="section level4">
+<h4>&gt;= 100 CPM expression in ambient</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_ambient_gene_calculations-1.png" width="576" /></p>
+</div>
+<div id="cpm-expression-in-ambient-1" class="section level4">
+<h4>&gt;= 50 CPM expression in ambient</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_ambient_gene_calculations-2.png" width="576" /></p>
+</div>
+<div id="cpm-expression-in-ambient-2" class="section level4">
+<h4>&gt;= 10 CPM expression in ambient</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_ambient_gene_calculations-3.png" width="576" /></p>
+</div>
+<div id="all-genes" class="section level4">
+<h4>all genes</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_ambient_gene_calculations-4.png" width="576" /></p>
+</div>
+</div>
+<div id="which-genes-are-variable-across-the-ambient-profiles"
+class="section level3 tabset">
+<h3 class="tabset">Which genes are variable across the ambient
+profiles?</h3>
+<p>Examining how ambient genes vary across different samples can provide
+valuable insights. Such variation may highlight cases where certain
+samples require distinct treatment, for example, if case and control
+samples consistently exhibit different ambient profiles.</p>
+<p>The heatmaps display the pseudobulk expression of various genes
+across the ambient profiles of each sample in the dataset. The genes
+shown are the top 40 selected based on the following criteria:</p>
+<ul>
+<li>highest variance across ambient profiles;</li>
+<li>highest mean expression across ambient profiles;</li>
+<li>highest <code>log2fc</code> in empty droplets vs cells in
+<code>scprocess</code>’s ambient gene detection procedure; and</li>
+<li>smallest p-value in empty droplets vs cells in
+<code>scprocess</code>’s ambient gene detection procedure.</li>
+</ul>
+<pre class="r"><code>title_ls = c(
+  &quot;var&quot;           = &quot;HVGs&quot;,
+  &quot;mean&quot;          = &quot;Highest expression&quot;,
+  &quot;log2fc.empty&quot;  = &quot;Highest log2fc&quot;,
+  &quot;pval.empty&quot;    = &quot;Smallest p-value&quot;
+)
+for (top_var in names(title_ls)) {
+  cat(sprintf(&quot;#### %s in ambient\n&quot;, title_ls[top_var]))
+  suppressMessages(draw(plot_heatmap_of_ambient_profiles(vst_obj, top_var = top_var, 
+    n_top = 40), heatmap_legend_side = &quot;right&quot;, merge_legend = TRUE ))
+  cat(&quot;\n\n&quot;)
+}</code></pre>
+<div id="hvgs-in-ambient" class="section level4">
+<h4>HVGs in ambient</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_ambient_profiles-1.png" width="1152" /></p>
+</div>
+<div id="highest-expression-in-ambient" class="section level4">
+<h4>Highest expression in ambient</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_ambient_profiles-2.png" width="1152" /></p>
+</div>
+<div id="highest-log2fc-in-ambient" class="section level4">
+<h4>Highest log2fc in ambient</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_ambient_profiles-3.png" width="1152" /></p>
+</div>
+<div id="smallest-p-value-in-ambient" class="section level4">
+<h4>Smallest p-value in ambient</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_ambient_profiles-4.png" width="1152" /></p>
+</div>
+</div>
+</div>
+<div id="clustering-diagnostics" class="section level2">
+<h2>Clustering diagnostics</h2>
+<div id="clusters-over-umap" class="section level3 tabset">
+<h3 class="tabset">Clusters over UMAP</h3>
+<p>Clustering of data is performed at different resolution values. For
+each value the clusters are displayed over a UMAP together with a plot
+showing the density of cells.</p>
+<pre class="r"><code>for (res in res_ls) {
+  cat(&#39;#### &#39;, res, &#39;\n&#39;)
+  g_cl    = plot_umap_cluster(
+    umap_dt   = int_dt[, .(cell_id, UMAP1, UMAP2) ], 
+    clust_dt  = int_dt[, .(cell_id, cluster = get(paste0(&#39;RNA_snn_res.&#39;, res))) ],
+    name      = sprintf(&#39;res = %s&#39;, res))
+  g_dens  = plot_umap_density(int_dt[, .(cell_id, UMAP1, UMAP2) ])
+  g       = g_cl + g_dens
+  print(g)
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="section" class="section level4">
+<h4>0.1</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_clusters_integration-1.png" width="864" /></p>
+</div>
+<div id="section-1" class="section level4">
+<h4>0.2</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_clusters_integration-2.png" width="864" /></p>
+</div>
+<div id="section-2" class="section level4">
+<h4>0.5</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_clusters_integration-3.png" width="864" /></p>
+</div>
+<div id="section-3" class="section level4">
+<h4>1</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_clusters_integration-4.png" width="864" /></p>
+</div>
+<div id="section-4" class="section level4">
+<h4>2</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_clusters_integration-5.png" width="864" /></p>
+</div>
+</div>
+<div id="evaluating-cluster-distribution-across-samples"
+class="section level3 tabset">
+<h3 class="tabset">Evaluating cluster distribution across samples</h3>
+<p>This plot visualizes the relationship between the entropy of clusters
+and the maximum proportion of cells from a single sample within each
+cluster (higher values suggest that a cluster predominantly contains
+cells from a single sample). Entropy measures how evenly distributed
+cells are across samples within each cluster—higher entropy indicates
+that cells from different samples are more evenly distributed, while
+lower entropy suggests that a cluster is dominated by cells from a small
+number of samples.</p>
+<pre class="r"><code>n_clusts = res_ls %&gt;% lapply(function(res){
+  tmp_dt = int_dt[, .(cluster = get(paste0(&#39;RNA_snn_res.&#39;, res)))]
+  length(unique(tmp_dt$cluster))
+})
+
+res_ls_pl = res_ls[n_clusts &gt; 1]
+for (res in res_ls_pl) {
+  cat(&#39;#### &#39;, res, &#39;\n&#39;)
+  input_dt  = int_dt[, .(batch_var = get(batch_var), cell_id, cluster = get(paste0(&#39;RNA_snn_res.&#39;, res)))]
+  suppressWarnings(print(plot_cluster_entropies(input_dt,batch_var, what = &quot;norm&quot;)))
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="section-5" class="section level4">
+<h4>0.1</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_entropy_selected_clusters-1.png" width="672" /></p>
+</div>
+<div id="section-6" class="section level4">
+<h4>0.2</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_entropy_selected_clusters-2.png" width="672" /></p>
+</div>
+<div id="section-7" class="section level4">
+<h4>0.5</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_entropy_selected_clusters-3.png" width="672" /></p>
+</div>
+<div id="section-8" class="section level4">
+<h4>1</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_entropy_selected_clusters-4.png" width="672" /></p>
+</div>
+<div id="section-9" class="section level4">
+<h4>2</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_entropy_selected_clusters-5.png" width="672" /></p>
+</div>
+</div>
+<div id="qc-metrics-of-clusters" class="section level3 tabset">
+<h3 class="tabset">QC metrics of clusters</h3>
+<p>Distributions of QC metrics (library size, number of features,
+mitochondrial proportion, and spliced proportion) are shown for each
+cluster across different resolution values.</p>
+<pre class="r"><code>for (res in res_ls) {
+  cat(&#39;#### &#39;, res, &#39;\n&#39;)
+  suppressWarnings(print(plot_cluster_qc_distns(
+    qc_melt, 
+    clust_dt  = int_dt[, .(cell_id, cluster = get(paste0(&#39;RNA_snn_res.&#39;, res)))], 
+    name      = res)))
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="section-10" class="section level4">
+<h4>0.1</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_qc_distns-1.png" width="960" /></p>
+</div>
+<div id="section-11" class="section level4">
+<h4>0.2</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_qc_distns-2.png" width="960" /></p>
+</div>
+<div id="section-12" class="section level4">
+<h4>0.5</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_qc_distns-3.png" width="960" /></p>
+</div>
+<div id="section-13" class="section level4">
+<h4>1</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_qc_distns-4.png" width="960" /></p>
+</div>
+<div id="section-14" class="section level4">
+<h4>2</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_qc_distns-5.png" width="960" /></p>
+</div>
+</div>
+</div>
+<div id="marker-genes" class="section level2">
+<h2>Marker genes</h2>
+<p>To identify marker genes for each cluster (resolution: 0.5),
+pseudobulk counts are generated by aggregating the expression values of
+cells within a specific cluster for each sample. Similarly, pseudobulk
+counts are generated for the remaining clusters by aggregating
+expression values separately for each sample. The resulting pseudobulk
+values for the target cluster are then compared to those of the
+remaining clusters using <code>edgeR</code>.</p>
+<div id="heatmaps-of-marker-genes" class="section level3 tabset">
+<h3 class="tabset">Heatmaps of marker genes</h3>
+<p>The resulting <code>log2</code> fold change values (calculated using
+<code>edgeR</code>) per cluster are shown for several genesets:</p>
+<ul>
+<li>selected canonical marker genes, if specified in the config
+file;</li>
+<li>the 50 most highly variable genes; and</li>
+<li>the 50 genes most likely to represent ambient RNA
+contamination.</li>
+</ul>
+<pre class="r"><code>for (nn in names(mkrs_ls)) {
+  cat(&quot;#### &quot;, nn, &quot;\n&quot;)
+  suppressMessages(draw( plot_heatmap_of_selected_genes(mkrs_dt, mkrs_ls[[nn]]),
+    heatmap_legend_side = &quot;bottom&quot;, annotation_legend_side = &quot;bottom&quot;, merge_legend = TRUE ))
+  cat(&quot;\n\n&quot;)
+}</code></pre>
+<div id="human_brain" class="section level4">
+<h4>human_brain</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_marker_heatmaps-1.png" width="960" /></p>
+</div>
+<div id="hvgs" class="section level4">
+<h4>HVGs</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_marker_heatmaps-2.png" width="960" /></p>
+</div>
+<div id="ambient" class="section level4">
+<h4>ambient</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_marker_heatmaps-3.png" width="960" /></p>
+</div>
+</div>
+<div id="highly-variable-genes" class="section level3 tabset">
+<h3 class="tabset">Highly variable genes</h3>
+<p>Normalized pseudobulk expression values for top 100 highly variable
+genes are shown for each cluster, in descending order of variance
+(variance calculated using <code>DESeq2::vst</code>).</p>
+<pre class="r"><code>n_pages = 10
+per_p   = 10
+p       = 1
+for (i in seq(1, n_pages * per_p, by = per_p)) {
+  cat(&#39;#### page&#39;, p, &#39;\n&#39;); p = p + 1
+  sel_hvgs  = pb_hvgs_dt[ i:(i + 9) ]
+  print(plot_selected_genes(sel_hvgs, cpms_dt, cl_order = cl_ord))
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="page-1" class="section level4">
+<h4>page 1</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-1.png" width="768" /></p>
+</div>
+<div id="page-2" class="section level4">
+<h4>page 2</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-2.png" width="768" /></p>
+</div>
+<div id="page-3" class="section level4">
+<h4>page 3</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-3.png" width="768" /></p>
+</div>
+<div id="page-4" class="section level4">
+<h4>page 4</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-4.png" width="768" /></p>
+</div>
+<div id="page-5" class="section level4">
+<h4>page 5</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-5.png" width="768" /></p>
+</div>
+<div id="page-6" class="section level4">
+<h4>page 6</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-6.png" width="768" /></p>
+</div>
+<div id="page-7" class="section level4">
+<h4>page 7</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-7.png" width="768" /></p>
+</div>
+<div id="page-8" class="section level4">
+<h4>page 8</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-8.png" width="768" /></p>
+</div>
+<div id="page-9" class="section level4">
+<h4>page 9</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-9.png" width="768" /></p>
+</div>
+<div id="page-10" class="section level4">
+<h4>page 10</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_hvgs_pb_hmny-10.png" width="768" /></p>
+</div>
+</div>
+<div id="top-marker-genes" class="section level3 tabset">
+<h3 class="tabset">Top marker genes</h3>
+<p>Normalized pseudobulk expression values of top 10 marker genes with
+FDR &lt; 0.05 and a minimum expression of 50 CPM are shown for each
+cluster.</p>
+<pre class="r"><code>for (sel_cl in cl_ord) {
+  cat(&#39;####&#39;, sel_cl, &#39;\n&#39;)
+  print(plot_top_marker_genes(sel_cl, top_min_dt, cpms_dt, cl_order = cl_ord))
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="cl01" class="section level4">
+<h4>cl01</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-1.png" width="768" /></p>
+</div>
+<div id="cl02" class="section level4">
+<h4>cl02</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-2.png" width="768" /></p>
+</div>
+<div id="cl03" class="section level4">
+<h4>cl03</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-3.png" width="768" /></p>
+</div>
+<div id="cl04" class="section level4">
+<h4>cl04</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-4.png" width="768" /></p>
+</div>
+<div id="cl05" class="section level4">
+<h4>cl05</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-5.png" width="768" /></p>
+</div>
+<div id="cl06" class="section level4">
+<h4>cl06</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-6.png" width="768" /></p>
+</div>
+<div id="cl07" class="section level4">
+<h4>cl07</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-7.png" width="768" /></p>
+</div>
+<div id="cl08" class="section level4">
+<h4>cl08</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-8.png" width="768" /></p>
+</div>
+<div id="cl09" class="section level4">
+<h4>cl09</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-9.png" width="768" /></p>
+</div>
+<div id="cl10" class="section level4">
+<h4>cl10</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-10.png" width="768" /></p>
+</div>
+<div id="cl11" class="section level4">
+<h4>cl11</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-11.png" width="768" /></p>
+</div>
+<div id="cl12" class="section level4">
+<h4>cl12</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-12.png" width="768" /></p>
+</div>
+<div id="cl13" class="section level4">
+<h4>cl13</h4>
+<p><img src="figure/pineda_zoom_myeloid.Rmd/plot_top_markers_pb_min-13.png" width="768" /></p>
+</div>
+</div>
+<div id="gsea-characterisation-of-clusters"
+class="section level3 tabset">
+<h3 class="tabset">GSEA characterisation of clusters</h3>
+<p>Gene Set Enrichment Analysis (GSEA) was performed on marker genes for
+each cluster, using log fold change as the ranking variable. The top 10
+pathways, grouped into five categories and selected based on a
+significance threshold of 0.05, are displayed for each cluster.</p>
+<pre class="r"><code>for (p in names(gsea_ls)) {
+  if (is.null(gsea_ls[[p]]))
+    next
+  cat(&#39;#### &#39;, p, &#39;\n&#39;)
+  dt    = gsea_ls[[p]] %&gt;% .[ gsea_var == gsea_var_sel ]
+  plot_gsea_dotplot(dt, gsea_cut = gsea_cut, n_top_paths = 5, max_nes = 2,
+    size_range = c(10, 200), what = &quot;pos_only&quot;, cl_order = cl_ord) %&gt;% print
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+</div>
+</div>
+<div id="r-session-info" class="section level2">
+<h2>R session info</h2>
+<p>Details of the R package versions used are given below.</p>
+<details>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.4.3 (2025-02-28)
+##  os       Red Hat Enterprise Linux 8.10 (Ootpa)
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Zurich
+##  date     2026-03-03
+##  pandoc   3.8.2.1 @ /home/macnairw/packages/scprocess/.snakemake/conda/4fef11cadd34f9d2d13a0d6139d09340_/bin/ (via rmarkdown)
+##  quarto   NA
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package              * version  date (UTC) lib source
+##  abind                  1.4-8    2024-09-12 [1] CRAN (R 4.4.3)
+##  assertthat           * 0.2.1    2019-03-21 [1] CRAN (R 4.4.3)
+##  basilisk               1.18.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  basilisk.utils         1.18.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  beachmat               2.22.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  beeswarm               0.4.0    2021-06-01 [1] CRAN (R 4.4.3)
+##  Biobase              * 2.66.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocGenerics         * 0.52.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocManager            1.30.27  2025-11-14 [1] CRAN (R 4.4.3)
+##  BiocNeighbors          2.0.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  BiocParallel         * 1.40.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocSingular           1.22.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  BiocStyle            * 2.34.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  bluster                1.16.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  bookdown               0.45     2025-10-03 [1] CRAN (R 4.4.3)
+##  bslib                  0.9.0    2025-01-30 [1] CRAN (R 4.4.3)
+##  ca                     0.71.1   2020-01-24 [1] CRAN (R 4.4.3)
+##  cachem                 1.1.0    2024-05-16 [1] CRAN (R 4.4.3)
+##  Cairo                  1.7-0    2025-10-29 [1] CRAN (R 4.4.3)
+##  callr                  3.7.6    2024-03-25 [1] CRAN (R 4.4.3)
+##  cellranger             1.1.0    2016-07-27 [1] CRAN (R 4.4.3)
+##  circlize             * 0.4.16   2024-02-20 [1] CRAN (R 4.4.3)
+##  cli                    3.6.5    2025-04-23 [1] CRAN (R 4.4.3)
+##  clue                   0.3-66   2024-11-13 [1] CRAN (R 4.4.3)
+##  cluster                2.1.8.1  2025-03-12 [1] CRAN (R 4.4.3)
+##  codetools              0.2-20   2024-03-31 [1] CRAN (R 4.4.3)
+##  colorspace             2.1-2    2025-09-22 [1] CRAN (R 4.4.3)
+##  ComplexHeatmap       * 2.22.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  cowplot                1.2.0    2025-07-07 [1] CRAN (R 4.4.3)
+##  crayon                 1.5.3    2024-06-20 [1] CRAN (R 4.4.3)
+##  data.table           * 1.17.8   2025-07-10 [1] CRAN (R 4.4.3)
+##  DelayedArray           0.32.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  deldir                 2.0-4    2024-02-28 [1] CRAN (R 4.4.3)
+##  DESeq2               * 1.46.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  devtools               2.4.6    2025-10-03 [1] CRAN (R 4.4.3)
+##  digest                 0.6.39   2025-11-19 [1] CRAN (R 4.4.3)
+##  dir.expiry             1.14.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  doParallel             1.0.17   2022-02-07 [1] CRAN (R 4.4.3)
+##  dotCall64              1.2      2024-10-04 [1] CRAN (R 4.4.3)
+##  dplyr                  1.1.4    2023-11-17 [1] CRAN (R 4.4.3)
+##  dqrng                  0.3.2    2023-11-29 [1] CRAN (R 4.4.3)
+##  edgeR                * 4.4.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  ellipsis               0.3.2    2021-04-29 [1] CRAN (R 4.4.3)
+##  evaluate               1.0.5    2025-08-27 [1] CRAN (R 4.4.3)
+##  farver                 2.1.2    2024-05-13 [1] CRAN (R 4.4.3)
+##  fastDummies            1.7.5    2025-01-20 [1] CRAN (R 4.4.3)
+##  fastmap                1.2.0    2024-05-15 [1] CRAN (R 4.4.3)
+##  fastmatch              1.1-6    2024-12-23 [1] CRAN (R 4.4.3)
+##  fgsea                * 1.32.2   2024-12-19 [1] Bioconductor 3.20 (R 4.4.2)
+##  filelock               1.0.3    2023-12-11 [1] CRAN (R 4.4.3)
+##  fitdistrplus           1.2-4    2025-07-03 [1] CRAN (R 4.4.3)
+##  forcats              * 1.0.1    2025-09-25 [1] CRAN (R 4.4.3)
+##  foreach                1.5.2    2022-02-02 [1] CRAN (R 4.4.3)
+##  fs                     1.6.6    2025-04-12 [1] CRAN (R 4.4.3)
+##  future               * 1.68.0   2025-11-17 [1] CRAN (R 4.4.3)
+##  future.apply           1.20.0   2025-06-06 [1] CRAN (R 4.4.3)
+##  generics               0.1.4    2025-05-09 [1] CRAN (R 4.4.3)
+##  GenomeInfoDb         * 1.42.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  GenomeInfoDbData       1.2.13   2026-02-17 [1] Bioconductor
+##  GenomicRanges        * 1.58.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  GetoptLong             1.0.5    2020-12-15 [1] CRAN (R 4.4.3)
+##  getPass                0.2-4    2023-12-10 [1] CRAN (R 4.4.3)
+##  ggbeeswarm           * 0.7.2    2023-04-29 [1] CRAN (R 4.4.3)
+##  ggh4x                * 0.3.1    2025-05-30 [1] CRAN (R 4.4.3)
+##  ggplot.multistats    * 1.0.1    2024-09-25 [1] CRAN (R 4.4.3)
+##  ggplot2              * 4.0.1    2025-11-14 [1] CRAN (R 4.4.3)
+##  ggrepel              * 0.9.6    2024-09-07 [1] CRAN (R 4.4.3)
+##  ggridges               0.5.7    2025-08-27 [1] CRAN (R 4.4.3)
+##  git2r                  0.35.0   2024-10-20 [1] CRAN (R 4.4.3)
+##  GlobalOptions          0.1.2    2020-06-10 [1] CRAN (R 4.4.3)
+##  globals                0.18.0   2025-05-08 [1] CRAN (R 4.4.3)
+##  glue                   1.8.0    2024-09-30 [1] CRAN (R 4.4.3)
+##  goftest                1.2-3    2021-10-07 [1] CRAN (R 4.4.3)
+##  gridExtra              2.3      2017-09-09 [1] CRAN (R 4.4.3)
+##  gtable                 0.3.6    2024-10-25 [1] CRAN (R 4.4.3)
+##  harmony              * 1.2.4    2025-10-10 [1] CRAN (R 4.4.3)
+##  hexbin                 1.28.5   2024-11-13 [1] CRAN (R 4.4.3)
+##  htmltools              0.5.8.1  2024-04-04 [1] CRAN (R 4.4.3)
+##  htmlwidgets            1.6.4    2023-12-06 [1] CRAN (R 4.4.3)
+##  httpuv                 1.6.16   2025-04-16 [1] CRAN (R 4.4.3)
+##  httr                   1.4.7    2023-08-15 [1] CRAN (R 4.4.3)
+##  ica                    1.0-3    2022-07-08 [1] CRAN (R 4.4.3)
+##  igraph                 2.1.4    2025-01-23 [1] CRAN (R 4.4.3)
+##  IRanges              * 2.40.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  irlba                  2.3.5.1  2022-10-03 [1] CRAN (R 4.4.3)
+##  iterators              1.0.14   2022-02-05 [1] CRAN (R 4.4.3)
+##  jquerylib              0.1.4    2021-04-26 [1] CRAN (R 4.4.3)
+##  jsonlite               2.0.0    2025-03-27 [1] CRAN (R 4.4.3)
+##  KernSmooth             2.23-26  2025-01-01 [1] CRAN (R 4.4.3)
+##  knitr                  1.50     2025-03-16 [1] CRAN (R 4.4.3)
+##  labeling               0.4.3    2023-08-29 [1] CRAN (R 4.4.3)
+##  later                  1.4.4    2025-08-27 [1] CRAN (R 4.4.3)
+##  lattice                0.22-7   2025-04-02 [1] CRAN (R 4.4.3)
+##  lazyeval               0.2.2    2019-03-15 [1] CRAN (R 4.4.3)
+##  lifecycle              1.0.4    2023-11-07 [1] CRAN (R 4.4.3)
+##  limma                * 3.62.1   2024-11-03 [1] Bioconductor 3.20 (R 4.4.2)
+##  listenv                0.10.0   2025-11-02 [1] CRAN (R 4.4.3)
+##  lmtest                 0.9-40   2022-03-21 [1] CRAN (R 4.4.3)
+##  locfit                 1.5-9.12 2025-03-05 [1] CRAN (R 4.4.3)
+##  magrittr             * 2.0.4    2025-09-12 [1] CRAN (R 4.4.3)
+##  MASS                   7.3-65   2025-02-28 [1] CRAN (R 4.4.3)
+##  Matrix               * 1.7-4    2025-08-28 [1] CRAN (R 4.4.3)
+##  MatrixGenerics       * 1.18.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  matrixStats          * 1.5.0    2025-01-07 [1] CRAN (R 4.4.3)
+##  memoise                2.0.1    2021-11-26 [1] CRAN (R 4.4.3)
+##  metapod                1.14.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  MetBrewer              0.2.0    2022-03-21 [1] CRAN (R 4.4.3)
+##  mgcv                   1.9-4    2025-11-07 [1] CRAN (R 4.4.3)
+##  mime                   0.13     2025-03-17 [1] CRAN (R 4.4.3)
+##  miniUI                 0.1.2    2025-04-17 [1] CRAN (R 4.4.3)
+##  nlme                   3.1-168  2025-03-31 [1] CRAN (R 4.4.3)
+##  otel                   0.2.0    2025-08-29 [1] CRAN (R 4.4.3)
+##  parallelly             1.45.1   2025-07-24 [1] CRAN (R 4.4.3)
+##  patchwork            * 1.3.2    2025-08-25 [1] CRAN (R 4.4.3)
+##  pbapply                1.7-4    2025-07-20 [1] CRAN (R 4.4.3)
+##  pillar                 1.11.1   2025-09-17 [1] CRAN (R 4.4.3)
+##  pkgbuild               1.4.8    2025-05-26 [1] CRAN (R 4.4.3)
+##  pkgconfig              2.0.3    2019-09-22 [1] CRAN (R 4.4.3)
+##  pkgload                1.4.1    2025-09-23 [1] CRAN (R 4.4.3)
+##  plotly                 4.11.0   2025-06-19 [1] CRAN (R 4.4.3)
+##  plyr                   1.8.9    2023-10-02 [1] CRAN (R 4.4.3)
+##  png                    0.1-8    2022-11-29 [1] CRAN (R 4.4.3)
+##  polyclip               1.10-7   2024-07-23 [1] CRAN (R 4.4.3)
+##  processx               3.8.6    2025-02-21 [1] CRAN (R 4.4.3)
+##  progressr              0.18.0   2025-11-06 [1] CRAN (R 4.4.3)
+##  promises               1.5.0    2025-11-01 [1] CRAN (R 4.4.3)
+##  ps                     1.9.1    2025-04-12 [1] CRAN (R 4.4.3)
+##  purrr                  1.2.0    2025-11-04 [1] CRAN (R 4.4.3)
+##  R.methodsS3            1.8.2    2022-06-13 [1] CRAN (R 4.4.3)
+##  R.oo                   1.27.1   2025-05-02 [1] CRAN (R 4.4.3)
+##  R.utils                2.13.0   2025-02-24 [1] CRAN (R 4.4.3)
+##  R6                     2.6.1    2025-02-15 [1] CRAN (R 4.4.3)
+##  RANN                   2.6.2    2024-08-25 [1] CRAN (R 4.4.3)
+##  RColorBrewer         * 1.1-3    2022-04-03 [1] CRAN (R 4.4.3)
+##  Rcpp                 * 1.1.0    2025-07-02 [1] CRAN (R 4.4.3)
+##  RcppAnnoy              0.0.22   2024-01-23 [1] CRAN (R 4.4.3)
+##  RcppHNSW               0.6.0    2024-02-04 [1] CRAN (R 4.4.3)
+##  readxl               * 1.4.5    2025-03-07 [1] CRAN (R 4.4.3)
+##  registry               0.5-1    2019-03-05 [1] CRAN (R 4.4.3)
+##  remotes                2.5.0    2024-03-17 [1] CRAN (R 4.4.3)
+##  reshape2               1.4.5    2025-11-12 [1] CRAN (R 4.4.3)
+##  reticulate             1.44.1   2025-11-14 [1] CRAN (R 4.4.3)
+##  rhdf5                * 2.50.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  rhdf5filters           1.18.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  Rhdf5lib               1.28.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  RhpcBLASctl            0.23-42  2023-02-11 [1] CRAN (R 4.4.3)
+##  rjson                  0.2.23   2024-09-16 [1] CRAN (R 4.4.3)
+##  rlang                  1.1.6    2025-04-11 [1] CRAN (R 4.4.3)
+##  rmarkdown              2.30     2025-09-28 [1] CRAN (R 4.4.3)
+##  rmdformats             1.0.4    2022-05-17 [1] CRAN (R 4.4.3)
+##  ROCR                   1.0-11   2020-05-02 [1] CRAN (R 4.4.3)
+##  rprojroot              2.1.1    2025-08-26 [1] CRAN (R 4.4.3)
+##  RSpectra               0.16-2   2024-07-18 [1] CRAN (R 4.4.3)
+##  rstudioapi             0.17.1   2024-10-22 [1] CRAN (R 4.4.3)
+##  rsvd                   1.0.5    2021-04-16 [1] CRAN (R 4.4.1)
+##  Rtsne                  0.17     2023-12-07 [1] CRAN (R 4.4.3)
+##  S4Arrays               1.6.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  S4Vectors            * 0.44.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  S7                     0.2.1    2025-11-14 [1] CRAN (R 4.4.3)
+##  sass                   0.4.10   2025-04-11 [1] CRAN (R 4.4.3)
+##  ScaledMatrix           1.14.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  scales               * 1.4.0    2025-04-24 [1] CRAN (R 4.4.3)
+##  scater               * 1.34.1   2025-03-03 [1] Bioconductor 3.20 (R 4.4.2)
+##  scattermore            1.2      2023-06-12 [1] CRAN (R 4.4.3)
+##  scran                * 1.34.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  sctransform            0.4.2    2025-04-30 [1] CRAN (R 4.4.3)
+##  scuttle              * 1.16.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  seriation            * 1.5.8    2025-08-20 [1] CRAN (R 4.4.3)
+##  sessioninfo            1.2.3    2025-02-05 [1] CRAN (R 4.4.3)
+##  Seurat               * 5.3.1    2025-10-29 [1] CRAN (R 4.4.3)
+##  SeuratObject         * 5.2.0    2025-08-27 [1] CRAN (R 4.4.3)
+##  shape                  1.4.6.1  2024-02-23 [1] CRAN (R 4.4.3)
+##  shiny                  1.11.1   2025-07-03 [1] CRAN (R 4.4.3)
+##  SingleCellExperiment * 1.28.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  sp                   * 2.2-0    2025-02-01 [1] CRAN (R 4.4.3)
+##  spam                   2.11-1   2025-01-20 [1] CRAN (R 4.4.3)
+##  SparseArray            1.6.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  spatstat.data          3.1-9    2025-10-18 [1] CRAN (R 4.4.3)
+##  spatstat.explore       3.6-0    2025-11-22 [1] CRAN (R 4.4.3)
+##  spatstat.geom          3.6-1    2025-11-20 [1] CRAN (R 4.4.3)
+##  spatstat.random        3.4-3    2025-11-21 [1] CRAN (R 4.4.3)
+##  spatstat.sparse        3.1-0    2024-06-21 [1] CRAN (R 4.4.3)
+##  spatstat.univar        3.1-5    2025-11-17 [1] CRAN (R 4.4.3)
+##  spatstat.utils         3.2-0    2025-09-20 [1] CRAN (R 4.4.3)
+##  statmod                1.5.1    2025-10-09 [1] CRAN (R 4.4.3)
+##  strex                * 2.0.1    2024-10-03 [1] CRAN (R 4.4.3)
+##  stringi              * 1.8.7    2025-03-27 [1] CRAN (R 4.4.3)
+##  stringr              * 1.6.0    2025-11-04 [1] CRAN (R 4.4.3)
+##  SummarizedExperiment * 1.36.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  survival               3.8-3    2024-12-17 [1] CRAN (R 4.4.3)
+##  tensor                 1.5.1    2025-06-17 [1] CRAN (R 4.4.3)
+##  tibble                 3.3.0    2025-06-08 [1] CRAN (R 4.4.3)
+##  tidyr                  1.3.1    2024-01-24 [1] CRAN (R 4.4.3)
+##  tidyselect             1.2.1    2024-03-11 [1] CRAN (R 4.4.3)
+##  TSP                    1.2.6    2025-11-27 [1] CRAN (R 4.4.3)
+##  UCSC.utils             1.2.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  usethis                3.2.1    2025-09-06 [1] CRAN (R 4.4.3)
+##  uwot                 * 0.2.4    2025-11-10 [1] CRAN (R 4.4.3)
+##  vctrs                  0.6.5    2023-12-01 [1] CRAN (R 4.4.3)
+##  vipor                  0.4.7    2023-12-18 [1] CRAN (R 4.4.3)
+##  viridis              * 0.6.5    2024-01-29 [1] CRAN (R 4.4.3)
+##  viridisLite          * 0.4.2    2023-05-02 [1] CRAN (R 4.4.3)
+##  whisker                0.4.1    2022-12-05 [1] CRAN (R 4.4.3)
+##  withr                  3.0.2    2024-10-28 [1] CRAN (R 4.4.3)
+##  workflowr            * 1.7.2    2025-08-18 [1] CRAN (R 4.4.3)
+##  xfun                   0.54     2025-10-30 [1] CRAN (R 4.4.3)
+##  xtable                 1.8-4    2019-04-21 [1] CRAN (R 4.4.3)
+##  XVector                0.46.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  yaml                   2.3.11   2025-11-28 [1] CRAN (R 4.4.3)
+##  zellkonverter        * 1.16.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  zlibbioc               1.52.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  zoo                    1.8-14   2025-04-10 [1] CRAN (R 4.4.3)
+## 
+##  [1] /home/macnairw/packages/scprocess/.snakemake/conda/4fef11cadd34f9d2d13a0d6139d09340_/lib/R/library
+##  * ── Packages attached to the search path.
+## 
+## ──────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
+
+   
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>

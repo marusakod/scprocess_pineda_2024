@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+    
+        <meta name="date" content="2026-02-28" />
+    
+    <title>Read mapping diagnostics</title>
+
+        <script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <script src="site_libs/navigation-1.1/codefolding.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+    
+    
+    
+        <link rel="stylesheet" href="custom.css" type="text/css" />
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+        <script>
+      $(document).ready(function () {
+	  	  	  window.initializeCodeFolding("hide" === "show");
+	        });
+    </script>
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a href="#barcode-rank-plots"
+            id="toc-barcode-rank-plots">Barcode rank plots</a>
+            <ul>
+            <li><a href="#ordered-by-slope-ratio"
+            id="toc-ordered-by-slope-ratio">Ordered by slope
+            ratio</a></li>
+            <li><a
+            href="#ordered-by-ratio-of-expected-cells-to-empty-droplets"
+            id="toc-ordered-by-ratio-of-expected-cells-to-empty-droplets">Ordered
+            by ratio of expected cells to empty droplets</a></li>
+            <li><a href="#dotplot-with-diagnotic-ratios"
+            id="toc-dotplot-with-diagnotic-ratios">Dotplot with
+            diagnotic ratios</a></li>
+            </ul></li>
+            <li><a
+            href="#library-sizes-and-splice-read-proportions-comparison-between-cells-and-empty-droplets-across-samples"
+            id="toc-library-sizes-and-splice-read-proportions-comparison-between-cells-and-empty-droplets-across-samples">Library
+            sizes and splice read proportions: comparison between cells
+            and empty droplets across samples</a></li>
+            <li><a href="#r-session-info" id="toc-r-session-info">R
+            session info</a></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+      <div class="btn-group pull-right">
+     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+     <ul class="dropdown-menu" style="min-width: 50px;">
+	    	    <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+	    <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+	    	    	         </ul>
+   </div>
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">dam_mice_2</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">Read mapping diagnostics</h1>
+      
+      <p class="authors">
+           <span class="glyphicon glyphicon-user"></span> Will Macnair
+           - Church of England
+               <br>
+      </p>
+         <p class="date"><span class="glyphicon glyphicon-calendar"></span> February
+28, 2026</p>
+           
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<div id="barcode-rank-plots" class="section level2">
+<h2>Barcode rank plots</h2>
+<p>For each sample, barcodes are ranked in descending order based on
+their library size (number of unique molecular identifiers (UMIs)).
+Typically, one can observe two plateaus in the barcode-rank curve: the
+first corresponds to droplets containing cells with high RNA content,
+while the second represents empty droplets containing ambient RNA. Key
+transition points on the curve (shin and knee points), are annotated
+with horizontal lines. Two main parameters infered by
+<code>scprocess</code> based on transition points are
+<code>expected_cells</code> and <code>empty_plateau_middle</code>.
+<code>empty_plateau_middle</code> should extend a few thousand barcodes
+into the second plateau. The absence of a clear empty plateau indicates
+poor sample quality due to ambient RNA contamination.</p>
+<div id="ordered-by-slope-ratio" class="section level3 tabset">
+<h3 class="tabset">Ordered by slope ratio</h3>
+<p>The slope ratio helps identify low-quality samples with high ambient
+RNA contamination. This ratio is calculated by dividing the slope of the
+barcode-rank curve in the empty droplet plateau by the slope at the
+first inflection point. Samples are ordered from highest to lowest based
+on the slope ratio.</p>
+<pre class="r"><code>for (i in 1:length(slope_ratio_split_l) ) {
+  # get knee dfs for all selected samples
+  samples = slope_ratio_split_l[[i]]
+  name    = sprintf(&#39;sample chunk #%d&#39;, i)
+  knee_fs = rna_knee_fs[samples]
+  cat(&#39;#### &#39;, name, &#39;\n&#39;)
+  suppressWarnings(print(plot_barcode_ranks_w_params(knee_fs, rna_knee_params_df, 
+    sample_var = sample_var, bender_priors_df = NULL)))
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="sample-chunk-1" class="section level4">
+<h4>sample chunk #1</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-1.png" width="864" /></p>
+</div>
+<div id="sample-chunk-2" class="section level4">
+<h4>sample chunk #2</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-2.png" width="864" /></p>
+</div>
+<div id="sample-chunk-3" class="section level4">
+<h4>sample chunk #3</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-3.png" width="864" /></p>
+</div>
+<div id="sample-chunk-4" class="section level4">
+<h4>sample chunk #4</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-4.png" width="864" /></p>
+</div>
+<div id="sample-chunk-5" class="section level4">
+<h4>sample chunk #5</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-5.png" width="864" /></p>
+</div>
+<div id="sample-chunk-6" class="section level4">
+<h4>sample chunk #6</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-6.png" width="864" /></p>
+</div>
+<div id="sample-chunk-7" class="section level4">
+<h4>sample chunk #7</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-7.png" width="864" /></p>
+</div>
+<div id="sample-chunk-8" class="section level4">
+<h4>sample chunk #8</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-8.png" width="864" /></p>
+</div>
+<div id="sample-chunk-9" class="section level4">
+<h4>sample chunk #9</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-9.png" width="864" /></p>
+</div>
+<div id="sample-chunk-10" class="section level4">
+<h4>sample chunk #10</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-10.png" width="864" /></p>
+</div>
+<div id="sample-chunk-11" class="section level4">
+<h4>sample chunk #11</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-11.png" width="864" /></p>
+</div>
+<div id="sample-chunk-12" class="section level4">
+<h4>sample chunk #12</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-12.png" width="864" /></p>
+</div>
+<div id="sample-chunk-13" class="section level4">
+<h4>sample chunk #13</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_slope_ordered-13.png" width="864" /></p>
+</div>
+</div>
+<div id="ordered-by-ratio-of-expected-cells-to-empty-droplets"
+class="section level3 tabset">
+<h3 class="tabset">Ordered by ratio of expected cells to empty
+droplets</h3>
+<p>Inaccurate detection of the transition points (knee and shin points)
+in the barcode-rank curve can lead to incorrect estimates of barcodes
+corresponding to cells or empty droplets. To evaluate this, samples are
+ordered by the ratio of <code>expected_cells</code> to
+<code>empty_plateau_middle</code>.</p>
+<pre class="r"><code>for (i in 1:length(exp_tot_ratio_split_l) ) {
+  # get knee dfs for all selected samples
+  samples = exp_tot_ratio_split_l[[i]]
+  name    = sprintf(&#39;sample chunk #%d&#39;, i)
+  knee_fs = rna_knee_fs[samples]
+  cat(&#39;#### &#39;, name, &#39;\n&#39;)
+  suppressWarnings(print(plot_barcode_ranks_w_params(knee_fs, rna_knee_params_df, 
+    sample_var = sample_var, bender_priors_df = NULL)))
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="sample-chunk-1-1" class="section level4">
+<h4>sample chunk #1</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-1.png" width="864" /></p>
+</div>
+<div id="sample-chunk-2-1" class="section level4">
+<h4>sample chunk #2</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-2.png" width="864" /></p>
+</div>
+<div id="sample-chunk-3-1" class="section level4">
+<h4>sample chunk #3</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-3.png" width="864" /></p>
+</div>
+<div id="sample-chunk-4-1" class="section level4">
+<h4>sample chunk #4</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-4.png" width="864" /></p>
+</div>
+<div id="sample-chunk-5-1" class="section level4">
+<h4>sample chunk #5</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-5.png" width="864" /></p>
+</div>
+<div id="sample-chunk-6-1" class="section level4">
+<h4>sample chunk #6</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-6.png" width="864" /></p>
+</div>
+<div id="sample-chunk-7-1" class="section level4">
+<h4>sample chunk #7</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-7.png" width="864" /></p>
+</div>
+<div id="sample-chunk-8-1" class="section level4">
+<h4>sample chunk #8</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-8.png" width="864" /></p>
+</div>
+<div id="sample-chunk-9-1" class="section level4">
+<h4>sample chunk #9</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-9.png" width="864" /></p>
+</div>
+<div id="sample-chunk-10-1" class="section level4">
+<h4>sample chunk #10</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-10.png" width="864" /></p>
+</div>
+<div id="sample-chunk-11-1" class="section level4">
+<h4>sample chunk #11</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-11.png" width="864" /></p>
+</div>
+<div id="sample-chunk-12-1" class="section level4">
+<h4>sample chunk #12</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-12.png" width="864" /></p>
+</div>
+<div id="sample-chunk-13-1" class="section level4">
+<h4>sample chunk #13</h4>
+<p><img src="figure/pineda_mapping.Rmd/knee_plots_exp_tot_ordered-13.png" width="864" /></p>
+</div>
+</div>
+<div id="dotplot-with-diagnotic-ratios" class="section level3">
+<h3>Dotplot with diagnotic ratios</h3>
+<p>Both the slope ratio and the expected cells to empty droplets ratio
+are displayed in a dot plot, where each dot represents a sample.
+Outliers are labeled with their corresponding sample_id values.</p>
+<pre class="r"><code>print(plot_amb_params_dotplot(rna_knee_params_df, sample_var = sample_var, scales = &#39;free&#39;))</code></pre>
+<p><img src="figure/pineda_mapping.Rmd/ambient_params_qc_dot-1.png" width="768" /></p>
+</div>
+</div>
+<div
+id="library-sizes-and-splice-read-proportions-comparison-between-cells-and-empty-droplets-across-samples"
+class="section level2">
+<h2>Library sizes and splice read proportions: comparison between cells
+and empty droplets across samples</h2>
+<p>This plot shows the distribution of UMIs and spliced read proportions
+for both empty droplets and expected cells, split by sample. The UMI
+counts in empty droplets serve as an indicator of ambient RNA
+contamination in the dataset.</p>
+<pre class="r"><code>print(plot_qc_metrics_split_by_cells_empties(rna_knee_fs, sample_var = sample_var, n_cores = n_cores))</code></pre>
+<p><img src="figure/pineda_mapping.Rmd/plot_qc_metrics_cells_empties-1.png" width="864" /></p>
+</div>
+<div id="r-session-info" class="section level2">
+<h2>R session info</h2>
+<p>Details of the R package versions used are given below.</p>
+<details>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.4.3 (2025-02-28)
+##  os       Red Hat Enterprise Linux 8.10 (Ootpa)
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       UTC
+##  date     2026-03-02
+##  pandoc   3.8.2.1 @ /home/macnairw/packages/scprocess/.snakemake/conda/4fef11cadd34f9d2d13a0d6139d09340_/bin/ (via rmarkdown)
+##  quarto   NA
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package              * version  date (UTC) lib source
+##  abind                  1.4-8    2024-09-12 [1] CRAN (R 4.4.3)
+##  assertthat           * 0.2.1    2019-03-21 [1] CRAN (R 4.4.3)
+##  beachmat               2.22.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  beeswarm               0.4.0    2021-06-01 [1] CRAN (R 4.4.3)
+##  Biobase              * 2.66.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocGenerics         * 0.52.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocManager            1.30.27  2025-11-14 [1] CRAN (R 4.4.3)
+##  BiocParallel         * 1.40.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  BiocStyle            * 2.34.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  bookdown               0.45     2025-10-03 [1] CRAN (R 4.4.3)
+##  bslib                  0.9.0    2025-01-30 [1] CRAN (R 4.4.3)
+##  ca                     0.71.1   2020-01-24 [1] CRAN (R 4.4.3)
+##  cachem                 1.1.0    2024-05-16 [1] CRAN (R 4.4.3)
+##  callr                  3.7.6    2024-03-25 [1] CRAN (R 4.4.3)
+##  cellranger             1.1.0    2016-07-27 [1] CRAN (R 4.4.3)
+##  circlize             * 0.4.16   2024-02-20 [1] CRAN (R 4.4.3)
+##  cli                    3.6.5    2025-04-23 [1] CRAN (R 4.4.3)
+##  clue                   0.3-66   2024-11-13 [1] CRAN (R 4.4.3)
+##  cluster                2.1.8.1  2025-03-12 [1] CRAN (R 4.4.3)
+##  codetools              0.2-20   2024-03-31 [1] CRAN (R 4.4.3)
+##  colorspace             2.1-2    2025-09-22 [1] CRAN (R 4.4.3)
+##  ComplexHeatmap       * 2.22.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  crayon                 1.5.3    2024-06-20 [1] CRAN (R 4.4.3)
+##  data.table           * 1.17.8   2025-07-10 [1] CRAN (R 4.4.3)
+##  DelayedArray           0.32.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  DelayedMatrixStats     1.28.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  devtools               2.4.6    2025-10-03 [1] CRAN (R 4.4.3)
+##  digest                 0.6.39   2025-11-19 [1] CRAN (R 4.4.3)
+##  doParallel             1.0.17   2022-02-07 [1] CRAN (R 4.4.3)
+##  dplyr                * 1.1.4    2023-11-17 [1] CRAN (R 4.4.3)
+##  dqrng                  0.3.2    2023-11-29 [1] CRAN (R 4.4.3)
+##  DropletUtils         * 1.26.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  edgeR                  4.4.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  ellipsis               0.3.2    2021-04-29 [1] CRAN (R 4.4.3)
+##  evaluate               1.0.5    2025-08-27 [1] CRAN (R 4.4.3)
+##  farver                 2.1.2    2024-05-13 [1] CRAN (R 4.4.3)
+##  fastmap                1.2.0    2024-05-15 [1] CRAN (R 4.4.3)
+##  fishpond             * 2.12.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  forcats              * 1.0.1    2025-09-25 [1] CRAN (R 4.4.3)
+##  foreach                1.5.2    2022-02-02 [1] CRAN (R 4.4.3)
+##  fs                     1.6.6    2025-04-12 [1] CRAN (R 4.4.3)
+##  generics               0.1.4    2025-05-09 [1] CRAN (R 4.4.3)
+##  GenomeInfoDb         * 1.42.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  GenomeInfoDbData       1.2.13   2026-02-17 [1] Bioconductor
+##  GenomicRanges        * 1.58.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  GetoptLong             1.0.5    2020-12-15 [1] CRAN (R 4.4.3)
+##  getPass                0.2-4    2023-12-10 [1] CRAN (R 4.4.3)
+##  ggbeeswarm           * 0.7.2    2023-04-29 [1] CRAN (R 4.4.3)
+##  ggh4x                * 0.3.1    2025-05-30 [1] CRAN (R 4.4.3)
+##  ggplot2              * 4.0.1    2025-11-14 [1] CRAN (R 4.4.3)
+##  ggrepel              * 0.9.6    2024-09-07 [1] CRAN (R 4.4.3)
+##  git2r                  0.35.0   2024-10-20 [1] CRAN (R 4.4.3)
+##  GlobalOptions          0.1.2    2020-06-10 [1] CRAN (R 4.4.3)
+##  glue                   1.8.0    2024-09-30 [1] CRAN (R 4.4.3)
+##  gridExtra              2.3      2017-09-09 [1] CRAN (R 4.4.3)
+##  gtable                 0.3.6    2024-10-25 [1] CRAN (R 4.4.3)
+##  gtools                 3.9.5    2023-11-20 [1] CRAN (R 4.4.3)
+##  HDF5Array              1.34.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  hms                    1.1.4    2025-10-17 [1] CRAN (R 4.4.3)
+##  htmltools              0.5.8.1  2024-04-04 [1] CRAN (R 4.4.3)
+##  httpuv                 1.6.16   2025-04-16 [1] CRAN (R 4.4.3)
+##  httr                   1.4.7    2023-08-15 [1] CRAN (R 4.4.3)
+##  IRanges              * 2.40.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  iterators              1.0.14   2022-02-05 [1] CRAN (R 4.4.3)
+##  jquerylib              0.1.4    2021-04-26 [1] CRAN (R 4.4.3)
+##  jsonlite               2.0.0    2025-03-27 [1] CRAN (R 4.4.3)
+##  knitr                  1.50     2025-03-16 [1] CRAN (R 4.4.3)
+##  later                  1.4.4    2025-08-27 [1] CRAN (R 4.4.3)
+##  lattice                0.22-7   2025-04-02 [1] CRAN (R 4.4.3)
+##  lifecycle              1.0.4    2023-11-07 [1] CRAN (R 4.4.3)
+##  limma                  3.62.1   2024-11-03 [1] Bioconductor 3.20 (R 4.4.2)
+##  locfit                 1.5-9.12 2025-03-05 [1] CRAN (R 4.4.3)
+##  lubridate            * 1.9.4    2024-12-08 [1] CRAN (R 4.4.3)
+##  magrittr             * 2.0.4    2025-09-12 [1] CRAN (R 4.4.3)
+##  Matrix                 1.7-4    2025-08-28 [1] CRAN (R 4.4.3)
+##  MatrixGenerics       * 1.18.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  matrixStats          * 1.5.0    2025-01-07 [1] CRAN (R 4.4.3)
+##  memoise                2.0.1    2021-11-26 [1] CRAN (R 4.4.3)
+##  otel                   0.2.0    2025-08-29 [1] CRAN (R 4.4.3)
+##  patchwork            * 1.3.2    2025-08-25 [1] CRAN (R 4.4.3)
+##  pillar                 1.11.1   2025-09-17 [1] CRAN (R 4.4.3)
+##  pkgbuild               1.4.8    2025-05-26 [1] CRAN (R 4.4.3)
+##  pkgconfig              2.0.3    2019-09-22 [1] CRAN (R 4.4.3)
+##  pkgload                1.4.1    2025-09-23 [1] CRAN (R 4.4.3)
+##  png                    0.1-8    2022-11-29 [1] CRAN (R 4.4.3)
+##  processx               3.8.6    2025-02-21 [1] CRAN (R 4.4.3)
+##  promises               1.5.0    2025-11-01 [1] CRAN (R 4.4.3)
+##  ps                     1.9.1    2025-04-12 [1] CRAN (R 4.4.3)
+##  purrr                * 1.2.0    2025-11-04 [1] CRAN (R 4.4.3)
+##  R.methodsS3            1.8.2    2022-06-13 [1] CRAN (R 4.4.3)
+##  R.oo                   1.27.1   2025-05-02 [1] CRAN (R 4.4.3)
+##  R.utils                2.13.0   2025-02-24 [1] CRAN (R 4.4.3)
+##  R6                     2.6.1    2025-02-15 [1] CRAN (R 4.4.3)
+##  RColorBrewer         * 1.1-3    2022-04-03 [1] CRAN (R 4.4.3)
+##  Rcpp                   1.1.0    2025-07-02 [1] CRAN (R 4.4.3)
+##  readr                * 2.1.6    2025-11-14 [1] CRAN (R 4.4.3)
+##  readxl               * 1.4.5    2025-03-07 [1] CRAN (R 4.4.3)
+##  registry               0.5-1    2019-03-05 [1] CRAN (R 4.4.3)
+##  remotes                2.5.0    2024-03-17 [1] CRAN (R 4.4.3)
+##  rhdf5                * 2.50.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  rhdf5filters           1.18.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  Rhdf5lib               1.28.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  rjson                  0.2.23   2024-09-16 [1] CRAN (R 4.4.3)
+##  rlang                  1.1.6    2025-04-11 [1] CRAN (R 4.4.3)
+##  rmarkdown              2.30     2025-09-28 [1] CRAN (R 4.4.3)
+##  rmdformats             1.0.4    2022-05-17 [1] CRAN (R 4.4.3)
+##  rprojroot              2.1.1    2025-08-26 [1] CRAN (R 4.4.3)
+##  rstudioapi             0.17.1   2024-10-22 [1] CRAN (R 4.4.3)
+##  S4Arrays               1.6.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  S4Vectors            * 0.44.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  S7                     0.2.1    2025-11-14 [1] CRAN (R 4.4.3)
+##  sass                   0.4.10   2025-04-11 [1] CRAN (R 4.4.3)
+##  scales               * 1.4.0    2025-04-24 [1] CRAN (R 4.4.3)
+##  scuttle                1.16.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  seriation            * 1.5.8    2025-08-20 [1] CRAN (R 4.4.3)
+##  sessioninfo            1.2.3    2025-02-05 [1] CRAN (R 4.4.3)
+##  shape                  1.4.6.1  2024-02-23 [1] CRAN (R 4.4.3)
+##  SingleCellExperiment * 1.28.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  SparseArray            1.6.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  sparseMatrixStats      1.18.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.3)
+##  statmod                1.5.1    2025-10-09 [1] CRAN (R 4.4.3)
+##  strex                * 2.0.1    2024-10-03 [1] CRAN (R 4.4.3)
+##  stringi                1.8.7    2025-03-27 [1] CRAN (R 4.4.3)
+##  stringr              * 1.6.0    2025-11-04 [1] CRAN (R 4.4.3)
+##  SummarizedExperiment * 1.36.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  svMisc                 1.4.3    2024-11-14 [1] CRAN (R 4.4.3)
+##  testit               * 0.13     2021-04-14 [1] CRAN (R 4.4.3)
+##  tibble               * 3.3.0    2025-06-08 [1] CRAN (R 4.4.3)
+##  tidyr                * 1.3.1    2024-01-24 [1] CRAN (R 4.4.3)
+##  tidyselect             1.2.1    2024-03-11 [1] CRAN (R 4.4.3)
+##  tidyverse            * 2.0.0    2023-02-22 [1] CRAN (R 4.4.3)
+##  timechange             0.3.0    2024-01-18 [1] CRAN (R 4.4.3)
+##  TSP                    1.2.6    2025-11-27 [1] CRAN (R 4.4.3)
+##  tzdb                   0.5.0    2025-03-15 [1] CRAN (R 4.4.3)
+##  UCSC.utils             1.2.0    2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  usethis                3.2.1    2025-09-06 [1] CRAN (R 4.4.3)
+##  vctrs                  0.6.5    2023-12-01 [1] CRAN (R 4.4.3)
+##  vipor                  0.4.7    2023-12-18 [1] CRAN (R 4.4.3)
+##  viridis              * 0.6.5    2024-01-29 [1] CRAN (R 4.4.3)
+##  viridisLite          * 0.4.2    2023-05-02 [1] CRAN (R 4.4.3)
+##  whisker                0.4.1    2022-12-05 [1] CRAN (R 4.4.3)
+##  withr                  3.0.2    2024-10-28 [1] CRAN (R 4.4.3)
+##  workflowr            * 1.7.2    2025-08-18 [1] CRAN (R 4.4.3)
+##  xfun                   0.54     2025-10-30 [1] CRAN (R 4.4.3)
+##  XVector                0.46.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+##  yaml                   2.3.11   2025-11-28 [1] CRAN (R 4.4.3)
+##  zlibbioc               1.52.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
+## 
+##  [1] /home/macnairw/packages/scprocess/.snakemake/conda/4fef11cadd34f9d2d13a0d6139d09340_/lib/R/library
+##  * ── Packages attached to the search path.
+## 
+## ──────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
+
+   
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>

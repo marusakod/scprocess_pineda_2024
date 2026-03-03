@@ -1,0 +1,39 @@
+project:
+  proj_dir:         /pstore/data/brain-sc-analysis/studies/pineda_2024
+  arv_uuids:        [arkau-4zz18-lwwp1d79awsx66x]
+  arv_instance:     arkau
+  full_tag:         pineda_2024
+  short_tag:        pineda
+  your_name:        Will Macnair
+  affiliation:      Church of England
+  sample_metadata:  data/metadata/pineda_2024_harmonized_metadata.csv
+  ref_txome:        human_2024
+  date_stamp:       "2026-02-28"
+  custom_sample_params: data/metadata/custom_params_pineda_2024.yaml
+  # exclude:
+  #   sample_id:      [SRR27882190]
+ambient:
+  ambient_method:   cellbender
+qc:
+  qc_max_mito:      0.10
+  qc_max_splice:    0.75
+marker_genes:
+  mkr_custom_genesets:
+  - name: human_brain
+label_celltypes:
+  - labeller:       scprocess
+    model:          human_cns
+zoom:
+  - data/metadata/zoom_params_pineda_2024_myeloid.yaml
+  - data/metadata/zoom_params_pineda_2024_neurons.yaml
+resources:
+  retries:                          1
+  mins_run_mapping:                 120
+  mins_run_cellbender:              180
+  gb_run_integration:               64
+  gb_run_marker_genes:              98
+  mins_run_marker_genes:            180
+  gb_render_html_label_celltypes:   32
+  mins_render_html_label_celltypes: 60
+  gb_zoom_run_marker_genes:         64
+  mins_zoom_run_marker_genes:       120

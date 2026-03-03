@@ -1,0 +1,2554 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+    
+        <meta name="date" content="2026-02-28" />
+    
+    <title>Ambient RNA removal diagnostics</title>
+
+        <script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <script src="site_libs/navigation-1.1/codefolding.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+    
+    
+    
+        <link rel="stylesheet" href="custom.css" type="text/css" />
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+        <script>
+      $(document).ready(function () {
+	  	  	  window.initializeCodeFolding("hide" === "show");
+	        });
+    </script>
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a
+            href="#distributions-of-spliced-pct.-in-empty-and-cell-barcodes"
+            id="toc-distributions-of-spliced-pct.-in-empty-and-cell-barcodes">Distributions
+            of spliced pct. in empty and cell barcodes</a>
+            <ul>
+            <li><a href="#gsm5292143"
+            id="toc-gsm5292143">GSM5292143</a></li>
+            <li><a href="#gsm5292144"
+            id="toc-gsm5292144">GSM5292144</a></li>
+            <li><a href="#gsm5292145"
+            id="toc-gsm5292145">GSM5292145</a></li>
+            <li><a href="#gsm5292146"
+            id="toc-gsm5292146">GSM5292146</a></li>
+            <li><a href="#gsm5292147"
+            id="toc-gsm5292147">GSM5292147</a></li>
+            <li><a href="#gsm5292148"
+            id="toc-gsm5292148">GSM5292148</a></li>
+            <li><a href="#gsm5292149"
+            id="toc-gsm5292149">GSM5292149</a></li>
+            <li><a href="#gsm5292150"
+            id="toc-gsm5292150">GSM5292150</a></li>
+            <li><a href="#gsm5292151"
+            id="toc-gsm5292151">GSM5292151</a></li>
+            <li><a href="#gsm5292152"
+            id="toc-gsm5292152">GSM5292152</a></li>
+            <li><a href="#gsm5292153"
+            id="toc-gsm5292153">GSM5292153</a></li>
+            <li><a href="#gsm5292154"
+            id="toc-gsm5292154">GSM5292154</a></li>
+            <li><a href="#gsm5292155"
+            id="toc-gsm5292155">GSM5292155</a></li>
+            <li><a href="#gsm5292156"
+            id="toc-gsm5292156">GSM5292156</a></li>
+            <li><a href="#gsm5292157"
+            id="toc-gsm5292157">GSM5292157</a></li>
+            <li><a href="#gsm5292158"
+            id="toc-gsm5292158">GSM5292158</a></li>
+            <li><a href="#gsm5292159"
+            id="toc-gsm5292159">GSM5292159</a></li>
+            <li><a href="#gsm5292160"
+            id="toc-gsm5292160">GSM5292160</a></li>
+            <li><a href="#gsm5292161"
+            id="toc-gsm5292161">GSM5292161</a></li>
+            <li><a href="#gsm5292162"
+            id="toc-gsm5292162">GSM5292162</a></li>
+            <li><a href="#gsm5292163"
+            id="toc-gsm5292163">GSM5292163</a></li>
+            <li><a href="#gsm5292164"
+            id="toc-gsm5292164">GSM5292164</a></li>
+            <li><a href="#gsm5292165"
+            id="toc-gsm5292165">GSM5292165</a></li>
+            <li><a href="#gsm5292166"
+            id="toc-gsm5292166">GSM5292166</a></li>
+            <li><a href="#gsm5292167"
+            id="toc-gsm5292167">GSM5292167</a></li>
+            <li><a href="#gsm5292168"
+            id="toc-gsm5292168">GSM5292168</a></li>
+            <li><a href="#gsm5292169"
+            id="toc-gsm5292169">GSM5292169</a></li>
+            <li><a href="#gsm5292170"
+            id="toc-gsm5292170">GSM5292170</a></li>
+            <li><a href="#gsm5292171"
+            id="toc-gsm5292171">GSM5292171</a></li>
+            <li><a href="#gsm5292172"
+            id="toc-gsm5292172">GSM5292172</a></li>
+            <li><a href="#gsm5292173"
+            id="toc-gsm5292173">GSM5292173</a></li>
+            <li><a href="#gsm5292174"
+            id="toc-gsm5292174">GSM5292174</a></li>
+            <li><a href="#gsm5292175"
+            id="toc-gsm5292175">GSM5292175</a></li>
+            <li><a href="#gsm5292176"
+            id="toc-gsm5292176">GSM5292176</a></li>
+            <li><a href="#gsm5292177"
+            id="toc-gsm5292177">GSM5292177</a></li>
+            <li><a href="#gsm5292178"
+            id="toc-gsm5292178">GSM5292178</a></li>
+            <li><a href="#gsm5292179"
+            id="toc-gsm5292179">GSM5292179</a></li>
+            <li><a href="#gsm5292180"
+            id="toc-gsm5292180">GSM5292180</a></li>
+            <li><a href="#gsm5292181"
+            id="toc-gsm5292181">GSM5292181</a></li>
+            <li><a href="#gsm5292182"
+            id="toc-gsm5292182">GSM5292182</a></li>
+            <li><a href="#gsm5292183"
+            id="toc-gsm5292183">GSM5292183</a></li>
+            <li><a href="#gsm5292184"
+            id="toc-gsm5292184">GSM5292184</a></li>
+            <li><a href="#gsm5292185"
+            id="toc-gsm5292185">GSM5292185</a></li>
+            <li><a href="#gsm5292186"
+            id="toc-gsm5292186">GSM5292186</a></li>
+            <li><a href="#gsm5292187"
+            id="toc-gsm5292187">GSM5292187</a></li>
+            <li><a href="#gsm5292188"
+            id="toc-gsm5292188">GSM5292188</a></li>
+            <li><a href="#gsm5292189"
+            id="toc-gsm5292189">GSM5292189</a></li>
+            <li><a href="#gsm5292190"
+            id="toc-gsm5292190">GSM5292190</a></li>
+            <li><a href="#gsm5292191"
+            id="toc-gsm5292191">GSM5292191</a></li>
+            <li><a href="#gsm5292192"
+            id="toc-gsm5292192">GSM5292192</a></li>
+            <li><a href="#gsm5292193"
+            id="toc-gsm5292193">GSM5292193</a></li>
+            <li><a href="#gsm5292194"
+            id="toc-gsm5292194">GSM5292194</a></li>
+            <li><a href="#gsm5292195"
+            id="toc-gsm5292195">GSM5292195</a></li>
+            <li><a href="#gsm5292196"
+            id="toc-gsm5292196">GSM5292196</a></li>
+            <li><a href="#gsm5292197"
+            id="toc-gsm5292197">GSM5292197</a></li>
+            <li><a href="#gsm5292198"
+            id="toc-gsm5292198">GSM5292198</a></li>
+            <li><a href="#gsm5292199"
+            id="toc-gsm5292199">GSM5292199</a></li>
+            <li><a href="#gsm5292200"
+            id="toc-gsm5292200">GSM5292200</a></li>
+            <li><a href="#gsm5292201"
+            id="toc-gsm5292201">GSM5292201</a></li>
+            <li><a href="#gsm5292202"
+            id="toc-gsm5292202">GSM5292202</a></li>
+            <li><a href="#gsm5292203"
+            id="toc-gsm5292203">GSM5292203</a></li>
+            <li><a href="#gsm5292204"
+            id="toc-gsm5292204">GSM5292204</a></li>
+            <li><a href="#gsm5292205"
+            id="toc-gsm5292205">GSM5292205</a></li>
+            <li><a href="#gsm5292206"
+            id="toc-gsm5292206">GSM5292206</a></li>
+            <li><a href="#gsm5292207"
+            id="toc-gsm5292207">GSM5292207</a></li>
+            <li><a href="#gsm5292208"
+            id="toc-gsm5292208">GSM5292208</a></li>
+            <li><a href="#srr27882073"
+            id="toc-srr27882073">SRR27882073</a></li>
+            <li><a href="#srr27882074"
+            id="toc-srr27882074">SRR27882074</a></li>
+            <li><a href="#srr27882075"
+            id="toc-srr27882075">SRR27882075</a></li>
+            <li><a href="#srr27882077"
+            id="toc-srr27882077">SRR27882077</a></li>
+            <li><a href="#srr27882078"
+            id="toc-srr27882078">SRR27882078</a></li>
+            <li><a href="#srr27882079"
+            id="toc-srr27882079">SRR27882079</a></li>
+            <li><a href="#srr27882080"
+            id="toc-srr27882080">SRR27882080</a></li>
+            <li><a href="#srr27882081"
+            id="toc-srr27882081">SRR27882081</a></li>
+            <li><a href="#srr27882082"
+            id="toc-srr27882082">SRR27882082</a></li>
+            <li><a href="#srr27882084"
+            id="toc-srr27882084">SRR27882084</a></li>
+            <li><a href="#srr27882085"
+            id="toc-srr27882085">SRR27882085</a></li>
+            <li><a href="#srr27882086"
+            id="toc-srr27882086">SRR27882086</a></li>
+            <li><a href="#srr27882088"
+            id="toc-srr27882088">SRR27882088</a></li>
+            <li><a href="#srr27882089"
+            id="toc-srr27882089">SRR27882089</a></li>
+            <li><a href="#srr27882090"
+            id="toc-srr27882090">SRR27882090</a></li>
+            <li><a href="#srr27882091"
+            id="toc-srr27882091">SRR27882091</a></li>
+            <li><a href="#srr27882092"
+            id="toc-srr27882092">SRR27882092</a></li>
+            <li><a href="#srr27882093"
+            id="toc-srr27882093">SRR27882093</a></li>
+            <li><a href="#srr27882094"
+            id="toc-srr27882094">SRR27882094</a></li>
+            <li><a href="#srr27882148"
+            id="toc-srr27882148">SRR27882148</a></li>
+            <li><a href="#srr27882149"
+            id="toc-srr27882149">SRR27882149</a></li>
+            <li><a href="#srr27882150"
+            id="toc-srr27882150">SRR27882150</a></li>
+            <li><a href="#srr27882151"
+            id="toc-srr27882151">SRR27882151</a></li>
+            <li><a href="#srr27882152"
+            id="toc-srr27882152">SRR27882152</a></li>
+            <li><a href="#srr27882153"
+            id="toc-srr27882153">SRR27882153</a></li>
+            <li><a href="#srr27882154"
+            id="toc-srr27882154">SRR27882154</a></li>
+            <li><a href="#srr27882156"
+            id="toc-srr27882156">SRR27882156</a></li>
+            <li><a href="#srr27882157"
+            id="toc-srr27882157">SRR27882157</a></li>
+            <li><a href="#srr27882158"
+            id="toc-srr27882158">SRR27882158</a></li>
+            <li><a href="#srr27882159"
+            id="toc-srr27882159">SRR27882159</a></li>
+            <li><a href="#srr27882160"
+            id="toc-srr27882160">SRR27882160</a></li>
+            <li><a href="#srr27882161"
+            id="toc-srr27882161">SRR27882161</a></li>
+            <li><a href="#srr27882162"
+            id="toc-srr27882162">SRR27882162</a></li>
+            <li><a href="#srr27882163"
+            id="toc-srr27882163">SRR27882163</a></li>
+            <li><a href="#srr27882164"
+            id="toc-srr27882164">SRR27882164</a></li>
+            <li><a href="#srr27882165"
+            id="toc-srr27882165">SRR27882165</a></li>
+            <li><a href="#srr27882166"
+            id="toc-srr27882166">SRR27882166</a></li>
+            <li><a href="#srr27882167"
+            id="toc-srr27882167">SRR27882167</a></li>
+            <li><a href="#srr27882168"
+            id="toc-srr27882168">SRR27882168</a></li>
+            <li><a href="#srr27882169"
+            id="toc-srr27882169">SRR27882169</a></li>
+            <li><a href="#srr27882170"
+            id="toc-srr27882170">SRR27882170</a></li>
+            <li><a href="#srr27882171"
+            id="toc-srr27882171">SRR27882171</a></li>
+            <li><a href="#srr27882172"
+            id="toc-srr27882172">SRR27882172</a></li>
+            <li><a href="#srr27882173"
+            id="toc-srr27882173">SRR27882173</a></li>
+            <li><a href="#srr27882174"
+            id="toc-srr27882174">SRR27882174</a></li>
+            <li><a href="#srr27882175"
+            id="toc-srr27882175">SRR27882175</a></li>
+            <li><a href="#srr27882177"
+            id="toc-srr27882177">SRR27882177</a></li>
+            <li><a href="#srr27882178"
+            id="toc-srr27882178">SRR27882178</a></li>
+            <li><a href="#srr27882179"
+            id="toc-srr27882179">SRR27882179</a></li>
+            <li><a href="#srr27882180"
+            id="toc-srr27882180">SRR27882180</a></li>
+            <li><a href="#srr27882181"
+            id="toc-srr27882181">SRR27882181</a></li>
+            <li><a href="#srr27882182"
+            id="toc-srr27882182">SRR27882182</a></li>
+            <li><a href="#srr27882183"
+            id="toc-srr27882183">SRR27882183</a></li>
+            <li><a href="#srr27882185"
+            id="toc-srr27882185">SRR27882185</a></li>
+            <li><a href="#srr27882186"
+            id="toc-srr27882186">SRR27882186</a></li>
+            <li><a href="#srr27882187"
+            id="toc-srr27882187">SRR27882187</a></li>
+            <li><a href="#srr27882188"
+            id="toc-srr27882188">SRR27882188</a></li>
+            <li><a href="#srr27882189"
+            id="toc-srr27882189">SRR27882189</a></li>
+            <li><a href="#srr27882190"
+            id="toc-srr27882190">SRR27882190</a></li>
+            <li><a href="#srr27882191"
+            id="toc-srr27882191">SRR27882191</a></li>
+            <li><a href="#srr27882192"
+            id="toc-srr27882192">SRR27882192</a></li>
+            <li><a href="#srr27882193"
+            id="toc-srr27882193">SRR27882193</a></li>
+            <li><a href="#srr27882194"
+            id="toc-srr27882194">SRR27882194</a></li>
+            <li><a href="#srr27882196"
+            id="toc-srr27882196">SRR27882196</a></li>
+            <li><a href="#srr27882197"
+            id="toc-srr27882197">SRR27882197</a></li>
+            <li><a href="#srr27882198"
+            id="toc-srr27882198">SRR27882198</a></li>
+            <li><a href="#srr27882199"
+            id="toc-srr27882199">SRR27882199</a></li>
+            <li><a href="#srr27882200"
+            id="toc-srr27882200">SRR27882200</a></li>
+            <li><a href="#srr27882201"
+            id="toc-srr27882201">SRR27882201</a></li>
+            <li><a href="#srr27882202"
+            id="toc-srr27882202">SRR27882202</a></li>
+            <li><a href="#srr27882203"
+            id="toc-srr27882203">SRR27882203</a></li>
+            <li><a href="#srr27882204"
+            id="toc-srr27882204">SRR27882204</a></li>
+            <li><a href="#srr27882205"
+            id="toc-srr27882205">SRR27882205</a></li>
+            <li><a href="#srr27882207"
+            id="toc-srr27882207">SRR27882207</a></li>
+            <li><a href="#srr27882208"
+            id="toc-srr27882208">SRR27882208</a></li>
+            <li><a href="#srr27882209"
+            id="toc-srr27882209">SRR27882209</a></li>
+            <li><a href="#srr27882210"
+            id="toc-srr27882210">SRR27882210</a></li>
+            <li><a href="#srr27882211"
+            id="toc-srr27882211">SRR27882211</a></li>
+            <li><a href="#srr27882212"
+            id="toc-srr27882212">SRR27882212</a></li>
+            <li><a href="#srr27882213"
+            id="toc-srr27882213">SRR27882213</a></li>
+            <li><a href="#srr27882214"
+            id="toc-srr27882214">SRR27882214</a></li>
+            <li><a href="#srr27882215"
+            id="toc-srr27882215">SRR27882215</a></li>
+            <li><a href="#srr27882216"
+            id="toc-srr27882216">SRR27882216</a></li>
+            </ul></li>
+            <li><a href="#how-many-reads-were-removed-as-ambient"
+            id="toc-how-many-reads-were-removed-as-ambient">How many
+            reads were removed as ambient?</a>
+            <ul>
+            <li><a href="#samples-1---10"
+            id="toc-samples-1---10">samples 1 - 10</a></li>
+            <li><a href="#samples-11---20"
+            id="toc-samples-11---20">samples 11 - 20</a></li>
+            <li><a href="#samples-21---30"
+            id="toc-samples-21---30">samples 21 - 30</a></li>
+            <li><a href="#samples-31---40"
+            id="toc-samples-31---40">samples 31 - 40</a></li>
+            <li><a href="#samples-41---50"
+            id="toc-samples-41---50">samples 41 - 50</a></li>
+            <li><a href="#samples-51---60"
+            id="toc-samples-51---60">samples 51 - 60</a></li>
+            <li><a href="#samples-61---70"
+            id="toc-samples-61---70">samples 61 - 70</a></li>
+            <li><a href="#samples-71---80"
+            id="toc-samples-71---80">samples 71 - 80</a></li>
+            <li><a href="#samples-81---90"
+            id="toc-samples-81---90">samples 81 - 90</a></li>
+            <li><a href="#samples-91---100"
+            id="toc-samples-91---100">samples 91 - 100</a></li>
+            <li><a href="#samples-101---110"
+            id="toc-samples-101---110">samples 101 - 110</a></li>
+            <li><a href="#samples-111---120"
+            id="toc-samples-111---120">samples 111 - 120</a></li>
+            <li><a href="#samples-121---130"
+            id="toc-samples-121---130">samples 121 - 130</a></li>
+            <li><a href="#samples-131---140"
+            id="toc-samples-131---140">samples 131 - 140</a></li>
+            <li><a href="#samples-141---149"
+            id="toc-samples-141---149">samples 141 - 149</a></li>
+            </ul></li>
+            <li><a href="#samples-excluded-by-ambient-removal-step"
+            id="toc-samples-excluded-by-ambient-removal-step">Samples
+            excluded by ambient removal step</a></li>
+            <li><a href="#r-session-info" id="toc-r-session-info">R
+            session info</a></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+      <div class="btn-group pull-right">
+     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+     <ul class="dropdown-menu" style="min-width: 50px;">
+	    	    <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+	    <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+	    	    	         </ul>
+   </div>
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">dam_mice_2</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">Ambient RNA removal diagnostics</h1>
+      
+      <p class="authors">
+           <span class="glyphicon glyphicon-user"></span> Will Macnair
+           - Church of England
+               <br>
+      </p>
+         <p class="date"><span class="glyphicon glyphicon-calendar"></span> February
+28, 2026</p>
+           
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<div id="distributions-of-spliced-pct.-in-empty-and-cell-barcodes"
+class="section level2 tabset">
+<h2 class="tabset">Distributions of spliced pct. in empty and cell
+barcodes</h2>
+<p>The plots show the relationship between the number of UMIs and the
+percentage of spliced reads, separated by sample, both before and after
+ambient RNA removal. Ambient RNA is typically characterized by a high
+proportion of spliced reads, making the spliced percentage a useful
+metric for evaluating the effectiveness of an ambient RNA removal
+method. By examining changes in spliced percentages, we can assess how
+well the method performed in reducing ambient RNA contamination.</p>
+<pre class="r"><code>for (ss in s_lvls) {
+  cat(&quot;### &quot;, ss, &quot;\n&quot;)
+  print( plot_spliced_vs_umis(ss, usa_dt_ls[[ss]], ok_bcs_ls[[ss]], tot_inc_ls[[ss]]) )
+  cat(&quot;\n\n&quot;)
+}</code></pre>
+<div id="gsm5292143" class="section level3">
+<h3>GSM5292143</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-1.png" width="864" /></p>
+</div>
+<div id="gsm5292144" class="section level3">
+<h3>GSM5292144</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-2.png" width="864" /></p>
+</div>
+<div id="gsm5292145" class="section level3">
+<h3>GSM5292145</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-3.png" width="864" /></p>
+</div>
+<div id="gsm5292146" class="section level3">
+<h3>GSM5292146</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-4.png" width="864" /></p>
+</div>
+<div id="gsm5292147" class="section level3">
+<h3>GSM5292147</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-5.png" width="864" /></p>
+</div>
+<div id="gsm5292148" class="section level3">
+<h3>GSM5292148</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-6.png" width="864" /></p>
+</div>
+<div id="gsm5292149" class="section level3">
+<h3>GSM5292149</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-7.png" width="864" /></p>
+</div>
+<div id="gsm5292150" class="section level3">
+<h3>GSM5292150</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-8.png" width="864" /></p>
+</div>
+<div id="gsm5292151" class="section level3">
+<h3>GSM5292151</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-9.png" width="864" /></p>
+</div>
+<div id="gsm5292152" class="section level3">
+<h3>GSM5292152</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-10.png" width="864" /></p>
+</div>
+<div id="gsm5292153" class="section level3">
+<h3>GSM5292153</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-11.png" width="864" /></p>
+</div>
+<div id="gsm5292154" class="section level3">
+<h3>GSM5292154</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-12.png" width="864" /></p>
+</div>
+<div id="gsm5292155" class="section level3">
+<h3>GSM5292155</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-13.png" width="864" /></p>
+</div>
+<div id="gsm5292156" class="section level3">
+<h3>GSM5292156</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-14.png" width="864" /></p>
+</div>
+<div id="gsm5292157" class="section level3">
+<h3>GSM5292157</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-15.png" width="864" /></p>
+</div>
+<div id="gsm5292158" class="section level3">
+<h3>GSM5292158</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-16.png" width="864" /></p>
+</div>
+<div id="gsm5292159" class="section level3">
+<h3>GSM5292159</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-17.png" width="864" /></p>
+</div>
+<div id="gsm5292160" class="section level3">
+<h3>GSM5292160</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-18.png" width="864" /></p>
+</div>
+<div id="gsm5292161" class="section level3">
+<h3>GSM5292161</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-19.png" width="864" /></p>
+</div>
+<div id="gsm5292162" class="section level3">
+<h3>GSM5292162</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-20.png" width="864" /></p>
+</div>
+<div id="gsm5292163" class="section level3">
+<h3>GSM5292163</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-21.png" width="864" /></p>
+</div>
+<div id="gsm5292164" class="section level3">
+<h3>GSM5292164</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-22.png" width="864" /></p>
+</div>
+<div id="gsm5292165" class="section level3">
+<h3>GSM5292165</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-23.png" width="864" /></p>
+</div>
+<div id="gsm5292166" class="section level3">
+<h3>GSM5292166</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-24.png" width="864" /></p>
+</div>
+<div id="gsm5292167" class="section level3">
+<h3>GSM5292167</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-25.png" width="864" /></p>
+</div>
+<div id="gsm5292168" class="section level3">
+<h3>GSM5292168</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-26.png" width="864" /></p>
+</div>
+<div id="gsm5292169" class="section level3">
+<h3>GSM5292169</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-27.png" width="864" /></p>
+</div>
+<div id="gsm5292170" class="section level3">
+<h3>GSM5292170</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-28.png" width="864" /></p>
+</div>
+<div id="gsm5292171" class="section level3">
+<h3>GSM5292171</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-29.png" width="864" /></p>
+</div>
+<div id="gsm5292172" class="section level3">
+<h3>GSM5292172</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-30.png" width="864" /></p>
+</div>
+<div id="gsm5292173" class="section level3">
+<h3>GSM5292173</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-31.png" width="864" /></p>
+</div>
+<div id="gsm5292174" class="section level3">
+<h3>GSM5292174</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-32.png" width="864" /></p>
+</div>
+<div id="gsm5292175" class="section level3">
+<h3>GSM5292175</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-33.png" width="864" /></p>
+</div>
+<div id="gsm5292176" class="section level3">
+<h3>GSM5292176</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-34.png" width="864" /></p>
+</div>
+<div id="gsm5292177" class="section level3">
+<h3>GSM5292177</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-35.png" width="864" /></p>
+</div>
+<div id="gsm5292178" class="section level3">
+<h3>GSM5292178</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-36.png" width="864" /></p>
+</div>
+<div id="gsm5292179" class="section level3">
+<h3>GSM5292179</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-37.png" width="864" /></p>
+</div>
+<div id="gsm5292180" class="section level3">
+<h3>GSM5292180</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-38.png" width="864" /></p>
+</div>
+<div id="gsm5292181" class="section level3">
+<h3>GSM5292181</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-39.png" width="864" /></p>
+</div>
+<div id="gsm5292182" class="section level3">
+<h3>GSM5292182</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-40.png" width="864" /></p>
+</div>
+<div id="gsm5292183" class="section level3">
+<h3>GSM5292183</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-41.png" width="864" /></p>
+</div>
+<div id="gsm5292184" class="section level3">
+<h3>GSM5292184</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-42.png" width="864" /></p>
+</div>
+<div id="gsm5292185" class="section level3">
+<h3>GSM5292185</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-43.png" width="864" /></p>
+</div>
+<div id="gsm5292186" class="section level3">
+<h3>GSM5292186</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-44.png" width="864" /></p>
+</div>
+<div id="gsm5292187" class="section level3">
+<h3>GSM5292187</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-45.png" width="864" /></p>
+</div>
+<div id="gsm5292188" class="section level3">
+<h3>GSM5292188</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-46.png" width="864" /></p>
+</div>
+<div id="gsm5292189" class="section level3">
+<h3>GSM5292189</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-47.png" width="864" /></p>
+</div>
+<div id="gsm5292190" class="section level3">
+<h3>GSM5292190</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-48.png" width="864" /></p>
+</div>
+<div id="gsm5292191" class="section level3">
+<h3>GSM5292191</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-49.png" width="864" /></p>
+</div>
+<div id="gsm5292192" class="section level3">
+<h3>GSM5292192</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-50.png" width="864" /></p>
+</div>
+<div id="gsm5292193" class="section level3">
+<h3>GSM5292193</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-51.png" width="864" /></p>
+</div>
+<div id="gsm5292194" class="section level3">
+<h3>GSM5292194</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-52.png" width="864" /></p>
+</div>
+<div id="gsm5292195" class="section level3">
+<h3>GSM5292195</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-53.png" width="864" /></p>
+</div>
+<div id="gsm5292196" class="section level3">
+<h3>GSM5292196</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-54.png" width="864" /></p>
+</div>
+<div id="gsm5292197" class="section level3">
+<h3>GSM5292197</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-55.png" width="864" /></p>
+</div>
+<div id="gsm5292198" class="section level3">
+<h3>GSM5292198</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-56.png" width="864" /></p>
+</div>
+<div id="gsm5292199" class="section level3">
+<h3>GSM5292199</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-57.png" width="864" /></p>
+</div>
+<div id="gsm5292200" class="section level3">
+<h3>GSM5292200</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-58.png" width="864" /></p>
+</div>
+<div id="gsm5292201" class="section level3">
+<h3>GSM5292201</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-59.png" width="864" /></p>
+</div>
+<div id="gsm5292202" class="section level3">
+<h3>GSM5292202</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-60.png" width="864" /></p>
+</div>
+<div id="gsm5292203" class="section level3">
+<h3>GSM5292203</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-61.png" width="864" /></p>
+</div>
+<div id="gsm5292204" class="section level3">
+<h3>GSM5292204</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-62.png" width="864" /></p>
+</div>
+<div id="gsm5292205" class="section level3">
+<h3>GSM5292205</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-63.png" width="864" /></p>
+</div>
+<div id="gsm5292206" class="section level3">
+<h3>GSM5292206</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-64.png" width="864" /></p>
+</div>
+<div id="gsm5292207" class="section level3">
+<h3>GSM5292207</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-65.png" width="864" /></p>
+</div>
+<div id="gsm5292208" class="section level3">
+<h3>GSM5292208</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-66.png" width="864" /></p>
+</div>
+<div id="srr27882073" class="section level3">
+<h3>SRR27882073</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-67.png" width="864" /></p>
+</div>
+<div id="srr27882074" class="section level3">
+<h3>SRR27882074</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-68.png" width="864" /></p>
+</div>
+<div id="srr27882075" class="section level3">
+<h3>SRR27882075</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-69.png" width="864" /></p>
+</div>
+<div id="srr27882077" class="section level3">
+<h3>SRR27882077</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-70.png" width="864" /></p>
+</div>
+<div id="srr27882078" class="section level3">
+<h3>SRR27882078</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-71.png" width="864" /></p>
+</div>
+<div id="srr27882079" class="section level3">
+<h3>SRR27882079</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-72.png" width="864" /></p>
+</div>
+<div id="srr27882080" class="section level3">
+<h3>SRR27882080</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-73.png" width="864" /></p>
+</div>
+<div id="srr27882081" class="section level3">
+<h3>SRR27882081</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-74.png" width="864" /></p>
+</div>
+<div id="srr27882082" class="section level3">
+<h3>SRR27882082</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-75.png" width="864" /></p>
+</div>
+<div id="srr27882084" class="section level3">
+<h3>SRR27882084</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-76.png" width="864" /></p>
+</div>
+<div id="srr27882085" class="section level3">
+<h3>SRR27882085</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-77.png" width="864" /></p>
+</div>
+<div id="srr27882086" class="section level3">
+<h3>SRR27882086</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-78.png" width="864" /></p>
+</div>
+<div id="srr27882088" class="section level3">
+<h3>SRR27882088</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-79.png" width="864" /></p>
+</div>
+<div id="srr27882089" class="section level3">
+<h3>SRR27882089</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-80.png" width="864" /></p>
+</div>
+<div id="srr27882090" class="section level3">
+<h3>SRR27882090</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-81.png" width="864" /></p>
+</div>
+<div id="srr27882091" class="section level3">
+<h3>SRR27882091</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-82.png" width="864" /></p>
+</div>
+<div id="srr27882092" class="section level3">
+<h3>SRR27882092</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-83.png" width="864" /></p>
+</div>
+<div id="srr27882093" class="section level3">
+<h3>SRR27882093</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-84.png" width="864" /></p>
+</div>
+<div id="srr27882094" class="section level3">
+<h3>SRR27882094</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-85.png" width="864" /></p>
+</div>
+<div id="srr27882148" class="section level3">
+<h3>SRR27882148</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-86.png" width="864" /></p>
+</div>
+<div id="srr27882149" class="section level3">
+<h3>SRR27882149</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-87.png" width="864" /></p>
+</div>
+<div id="srr27882150" class="section level3">
+<h3>SRR27882150</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-88.png" width="864" /></p>
+</div>
+<div id="srr27882151" class="section level3">
+<h3>SRR27882151</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-89.png" width="864" /></p>
+</div>
+<div id="srr27882152" class="section level3">
+<h3>SRR27882152</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-90.png" width="864" /></p>
+</div>
+<div id="srr27882153" class="section level3">
+<h3>SRR27882153</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-91.png" width="864" /></p>
+</div>
+<div id="srr27882154" class="section level3">
+<h3>SRR27882154</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-92.png" width="864" /></p>
+</div>
+<div id="srr27882156" class="section level3">
+<h3>SRR27882156</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-93.png" width="864" /></p>
+</div>
+<div id="srr27882157" class="section level3">
+<h3>SRR27882157</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-94.png" width="864" /></p>
+</div>
+<div id="srr27882158" class="section level3">
+<h3>SRR27882158</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-95.png" width="864" /></p>
+</div>
+<div id="srr27882159" class="section level3">
+<h3>SRR27882159</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-96.png" width="864" /></p>
+</div>
+<div id="srr27882160" class="section level3">
+<h3>SRR27882160</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-97.png" width="864" /></p>
+</div>
+<div id="srr27882161" class="section level3">
+<h3>SRR27882161</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-98.png" width="864" /></p>
+</div>
+<div id="srr27882162" class="section level3">
+<h3>SRR27882162</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-99.png" width="864" /></p>
+</div>
+<div id="srr27882163" class="section level3">
+<h3>SRR27882163</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-100.png" width="864" /></p>
+</div>
+<div id="srr27882164" class="section level3">
+<h3>SRR27882164</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-101.png" width="864" /></p>
+</div>
+<div id="srr27882165" class="section level3">
+<h3>SRR27882165</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-102.png" width="864" /></p>
+</div>
+<div id="srr27882166" class="section level3">
+<h3>SRR27882166</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-103.png" width="864" /></p>
+</div>
+<div id="srr27882167" class="section level3">
+<h3>SRR27882167</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-104.png" width="864" /></p>
+</div>
+<div id="srr27882168" class="section level3">
+<h3>SRR27882168</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-105.png" width="864" /></p>
+</div>
+<div id="srr27882169" class="section level3">
+<h3>SRR27882169</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-106.png" width="864" /></p>
+</div>
+<div id="srr27882170" class="section level3">
+<h3>SRR27882170</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-107.png" width="864" /></p>
+</div>
+<div id="srr27882171" class="section level3">
+<h3>SRR27882171</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-108.png" width="864" /></p>
+</div>
+<div id="srr27882172" class="section level3">
+<h3>SRR27882172</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-109.png" width="864" /></p>
+</div>
+<div id="srr27882173" class="section level3">
+<h3>SRR27882173</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-110.png" width="864" /></p>
+</div>
+<div id="srr27882174" class="section level3">
+<h3>SRR27882174</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-111.png" width="864" /></p>
+</div>
+<div id="srr27882175" class="section level3">
+<h3>SRR27882175</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-112.png" width="864" /></p>
+</div>
+<div id="srr27882177" class="section level3">
+<h3>SRR27882177</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-113.png" width="864" /></p>
+</div>
+<div id="srr27882178" class="section level3">
+<h3>SRR27882178</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-114.png" width="864" /></p>
+</div>
+<div id="srr27882179" class="section level3">
+<h3>SRR27882179</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-115.png" width="864" /></p>
+</div>
+<div id="srr27882180" class="section level3">
+<h3>SRR27882180</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-116.png" width="864" /></p>
+</div>
+<div id="srr27882181" class="section level3">
+<h3>SRR27882181</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-117.png" width="864" /></p>
+</div>
+<div id="srr27882182" class="section level3">
+<h3>SRR27882182</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-118.png" width="864" /></p>
+</div>
+<div id="srr27882183" class="section level3">
+<h3>SRR27882183</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-119.png" width="864" /></p>
+</div>
+<div id="srr27882185" class="section level3">
+<h3>SRR27882185</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-120.png" width="864" /></p>
+</div>
+<div id="srr27882186" class="section level3">
+<h3>SRR27882186</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-121.png" width="864" /></p>
+</div>
+<div id="srr27882187" class="section level3">
+<h3>SRR27882187</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-122.png" width="864" /></p>
+</div>
+<div id="srr27882188" class="section level3">
+<h3>SRR27882188</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-123.png" width="864" /></p>
+</div>
+<div id="srr27882189" class="section level3">
+<h3>SRR27882189</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-124.png" width="864" /></p>
+</div>
+<div id="srr27882190" class="section level3">
+<h3>SRR27882190</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-125.png" width="864" /></p>
+</div>
+<div id="srr27882191" class="section level3">
+<h3>SRR27882191</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-126.png" width="864" /></p>
+</div>
+<div id="srr27882192" class="section level3">
+<h3>SRR27882192</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-127.png" width="864" /></p>
+</div>
+<div id="srr27882193" class="section level3">
+<h3>SRR27882193</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-128.png" width="864" /></p>
+</div>
+<div id="srr27882194" class="section level3">
+<h3>SRR27882194</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-129.png" width="864" /></p>
+</div>
+<div id="srr27882196" class="section level3">
+<h3>SRR27882196</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-130.png" width="864" /></p>
+</div>
+<div id="srr27882197" class="section level3">
+<h3>SRR27882197</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-131.png" width="864" /></p>
+</div>
+<div id="srr27882198" class="section level3">
+<h3>SRR27882198</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-132.png" width="864" /></p>
+</div>
+<div id="srr27882199" class="section level3">
+<h3>SRR27882199</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-133.png" width="864" /></p>
+</div>
+<div id="srr27882200" class="section level3">
+<h3>SRR27882200</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-134.png" width="864" /></p>
+</div>
+<div id="srr27882201" class="section level3">
+<h3>SRR27882201</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-135.png" width="864" /></p>
+</div>
+<div id="srr27882202" class="section level3">
+<h3>SRR27882202</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-136.png" width="864" /></p>
+</div>
+<div id="srr27882203" class="section level3">
+<h3>SRR27882203</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-137.png" width="864" /></p>
+</div>
+<div id="srr27882204" class="section level3">
+<h3>SRR27882204</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-138.png" width="864" /></p>
+</div>
+<div id="srr27882205" class="section level3">
+<h3>SRR27882205</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-139.png" width="864" /></p>
+</div>
+<div id="srr27882207" class="section level3">
+<h3>SRR27882207</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-140.png" width="864" /></p>
+</div>
+<div id="srr27882208" class="section level3">
+<h3>SRR27882208</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-141.png" width="864" /></p>
+</div>
+<div id="srr27882209" class="section level3">
+<h3>SRR27882209</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-142.png" width="864" /></p>
+</div>
+<div id="srr27882210" class="section level3">
+<h3>SRR27882210</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-143.png" width="864" /></p>
+</div>
+<div id="srr27882211" class="section level3">
+<h3>SRR27882211</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-144.png" width="864" /></p>
+</div>
+<div id="srr27882212" class="section level3">
+<h3>SRR27882212</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-145.png" width="864" /></p>
+</div>
+<div id="srr27882213" class="section level3">
+<h3>SRR27882213</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-146.png" width="864" /></p>
+</div>
+<div id="srr27882214" class="section level3">
+<h3>SRR27882214</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-147.png" width="864" /></p>
+</div>
+<div id="srr27882215" class="section level3">
+<h3>SRR27882215</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-148.png" width="864" /></p>
+</div>
+<div id="srr27882216" class="section level3">
+<h3>SRR27882216</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_spliced_vs_umis-149.png" width="864" /></p>
+</div>
+</div>
+<div id="how-many-reads-were-removed-as-ambient"
+class="section level2 tabset">
+<h2 class="tabset">How many reads were removed as ambient?</h2>
+<p>Plots show what proportion of reads were removed from all barcodes
+called as cells.</p>
+<pre class="r"><code>for (ii in seq_along(chunks_ls)) {
+  chunk       = chunks_ls[[ii]]
+  cat(&quot;### samples &quot;, min(chunk), &quot;-&quot;, max(chunk), &quot;\n&quot;)
+  print(plot_reads_removed_as_ambient(usa_dt_ls[chunk], ok_bcs_ls[chunk]))
+  cat(&quot;\n\n&quot;)
+}</code></pre>
+<div id="samples-1---10" class="section level3">
+<h3>samples 1 - 10</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-1.png" width="960" /></p>
+</div>
+<div id="samples-11---20" class="section level3">
+<h3>samples 11 - 20</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-2.png" width="960" /></p>
+</div>
+<div id="samples-21---30" class="section level3">
+<h3>samples 21 - 30</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-3.png" width="960" /></p>
+</div>
+<div id="samples-31---40" class="section level3">
+<h3>samples 31 - 40</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-4.png" width="960" /></p>
+</div>
+<div id="samples-41---50" class="section level3">
+<h3>samples 41 - 50</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-5.png" width="960" /></p>
+</div>
+<div id="samples-51---60" class="section level3">
+<h3>samples 51 - 60</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-6.png" width="960" /></p>
+</div>
+<div id="samples-61---70" class="section level3">
+<h3>samples 61 - 70</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-7.png" width="960" /></p>
+</div>
+<div id="samples-71---80" class="section level3">
+<h3>samples 71 - 80</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-8.png" width="960" /></p>
+</div>
+<div id="samples-81---90" class="section level3">
+<h3>samples 81 - 90</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-9.png" width="960" /></p>
+</div>
+<div id="samples-91---100" class="section level3">
+<h3>samples 91 - 100</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-10.png" width="960" /></p>
+</div>
+<div id="samples-101---110" class="section level3">
+<h3>samples 101 - 110</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-11.png" width="960" /></p>
+</div>
+<div id="samples-111---120" class="section level3">
+<h3>samples 111 - 120</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-12.png" width="960" /></p>
+</div>
+<div id="samples-121---130" class="section level3">
+<h3>samples 121 - 130</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-13.png" width="960" /></p>
+</div>
+<div id="samples-131---140" class="section level3">
+<h3>samples 131 - 140</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-14.png" width="960" /></p>
+</div>
+<div id="samples-141---149" class="section level3">
+<h3>samples 141 - 149</h3>
+<p><img src="figure/pineda_ambient.Rmd/plot_reads_removed_as_ambient-15.png" width="960" /></p>
+</div>
+</div>
+<div id="samples-excluded-by-ambient-removal-step"
+class="section level2">
+<h2>Samples excluded by ambient removal step</h2>
+<p>CellBender includes all barcodes in the analysis up to the
+<code>total_droplets</code> threshold covering both cell-containing
+droplets and empty droplets. If CellBender calls the majority of these
+included droplets as cells, it may indicate an underlying issue. This
+typically occurs in low-quality samples where cell-containing barcodes
+and empty droplets cannot be clearly distinguished in the barcode rank
+plot. The table below shows the proportion of included droplets that
+were classified as cells by CellBender. Samples where this proportion
+exceeded % were excluded from further analysis.</p>
+<pre class="r"><code>calc_ambient_exclusions(stats_dt, run_var) %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">sample_id</th>
+<th align="right">total_droplets</th>
+<th align="right">kept_droplets</th>
+<th align="right">pct_kept</th>
+<th align="left">bad_run</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">GSM5292143</td>
+<td align="right">35173</td>
+<td align="right">11679</td>
+<td align="right">33.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292144</td>
+<td align="right">37914</td>
+<td align="right">16306</td>
+<td align="right">43.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292145</td>
+<td align="right">29983</td>
+<td align="right">7186</td>
+<td align="right">24.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292146</td>
+<td align="right">35361</td>
+<td align="right">12222</td>
+<td align="right">34.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292147</td>
+<td align="right">37893</td>
+<td align="right">13946</td>
+<td align="right">36.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292148</td>
+<td align="right">36487</td>
+<td align="right">12769</td>
+<td align="right">35.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292149</td>
+<td align="right">41396</td>
+<td align="right">16483</td>
+<td align="right">39.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292150</td>
+<td align="right">40048</td>
+<td align="right">14190</td>
+<td align="right">35.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292151</td>
+<td align="right">37819</td>
+<td align="right">11602</td>
+<td align="right">30.7</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292152</td>
+<td align="right">33970</td>
+<td align="right">5836</td>
+<td align="right">17.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292153</td>
+<td align="right">35151</td>
+<td align="right">8837</td>
+<td align="right">25.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292154</td>
+<td align="right">35114</td>
+<td align="right">7581</td>
+<td align="right">21.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292155</td>
+<td align="right">36153</td>
+<td align="right">7526</td>
+<td align="right">20.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292156</td>
+<td align="right">34555</td>
+<td align="right">9000</td>
+<td align="right">26.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292157</td>
+<td align="right">40829</td>
+<td align="right">9877</td>
+<td align="right">24.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292158</td>
+<td align="right">37305</td>
+<td align="right">11266</td>
+<td align="right">30.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292159</td>
+<td align="right">28882</td>
+<td align="right">8232</td>
+<td align="right">28.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292160</td>
+<td align="right">40863</td>
+<td align="right">15402</td>
+<td align="right">37.7</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292161</td>
+<td align="right">30376</td>
+<td align="right">9463</td>
+<td align="right">31.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292162</td>
+<td align="right">33760</td>
+<td align="right">11168</td>
+<td align="right">33.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292163</td>
+<td align="right">38375</td>
+<td align="right">15452</td>
+<td align="right">40.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292164</td>
+<td align="right">38757</td>
+<td align="right">13156</td>
+<td align="right">33.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292165</td>
+<td align="right">35933</td>
+<td align="right">14462</td>
+<td align="right">40.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292166</td>
+<td align="right">31982</td>
+<td align="right">10335</td>
+<td align="right">32.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292167</td>
+<td align="right">29697</td>
+<td align="right">8779</td>
+<td align="right">29.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292168</td>
+<td align="right">27530</td>
+<td align="right">4241</td>
+<td align="right">15.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292169</td>
+<td align="right">25636</td>
+<td align="right">10110</td>
+<td align="right">39.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292170</td>
+<td align="right">28106</td>
+<td align="right">4603</td>
+<td align="right">16.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292171</td>
+<td align="right">26013</td>
+<td align="right">3370</td>
+<td align="right">13.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292172</td>
+<td align="right">31901</td>
+<td align="right">5743</td>
+<td align="right">18.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292173</td>
+<td align="right">27815</td>
+<td align="right">5683</td>
+<td align="right">20.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292174</td>
+<td align="right">32868</td>
+<td align="right">8040</td>
+<td align="right">24.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292175</td>
+<td align="right">35862</td>
+<td align="right">8644</td>
+<td align="right">24.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292176</td>
+<td align="right">30626</td>
+<td align="right">9818</td>
+<td align="right">32.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292177</td>
+<td align="right">27604</td>
+<td align="right">5668</td>
+<td align="right">20.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292178</td>
+<td align="right">34758</td>
+<td align="right">7913</td>
+<td align="right">22.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292179</td>
+<td align="right">24487</td>
+<td align="right">7138</td>
+<td align="right">29.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292180</td>
+<td align="right">35542</td>
+<td align="right">8810</td>
+<td align="right">24.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292181</td>
+<td align="right">33774</td>
+<td align="right">7517</td>
+<td align="right">22.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292182</td>
+<td align="right">27916</td>
+<td align="right">3716</td>
+<td align="right">13.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292183</td>
+<td align="right">13008</td>
+<td align="right">1856</td>
+<td align="right">14.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292184</td>
+<td align="right">31384</td>
+<td align="right">6391</td>
+<td align="right">20.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292185</td>
+<td align="right">28720</td>
+<td align="right">6241</td>
+<td align="right">21.7</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292186</td>
+<td align="right">36164</td>
+<td align="right">9651</td>
+<td align="right">26.7</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292187</td>
+<td align="right">33555</td>
+<td align="right">8364</td>
+<td align="right">24.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292188</td>
+<td align="right">34637</td>
+<td align="right">6880</td>
+<td align="right">19.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292189</td>
+<td align="right">37125</td>
+<td align="right">14088</td>
+<td align="right">37.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292190</td>
+<td align="right">31745</td>
+<td align="right">7506</td>
+<td align="right">23.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292191</td>
+<td align="right">37785</td>
+<td align="right">9860</td>
+<td align="right">26.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292192</td>
+<td align="right">30344</td>
+<td align="right">8945</td>
+<td align="right">29.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292193</td>
+<td align="right">33076</td>
+<td align="right">8060</td>
+<td align="right">24.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292194</td>
+<td align="right">39819</td>
+<td align="right">14566</td>
+<td align="right">36.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292195</td>
+<td align="right">28079</td>
+<td align="right">6666</td>
+<td align="right">23.7</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292196</td>
+<td align="right">35030</td>
+<td align="right">8912</td>
+<td align="right">25.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292197</td>
+<td align="right">37197</td>
+<td align="right">11653</td>
+<td align="right">31.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292198</td>
+<td align="right">26739</td>
+<td align="right">9722</td>
+<td align="right">36.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292199</td>
+<td align="right">36340</td>
+<td align="right">9856</td>
+<td align="right">27.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292200</td>
+<td align="right">33537</td>
+<td align="right">9522</td>
+<td align="right">28.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292201</td>
+<td align="right">34889</td>
+<td align="right">7267</td>
+<td align="right">20.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292202</td>
+<td align="right">34340</td>
+<td align="right">8527</td>
+<td align="right">24.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292203</td>
+<td align="right">28656</td>
+<td align="right">6256</td>
+<td align="right">21.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292204</td>
+<td align="right">28264</td>
+<td align="right">5792</td>
+<td align="right">20.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292205</td>
+<td align="right">33974</td>
+<td align="right">8918</td>
+<td align="right">26.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292206</td>
+<td align="right">24306</td>
+<td align="right">5001</td>
+<td align="right">20.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">GSM5292207</td>
+<td align="right">26218</td>
+<td align="right">4257</td>
+<td align="right">16.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">GSM5292208</td>
+<td align="right">35771</td>
+<td align="right">9686</td>
+<td align="right">27.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882073</td>
+<td align="right">29280</td>
+<td align="right">8385</td>
+<td align="right">28.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882074</td>
+<td align="right">33844</td>
+<td align="right">10155</td>
+<td align="right">30.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882075</td>
+<td align="right">40876</td>
+<td align="right">18327</td>
+<td align="right">44.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882077</td>
+<td align="right">39344</td>
+<td align="right">16662</td>
+<td align="right">42.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882078</td>
+<td align="right">36400</td>
+<td align="right">11305</td>
+<td align="right">31.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882079</td>
+<td align="right">36652</td>
+<td align="right">12050</td>
+<td align="right">32.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882080</td>
+<td align="right">34560</td>
+<td align="right">12622</td>
+<td align="right">36.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882081</td>
+<td align="right">33960</td>
+<td align="right">11481</td>
+<td align="right">33.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882082</td>
+<td align="right">35856</td>
+<td align="right">14312</td>
+<td align="right">39.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882084</td>
+<td align="right">39543</td>
+<td align="right">7860</td>
+<td align="right">19.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882085</td>
+<td align="right">40989</td>
+<td align="right">8579</td>
+<td align="right">20.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882086</td>
+<td align="right">41889</td>
+<td align="right">9570</td>
+<td align="right">22.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882088</td>
+<td align="right">42788</td>
+<td align="right">9514</td>
+<td align="right">22.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882089</td>
+<td align="right">41816</td>
+<td align="right">8876</td>
+<td align="right">21.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882090</td>
+<td align="right">41326</td>
+<td align="right">9341</td>
+<td align="right">22.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882091</td>
+<td align="right">45593</td>
+<td align="right">13498</td>
+<td align="right">29.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882092</td>
+<td align="right">44460</td>
+<td align="right">14009</td>
+<td align="right">31.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882093</td>
+<td align="right">44478</td>
+<td align="right">13993</td>
+<td align="right">31.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882094</td>
+<td align="right">45151</td>
+<td align="right">12893</td>
+<td align="right">28.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882148</td>
+<td align="right">40254</td>
+<td align="right">8463</td>
+<td align="right">21.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882149</td>
+<td align="right">41538</td>
+<td align="right">10412</td>
+<td align="right">25.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882150</td>
+<td align="right">38367</td>
+<td align="right">10916</td>
+<td align="right">28.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882151</td>
+<td align="right">40678</td>
+<td align="right">10083</td>
+<td align="right">24.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882152</td>
+<td align="right">40305</td>
+<td align="right">9619</td>
+<td align="right">23.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882153</td>
+<td align="right">37919</td>
+<td align="right">10088</td>
+<td align="right">26.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882154</td>
+<td align="right">40897</td>
+<td align="right">12161</td>
+<td align="right">29.7</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882156</td>
+<td align="right">40536</td>
+<td align="right">10797</td>
+<td align="right">26.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882157</td>
+<td align="right">40451</td>
+<td align="right">10470</td>
+<td align="right">25.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882158</td>
+<td align="right">37214</td>
+<td align="right">8806</td>
+<td align="right">23.7</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882159</td>
+<td align="right">35887</td>
+<td align="right">9297</td>
+<td align="right">25.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882160</td>
+<td align="right">35410</td>
+<td align="right">10892</td>
+<td align="right">30.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882161</td>
+<td align="right">29457</td>
+<td align="right">7371</td>
+<td align="right">25.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882162</td>
+<td align="right">6287</td>
+<td align="right">1703</td>
+<td align="right">27.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882163</td>
+<td align="right">38995</td>
+<td align="right">14087</td>
+<td align="right">36.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882164</td>
+<td align="right">44100</td>
+<td align="right">16831</td>
+<td align="right">38.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882165</td>
+<td align="right">31510</td>
+<td align="right">12266</td>
+<td align="right">38.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882166</td>
+<td align="right">31296</td>
+<td align="right">7292</td>
+<td align="right">23.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882167</td>
+<td align="right">35618</td>
+<td align="right">10898</td>
+<td align="right">30.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882168</td>
+<td align="right">32262</td>
+<td align="right">11076</td>
+<td align="right">34.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882169</td>
+<td align="right">35378</td>
+<td align="right">14293</td>
+<td align="right">40.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882170</td>
+<td align="right">29529</td>
+<td align="right">12479</td>
+<td align="right">42.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882171</td>
+<td align="right">38752</td>
+<td align="right">15852</td>
+<td align="right">40.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882172</td>
+<td align="right">29158</td>
+<td align="right">18812</td>
+<td align="right">64.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882173</td>
+<td align="right">35731</td>
+<td align="right">11511</td>
+<td align="right">32.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882174</td>
+<td align="right">38376</td>
+<td align="right">11363</td>
+<td align="right">29.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882175</td>
+<td align="right">27856</td>
+<td align="right">6665</td>
+<td align="right">23.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882177</td>
+<td align="right">34173</td>
+<td align="right">13445</td>
+<td align="right">39.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882178</td>
+<td align="right">35427</td>
+<td align="right">14195</td>
+<td align="right">40.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882179</td>
+<td align="right">34644</td>
+<td align="right">11646</td>
+<td align="right">33.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882180</td>
+<td align="right">41815</td>
+<td align="right">19204</td>
+<td align="right">45.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882181</td>
+<td align="right">38825</td>
+<td align="right">16311</td>
+<td align="right">42.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882182</td>
+<td align="right">38542</td>
+<td align="right">13042</td>
+<td align="right">33.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882183</td>
+<td align="right">33905</td>
+<td align="right">22026</td>
+<td align="right">65.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882185</td>
+<td align="right">42864</td>
+<td align="right">15173</td>
+<td align="right">35.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882186</td>
+<td align="right">37651</td>
+<td align="right">9973</td>
+<td align="right">26.5</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882187</td>
+<td align="right">40324</td>
+<td align="right">10414</td>
+<td align="right">25.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882188</td>
+<td align="right">34575</td>
+<td align="right">8310</td>
+<td align="right">24.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882189</td>
+<td align="right">41612</td>
+<td align="right">37137</td>
+<td align="right">89.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882190</td>
+<td align="right">85000</td>
+<td align="right">69389</td>
+<td align="right">81.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882191</td>
+<td align="right">27170</td>
+<td align="right">6038</td>
+<td align="right">22.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882192</td>
+<td align="right">30063</td>
+<td align="right">6396</td>
+<td align="right">21.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882193</td>
+<td align="right">30288</td>
+<td align="right">6841</td>
+<td align="right">22.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882194</td>
+<td align="right">30397</td>
+<td align="right">5340</td>
+<td align="right">17.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882196</td>
+<td align="right">27661</td>
+<td align="right">5464</td>
+<td align="right">19.8</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882197</td>
+<td align="right">27852</td>
+<td align="right">5832</td>
+<td align="right">20.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882198</td>
+<td align="right">27794</td>
+<td align="right">5476</td>
+<td align="right">19.7</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882199</td>
+<td align="right">47047</td>
+<td align="right">28539</td>
+<td align="right">60.7</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882200</td>
+<td align="right">41117</td>
+<td align="right">11334</td>
+<td align="right">27.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882201</td>
+<td align="right">40758</td>
+<td align="right">14323</td>
+<td align="right">35.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882202</td>
+<td align="right">33113</td>
+<td align="right">8251</td>
+<td align="right">24.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882203</td>
+<td align="right">21813</td>
+<td align="right">5242</td>
+<td align="right">24.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882204</td>
+<td align="right">41305</td>
+<td align="right">15855</td>
+<td align="right">38.4</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882205</td>
+<td align="right">42521</td>
+<td align="right">10151</td>
+<td align="right">23.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882207</td>
+<td align="right">33634</td>
+<td align="right">8062</td>
+<td align="right">24.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882208</td>
+<td align="right">40549</td>
+<td align="right">10146</td>
+<td align="right">25.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882209</td>
+<td align="right">32569</td>
+<td align="right">9768</td>
+<td align="right">30.0</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882210</td>
+<td align="right">32448</td>
+<td align="right">6535</td>
+<td align="right">20.1</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882211</td>
+<td align="right">36596</td>
+<td align="right">9993</td>
+<td align="right">27.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882212</td>
+<td align="right">39104</td>
+<td align="right">10227</td>
+<td align="right">26.2</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882213</td>
+<td align="right">36336</td>
+<td align="right">9662</td>
+<td align="right">26.6</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882214</td>
+<td align="right">32912</td>
+<td align="right">8011</td>
+<td align="right">24.3</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SRR27882215</td>
+<td align="right">34203</td>
+<td align="right">7496</td>
+<td align="right">21.9</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">SRR27882216</td>
+<td align="right">40307</td>
+<td align="right">10338</td>
+<td align="right">25.6</td>
+<td align="left">FALSE</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="r-session-info" class="section level2">
+<h2>R session info</h2>
+<p>Details of the R package versions used are given below.</p>
+<details>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.3 (2024-02-29)
+##  os       Red Hat Enterprise Linux 8.10 (Ootpa)
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Zurich
+##  date     2026-03-02
+##  pandoc   3.8.2.1 @ /home/macnairw/packages/scprocess/.snakemake/conda/fd31be42acf0c42e462db0f4d9adae50_/bin/ (via rmarkdown)
+##  quarto   NA
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package              * version    date (UTC) lib source
+##  abind                  1.4-5      2016-07-21 [2] CRAN (R 4.3.3)
+##  assertthat           * 0.2.1      2019-03-21 [2] CRAN (R 4.3.3)
+##  beachmat               2.18.0     2023-10-24 [2] Bioconductor
+##  beeswarm               0.4.0      2021-06-01 [2] CRAN (R 4.3.3)
+##  Biobase              * 2.62.0     2023-10-24 [2] Bioconductor
+##  BiocGenerics         * 0.48.1     2023-11-01 [2] Bioconductor
+##  BiocManager            1.30.26    2025-06-05 [2] CRAN (R 4.3.3)
+##  BiocParallel         * 1.36.0     2023-10-24 [2] Bioconductor
+##  BiocStyle            * 2.30.0     2023-10-24 [2] Bioconductor
+##  bitops                 1.0-9      2024-10-03 [2] CRAN (R 4.3.3)
+##  bookdown               0.44       2025-08-21 [2] CRAN (R 4.3.3)
+##  bslib                  0.9.0      2025-01-30 [2] CRAN (R 4.3.3)
+##  ca                     0.71.1     2020-01-24 [2] CRAN (R 4.3.3)
+##  cachem                 1.1.0      2024-05-16 [2] CRAN (R 4.3.3)
+##  callr                  3.7.6      2024-03-25 [2] CRAN (R 4.3.3)
+##  cellranger             1.1.0      2016-07-27 [2] CRAN (R 4.3.3)
+##  circlize             * 0.4.16     2024-02-20 [2] CRAN (R 4.3.3)
+##  cli                    3.6.5      2025-04-23 [2] CRAN (R 4.3.3)
+##  clue                   0.3-66     2024-11-13 [2] CRAN (R 4.3.3)
+##  cluster                2.1.8.1    2025-03-12 [2] CRAN (R 4.3.3)
+##  codetools              0.2-20     2024-03-31 [2] CRAN (R 4.3.3)
+##  colorspace             2.1-1      2024-07-26 [2] CRAN (R 4.3.3)
+##  combinat               0.0-8      2012-10-29 [2] CRAN (R 4.3.3)
+##  ComplexHeatmap       * 2.18.0     2023-10-24 [2] Bioconductor
+##  cowplot                1.2.0      2025-07-07 [2] CRAN (R 4.3.3)
+##  crayon                 1.5.3      2024-06-20 [2] CRAN (R 4.3.3)
+##  data.table           * 1.17.8     2025-07-10 [2] CRAN (R 4.3.3)
+##  decontX              * 1.0.0      2023-10-24 [2] Bioconductor
+##  DelayedArray           0.28.0     2023-10-24 [2] Bioconductor
+##  DelayedMatrixStats     1.24.0     2023-10-24 [2] Bioconductor
+##  deldir                 2.0-4      2024-02-28 [2] CRAN (R 4.3.3)
+##  DEoptimR               1.1-4      2025-07-27 [2] CRAN (R 4.3.3)
+##  devtools               2.4.5      2022-10-11 [2] CRAN (R 4.3.3)
+##  digest                 0.6.37     2024-08-19 [2] CRAN (R 4.3.3)
+##  doParallel             1.0.17     2022-02-07 [2] CRAN (R 4.3.3)
+##  dotCall64              1.2        2024-10-04 [2] CRAN (R 4.3.3)
+##  dplyr                * 1.1.4      2023-11-17 [2] CRAN (R 4.3.3)
+##  dqrng                  0.3.2      2023-11-29 [2] CRAN (R 4.3.3)
+##  DropletUtils         * 1.22.0     2023-10-24 [2] Bioconductor
+##  edgeR                  4.0.16     2024-02-18 [2] Bioconductor 3.18 (R 4.3.3)
+##  ellipsis               0.3.2      2021-04-29 [2] CRAN (R 4.3.3)
+##  evaluate               1.0.5      2025-08-27 [2] CRAN (R 4.3.3)
+##  farver                 2.1.2      2024-05-13 [2] CRAN (R 4.3.3)
+##  fastDummies            1.7.5      2025-01-20 [2] CRAN (R 4.3.3)
+##  fastmap                1.2.0      2024-05-15 [2] CRAN (R 4.3.3)
+##  fitdistrplus           1.2-4      2025-07-03 [2] CRAN (R 4.3.3)
+##  forcats              * 1.0.0      2023-01-29 [2] CRAN (R 4.3.3)
+##  foreach                1.5.2      2022-02-02 [2] CRAN (R 4.3.3)
+##  fs                     1.6.6      2025-04-12 [2] CRAN (R 4.3.3)
+##  future                 1.67.0     2025-07-29 [2] CRAN (R 4.3.3)
+##  future.apply           1.20.0     2025-06-06 [2] CRAN (R 4.3.3)
+##  generics               0.1.4      2025-05-09 [2] CRAN (R 4.3.3)
+##  GenomeInfoDb         * 1.38.1     2023-11-08 [2] Bioconductor
+##  GenomeInfoDbData       1.2.11     2026-02-17 [2] Bioconductor
+##  GenomicRanges        * 1.54.1     2023-10-29 [2] Bioconductor
+##  GetoptLong             1.0.5      2020-12-15 [2] CRAN (R 4.3.3)
+##  getPass                0.2-4      2023-12-10 [2] CRAN (R 4.3.3)
+##  ggbeeswarm           * 0.7.2      2023-04-29 [2] CRAN (R 4.3.3)
+##  ggh4x                * 0.3.1      2025-05-30 [2] CRAN (R 4.3.3)
+##  ggplot2              * 3.5.2      2025-04-09 [2] CRAN (R 4.3.3)
+##  ggrepel              * 0.9.6      2024-09-07 [2] CRAN (R 4.3.3)
+##  ggridges               0.5.7      2025-08-27 [2] CRAN (R 4.3.3)
+##  git2r                  0.35.0     2024-10-20 [2] CRAN (R 4.3.3)
+##  GlobalOptions          0.1.2      2020-06-10 [2] CRAN (R 4.3.3)
+##  globals                0.18.0     2025-05-08 [2] CRAN (R 4.3.3)
+##  glue                   1.8.0      2024-09-30 [2] CRAN (R 4.3.3)
+##  goftest                1.2-3      2021-10-07 [2] CRAN (R 4.3.3)
+##  gridExtra            * 2.3        2017-09-09 [2] CRAN (R 4.3.3)
+##  gtable                 0.3.6      2024-10-25 [2] CRAN (R 4.3.3)
+##  HDF5Array              1.30.0     2023-10-24 [2] Bioconductor
+##  hms                    1.1.3      2023-03-21 [2] CRAN (R 4.3.3)
+##  htmltools              0.5.8.1    2024-04-04 [2] CRAN (R 4.3.3)
+##  htmlwidgets            1.6.4      2023-12-06 [2] CRAN (R 4.3.3)
+##  httpuv                 1.6.16     2025-04-16 [2] CRAN (R 4.3.3)
+##  httr                   1.4.7      2023-08-15 [2] CRAN (R 4.3.3)
+##  ica                    1.0-3      2022-07-08 [2] CRAN (R 4.3.3)
+##  igraph                 2.1.4      2025-01-23 [2] CRAN (R 4.3.3)
+##  inline                 0.3.21     2025-01-09 [2] CRAN (R 4.3.3)
+##  IRanges              * 2.36.0     2023-10-24 [2] Bioconductor
+##  irlba                  2.3.5.1    2022-10-03 [2] CRAN (R 4.3.3)
+##  iterators              1.0.14     2022-02-05 [2] CRAN (R 4.3.3)
+##  jquerylib              0.1.4      2021-04-26 [2] CRAN (R 4.3.3)
+##  jsonlite               2.0.0      2025-03-27 [2] CRAN (R 4.3.3)
+##  KernSmooth             2.23-26    2025-01-01 [2] CRAN (R 4.3.3)
+##  knitr                  1.50       2025-03-16 [2] CRAN (R 4.3.3)
+##  later                  1.4.4      2025-08-27 [2] CRAN (R 4.3.3)
+##  lattice                0.22-7     2025-04-02 [2] CRAN (R 4.3.3)
+##  lazyeval               0.2.2      2019-03-15 [2] CRAN (R 4.3.3)
+##  lifecycle              1.0.4      2023-11-07 [2] CRAN (R 4.3.3)
+##  limma                  3.58.1     2023-10-31 [2] Bioconductor
+##  listenv                0.9.1      2024-01-29 [2] CRAN (R 4.3.3)
+##  lmtest                 0.9-40     2022-03-21 [2] CRAN (R 4.3.3)
+##  locfit                 1.5-9.12   2025-03-05 [2] CRAN (R 4.3.3)
+##  loo                    2.8.0      2024-07-03 [2] CRAN (R 4.3.3)
+##  lubridate            * 1.9.4      2024-12-08 [2] CRAN (R 4.3.3)
+##  magrittr             * 2.0.3      2022-03-30 [2] CRAN (R 4.3.3)
+##  MASS                   7.3-60.0.1 2024-01-13 [2] CRAN (R 4.3.3)
+##  Matrix               * 1.6-5      2024-01-11 [2] CRAN (R 4.3.3)
+##  MatrixGenerics       * 1.14.0     2023-10-24 [2] Bioconductor
+##  matrixStats          * 1.5.0      2025-01-07 [2] CRAN (R 4.3.3)
+##  MCMCprecision          0.4.2      2025-07-22 [2] CRAN (R 4.3.3)
+##  memoise                2.0.1      2021-11-26 [2] CRAN (R 4.3.3)
+##  mime                   0.13       2025-03-17 [2] CRAN (R 4.3.3)
+##  miniUI                 0.1.2      2025-04-17 [2] CRAN (R 4.3.3)
+##  nlme                   3.1-168    2025-03-31 [2] CRAN (R 4.3.3)
+##  parallelly             1.45.1     2025-07-24 [2] CRAN (R 4.3.3)
+##  patchwork            * 1.3.2      2025-08-25 [2] CRAN (R 4.3.3)
+##  pbapply                1.7-4      2025-07-20 [2] CRAN (R 4.3.3)
+##  pillar                 1.11.0     2025-07-04 [2] CRAN (R 4.3.3)
+##  pkgbuild               1.4.8      2025-05-26 [2] CRAN (R 4.3.3)
+##  pkgconfig              2.0.3      2019-09-22 [2] CRAN (R 4.3.3)
+##  pkgload                1.4.0      2024-06-28 [2] CRAN (R 4.3.3)
+##  plotly                 4.11.0     2025-06-19 [2] CRAN (R 4.3.3)
+##  plyr                   1.8.9      2023-10-02 [2] CRAN (R 4.3.3)
+##  png                    0.1-8      2022-11-29 [2] CRAN (R 4.3.3)
+##  polyclip               1.10-7     2024-07-23 [2] CRAN (R 4.3.3)
+##  processx               3.8.6      2025-02-21 [2] CRAN (R 4.3.3)
+##  profvis                0.4.0      2024-09-20 [2] CRAN (R 4.3.3)
+##  progressr              0.15.1     2024-11-22 [2] CRAN (R 4.3.3)
+##  promises               1.3.3      2025-05-29 [2] CRAN (R 4.3.3)
+##  ps                     1.9.1      2025-04-12 [2] CRAN (R 4.3.3)
+##  purrr                * 1.1.0      2025-07-10 [2] CRAN (R 4.3.3)
+##  QuickJSR               1.8.0      2025-06-09 [2] CRAN (R 4.3.3)
+##  R.methodsS3            1.8.2      2022-06-13 [2] CRAN (R 4.3.3)
+##  R.oo                   1.27.1     2025-05-02 [2] CRAN (R 4.3.3)
+##  R.utils                2.13.0     2025-02-24 [2] CRAN (R 4.3.3)
+##  R6                     2.6.1      2025-02-15 [2] CRAN (R 4.3.3)
+##  RANN                   2.6.2      2024-08-25 [2] CRAN (R 4.3.3)
+##  RColorBrewer         * 1.1-3      2022-04-03 [2] CRAN (R 4.3.3)
+##  Rcpp                 * 1.1.0      2025-07-02 [2] CRAN (R 4.3.3)
+##  RcppAnnoy              0.0.22     2024-01-23 [2] CRAN (R 4.3.3)
+##  RcppHNSW               0.6.0      2024-02-04 [2] CRAN (R 4.3.3)
+##  RcppParallel         * 5.1.9      2024-08-19 [2] CRAN (R 4.3.3)
+##  RcppZiggurat         * 0.1.8      2025-03-30 [2] CRAN (R 4.3.3)
+##  RCurl                  1.98-1.17  2025-03-22 [2] CRAN (R 4.3.3)
+##  readr                * 2.1.5      2024-01-10 [2] CRAN (R 4.3.3)
+##  readxl               * 1.4.5      2025-03-07 [2] CRAN (R 4.3.3)
+##  registry               0.5-1      2019-03-05 [2] CRAN (R 4.3.3)
+##  remotes                2.5.0      2024-03-17 [2] CRAN (R 4.3.3)
+##  reshape2               1.4.4      2020-04-09 [2] CRAN (R 4.3.3)
+##  reticulate             1.43.0     2025-07-21 [2] CRAN (R 4.3.3)
+##  Rfast                * 2.1.0      2023-11-09 [2] CRAN (R 4.3.3)
+##  rhdf5                * 2.46.1     2023-11-29 [2] Bioconductor 3.18 (R 4.3.3)
+##  rhdf5filters           1.14.1     2023-11-06 [2] Bioconductor
+##  Rhdf5lib               1.24.0     2023-10-24 [2] Bioconductor
+##  rjson                  0.2.23     2024-09-16 [2] CRAN (R 4.3.3)
+##  rlang                  1.1.6      2025-04-11 [2] CRAN (R 4.3.3)
+##  rmarkdown              2.29       2024-11-04 [2] CRAN (R 4.3.3)
+##  rmdformats             1.0.4      2022-05-17 [2] CRAN (R 4.3.3)
+##  robustbase           * 0.99-6     2025-09-04 [2] CRAN (R 4.3.3)
+##  ROCR                   1.0-11     2020-05-02 [2] CRAN (R 4.3.3)
+##  rprojroot              2.1.1      2025-08-26 [2] CRAN (R 4.3.3)
+##  RSpectra               0.16-2     2024-07-18 [2] CRAN (R 4.3.3)
+##  rstan                  2.32.7     2025-03-10 [2] CRAN (R 4.3.3)
+##  rstantools             2.5.0      2025-09-01 [2] CRAN (R 4.3.3)
+##  rstudioapi             0.17.1     2024-10-22 [2] CRAN (R 4.3.3)
+##  Rtsne                  0.17       2023-12-07 [2] CRAN (R 4.3.3)
+##  S4Arrays               1.2.0      2023-10-24 [2] Bioconductor
+##  S4Vectors            * 0.40.2     2023-11-23 [2] Bioconductor 3.18 (R 4.3.3)
+##  sass                   0.4.10     2025-04-11 [2] CRAN (R 4.3.3)
+##  scales               * 1.4.0      2025-04-24 [2] CRAN (R 4.3.3)
+##  scattermore            1.2        2023-06-12 [2] CRAN (R 4.3.3)
+##  sctransform            0.4.2      2025-04-30 [2] CRAN (R 4.3.3)
+##  scuttle                1.12.0     2023-10-24 [2] Bioconductor
+##  seriation            * 1.5.8      2025-08-20 [2] CRAN (R 4.3.3)
+##  sessioninfo            1.2.3      2025-02-05 [2] CRAN (R 4.3.3)
+##  Seurat                 5.3.0      2025-04-23 [2] CRAN (R 4.3.3)
+##  SeuratObject           5.2.0      2025-08-27 [2] CRAN (R 4.3.3)
+##  shape                  1.4.6.1    2024-02-23 [2] CRAN (R 4.3.3)
+##  shiny                  1.11.1     2025-07-03 [2] CRAN (R 4.3.3)
+##  SingleCellExperiment * 1.24.0     2023-10-24 [2] Bioconductor
+##  sp                     2.2-0      2025-02-01 [2] CRAN (R 4.3.3)
+##  spam                   2.11-1     2025-01-20 [2] CRAN (R 4.3.3)
+##  SparseArray            1.2.2      2023-11-07 [2] Bioconductor
+##  sparseMatrixStats      1.14.0     2023-10-24 [2] Bioconductor
+##  spatstat.data          3.1-8      2025-08-18 [2] CRAN (R 4.3.3)
+##  spatstat.explore       3.5-2      2025-07-22 [2] CRAN (R 4.3.3)
+##  spatstat.geom          3.5-0      2025-07-20 [2] CRAN (R 4.3.3)
+##  spatstat.random        3.4-1      2025-05-20 [2] CRAN (R 4.3.3)
+##  spatstat.sparse        3.1-0      2024-06-21 [2] CRAN (R 4.3.3)
+##  spatstat.univar        3.1-4      2025-07-13 [2] CRAN (R 4.3.3)
+##  spatstat.utils         3.1-5      2025-07-17 [2] CRAN (R 4.3.3)
+##  StanHeaders            2.32.10    2024-07-15 [2] CRAN (R 4.3.3)
+##  statmod                1.5.0      2023-01-06 [2] CRAN (R 4.3.3)
+##  strex                * 2.0.1      2024-10-03 [2] CRAN (R 4.3.3)
+##  stringi                1.8.7      2025-03-27 [2] CRAN (R 4.3.3)
+##  stringr              * 1.5.2      2025-09-08 [2] CRAN (R 4.3.3)
+##  SummarizedExperiment * 1.32.0     2023-10-24 [2] Bioconductor
+##  survival               3.8-3      2024-12-17 [2] CRAN (R 4.3.3)
+##  tensor                 1.5.1      2025-06-17 [2] CRAN (R 4.3.3)
+##  testit               * 0.13       2021-04-14 [2] CRAN (R 4.3.3)
+##  tibble               * 3.3.0      2025-06-08 [2] CRAN (R 4.3.3)
+##  tidyr                * 1.3.1      2024-01-24 [2] CRAN (R 4.3.3)
+##  tidyselect             1.2.1      2024-03-11 [2] CRAN (R 4.3.3)
+##  tidyverse            * 2.0.0      2023-02-22 [2] CRAN (R 4.3.3)
+##  timechange             0.3.0      2024-01-18 [2] CRAN (R 4.3.3)
+##  TSP                    1.2-5      2025-05-27 [2] CRAN (R 4.3.3)
+##  tzdb                   0.5.0      2025-03-15 [2] CRAN (R 4.3.3)
+##  urlchecker             1.0.1      2021-11-30 [2] CRAN (R 4.3.3)
+##  usethis                3.2.1      2025-09-06 [2] CRAN (R 4.3.3)
+##  uwot                   0.2.3      2025-02-24 [2] CRAN (R 4.3.3)
+##  vctrs                  0.6.5      2023-12-01 [2] CRAN (R 4.3.3)
+##  vipor                  0.4.7      2023-12-18 [2] CRAN (R 4.3.3)
+##  viridis              * 0.6.5      2024-01-29 [2] CRAN (R 4.3.3)
+##  viridisLite          * 0.4.2      2023-05-02 [2] CRAN (R 4.3.3)
+##  whisker                0.4.1      2022-12-05 [2] CRAN (R 4.3.3)
+##  withr                  3.0.2      2024-10-28 [2] CRAN (R 4.3.3)
+##  workflowr            * 1.7.2      2025-08-18 [2] CRAN (R 4.3.3)
+##  xfun                   0.53       2025-08-19 [2] CRAN (R 4.3.3)
+##  xtable                 1.8-4      2019-04-21 [2] CRAN (R 4.3.3)
+##  XVector                0.42.0     2023-10-24 [2] Bioconductor
+##  yaml                 * 2.3.10     2024-07-26 [2] CRAN (R 4.3.3)
+##  zlibbioc               1.48.0     2023-10-24 [2] Bioconductor
+##  zoo                    1.8-14     2025-04-10 [2] CRAN (R 4.3.3)
+## 
+##  [1] /home/macnairw/R/x86_64-conda-linux-gnu-library/4.3
+##  [2] /home/macnairw/packages/scprocess/.snakemake/conda/fd31be42acf0c42e462db0f4d9adae50_/lib/R/library
+##  * ── Packages attached to the search path.
+## 
+## ──────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
+
+   
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>
