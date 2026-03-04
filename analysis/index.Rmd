@@ -1,9 +1,9 @@
 ---
-title: "Pineda 2024"
+title: "pineda_2024"
 author:
 - name: Will Macnair
   affiliation: 
-  - Church of England
+  - Neuroscience and Rare Diseases, Roche Innovation Center, Basel, Switzerland
 date: '`r format(as.Date("2026-02-28"), "%B %d, %Y")`'
 output:
   rmdformats::downcute:
@@ -36,13 +36,101 @@ Use this page to navigate through the full set of visualizations and outputs for
 - myeloid_0.5 ([link](pineda_zoom_myeloid_0.5.html))
 - neurons_0.2 ([link](pineda_zoom_neurons_0.2.html))
 
-## Configuration files
+## Config files
 
-```{r, echo=FALSE, results='asis'}
-source("../code/utils.R")
-include_yaml_file("../config-pineda_2024.yaml", "Main configuration (config-pineda_2024.yaml)", open = TRUE)
-include_yaml_file("../data/metadata/custom_params_pineda_2024.yaml", "Custom sample parameters (custom_params_pineda_2024.yaml)")
-include_yaml_file("../data/metadata/zoom_params_pineda_2024_myeloid.yaml", "Myeloid subclustering parameters (zoom_params_pineda_2024_myeloid.yaml)")
-include_yaml_file("../data/metadata/zoom_params_pineda_2024_neurons.yaml", "Neurons subclustering parameters (zoom_params_pineda_2024_neurons.yaml)")
+
+<details closed>
+<summary>▸ *config-pineda_2024.yaml* (click to expand)</summary>
+
+```yaml
+project:
+  proj_dir:         /pstore/data/brain-sc-analysis/studies/pineda_2024
+  arv_uuids:        [not shown]
+  arv_instance:     arkau
+  show_arv_uuids:   False
+  full_tag:         pineda_2024
+  short_tag:        pineda
+  your_name:        Will Macnair
+  affiliation:      Neuroscience and Rare Diseases, Roche Innovation Center, Basel, Switzerland
+  sample_metadata:  data/metadata/pineda_2024_harmonized_metadata.csv
+  ref_txome:        human_2024
+  date_stamp:       "2026-02-28"
+  custom_sample_params: data/metadata/custom_params_pineda_2024.yaml
+  # exclude:
+  #   sample_id:      [SRR27882190]
+ambient:
+  ambient_method:   cellbender
+qc:
+  qc_max_mito:      0.10
+  qc_max_splice:    0.75
+marker_genes:
+  mkr_custom_genesets:
+  - name: human_brain
+label_celltypes:
+  - labeller:       scprocess
+    model:          human_cns
+zoom:
+  - data/metadata/zoom_params_pineda_2024_myeloid.yaml
+  - data/metadata/zoom_params_pineda_2024_neurons.yaml
+resources:
+  retries:                          1
+  gb_render_html_label_celltypes:   32
+  gb_render_html_zoom:              32
+  gb_run_integration:               64
+  gb_run_marker_genes:              98
+  gb_zoom_run_marker_genes:         98
+  mins_render_html_label_celltypes: 60
+  mins_run_cellbender:              180
+  mins_run_mapping:                 120
+  mins_run_marker_genes:            180
+  mins_zoom_run_marker_genes:       120
 ```
+
+</details>
+
+<details closed>
+<summary>▸ *custom_params_pineda_2024.yaml* (click to expand)</summary>
+
+```yaml
+sample_id:
+  SRR27882190:
+    ambient:
+      cb_expected_cells:           4197
+      cb_total_droplets_included: 85000
+      cb_low_count_threshold:        50
+```
+
+</details>
+
+<details closed>
+<summary>▸ *zoom_params_pineda_2024_myeloid.yaml* (click to expand)</summary>
+
+```yaml
+zoom:
+  name:           myeloid
+  labels_source:  scprocess
+  model:          human_cns
+  sel_labels:     ["Micro_Mono"]
+  labels_col:     predicted_label_agg
+integration:
+  int_n_dims:     20
+marker_genes:
+  mkr_sel_res:    0.5
+```
+
+</details>
+
+<details closed>
+<summary>▸ *zoom_params_pineda_2024_neurons.yaml* (click to expand)</summary>
+
+```yaml
+zoom:
+  name:           neurons
+  labels_source:  scprocess
+  model:          human_cns
+  sel_labels:     ["Neurons"]
+  labels_col:     predicted_label_agg
+```
+
+</details>
 

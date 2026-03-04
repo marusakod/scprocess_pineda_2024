@@ -2,10 +2,11 @@ project:
   proj_dir:         /pstore/data/brain-sc-analysis/studies/pineda_2024
   arv_uuids:        [arkau-4zz18-lwwp1d79awsx66x]
   arv_instance:     arkau
+  show_arv_uuids:   False
   full_tag:         pineda_2024
   short_tag:        pineda
   your_name:        Will Macnair
-  affiliation:      Church of England
+  affiliation:      Neuroscience and Rare Diseases, Roche Innovation Center, Basel, Switzerland
   sample_metadata:  data/metadata/pineda_2024_harmonized_metadata.csv
   ref_txome:        human_2024
   date_stamp:       "2026-02-28"

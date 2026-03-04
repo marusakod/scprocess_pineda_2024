@@ -3,7 +3,7 @@ title: "Integration diagnostics"
 author:
 - name: Will Macnair
   affiliation: 
-  - Church of England
+  - Neuroscience and Rare Diseases, Roche Innovation Center, Basel, Switzerland
 date: '`r format(as.Date("2026-02-28"), "%B %d, %Y")`'
 output:
   rmdformats::downcute:

@@ -196,12 +196,3 @@ print_sel_gene <- function(mkrs_dt, sel_ls) {
   mats_sum = mats[[1]] + mats[[2]] + mats[[3]]
   return(mats_sum)
 }
-
-# Include YAML file contents in collapsible details blocks
-include_yaml_file <- function(filepath, title, open = FALSE) {
-  open_attr <- if (open) " open" else ""
-  cat(sprintf('<details%s>\n<summary>%s</summary>\n\n', open_attr, title))
-  cat("```yaml\n")
-  cat(readLines(filepath), sep = "\n")
-  cat("\n```\n\n</details>\n")
-}
