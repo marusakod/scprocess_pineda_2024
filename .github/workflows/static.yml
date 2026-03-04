@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # Allows you to trigger it manually
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,6 +24,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Fix Jekyll and Case Sensitivity
+        run: |
+          touch public/.nojekyll
+          echo "Verifying PNG files in figures:"
+          find public/figures -name "*.png" | head -n 5
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
