@@ -1,10 +1,10 @@
-name: Deploy MkDocs to Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch: # Allows you to trigger it manually
 
 permissions:
   contents: read
@@ -25,24 +25,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-          
-      - name: Install dependencies
-        run: pip install -r resources/mkdocs/mkdocs_reqs.txt
-
-      - name: Build MkDocs
-        run: mkdocs build --config-file resources/mkdocs/mkdocs.yml --verbose
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'resources/mkdocs/site'
+          # This points to the folder containing your index.html
+          path: 'public'
 
       - name: Deploy to GitHub Pages
         id: deployment
