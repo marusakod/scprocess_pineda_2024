@@ -1,5 +1,5 @@
 ---
-title: "pineda_2024"
+title: "Pineda 2024"
 author:
 - name: Will Macnair
   affiliation: 
@@ -35,4 +35,14 @@ Use this page to navigate through the full set of visualizations and outputs for
 - myeloid_0.2 ([link](pineda_zoom_myeloid_0.2.html))
 - myeloid_0.5 ([link](pineda_zoom_myeloid_0.5.html))
 - neurons_0.2 ([link](pineda_zoom_neurons_0.2.html))
+
+## Configuration files
+
+```{r, echo=FALSE, results='asis'}
+source("../code/utils.R")
+include_yaml_file("../config-pineda_2024.yaml", "Main configuration (config-pineda_2024.yaml)", open = TRUE)
+include_yaml_file("../data/metadata/custom_params_pineda_2024.yaml", "Custom sample parameters (custom_params_pineda_2024.yaml)")
+include_yaml_file("../data/metadata/zoom_params_pineda_2024_myeloid.yaml", "Myeloid subclustering parameters (zoom_params_pineda_2024_myeloid.yaml)")
+include_yaml_file("../data/metadata/zoom_params_pineda_2024_neurons.yaml", "Neurons subclustering parameters (zoom_params_pineda_2024_neurons.yaml)")
+```
 
