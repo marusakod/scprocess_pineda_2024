@@ -94,7 +94,7 @@ ref_txome     = "human_2024"
 cl_ord        = NULL
 
 # define metadata variables for plotting
-metadata_vars = "" %>% 
+metadata_vars = "diagnosis,diagnosis_subtype,original_tissue_annotation" %>% 
   str_split(pattern = ",") %>% unlist()
 if (all(metadata_vars == ""))
   metadata_vars = NULL
@@ -351,8 +351,8 @@ for (res in res_ls) {
 }
 ```
 
-
-
+### Cluster splits by metadata variables
+For each cluster (resolution: 0.5) the proportion of cells coming from samples associated with specific values of diagnosis, diagnosis_subtype and original_tissue_annotation is shown.
 
 ```{r plot_clusters_by_metadata, eval = do_metadata, include = do_metadata, fig.height = (2*length(metadata_vars)) + 1, fig.width = 8, results = 'asis'}
 
@@ -361,8 +361,8 @@ if (!is.null(metadata_vars))
     meta_vars = metadata_vars, cl_order = cl_ord))
 ```
 
-
-
+### Metadata variables over UMAP{.tabset}
+The plot shows a binned UMAP with facets corresponding to specific values of different metadata variables which allows the evaluation of whether cells sharing certain annotations are particularly abundant in some clusters.
 
 ```{r plot_metadata_over_UMAP, eval = do_metadata, include = do_metadata, fig.height = 5, fig.width = 8, results = 'asis'}
 for (meta_var in metadata_vars) {

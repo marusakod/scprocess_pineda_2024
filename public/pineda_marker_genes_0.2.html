@@ -124,6 +124,20 @@
             <ul>
             <li><a href="#clusters-over-umap"
             id="toc-clusters-over-umap">Clusters over UMAP</a></li>
+            <li><a href="#cluster-splits-by-metadata-variables"
+            id="toc-cluster-splits-by-metadata-variables">Cluster splits
+            by metadata variables</a></li>
+            <li><a href="#metadata-variables-over-umap"
+            id="toc-metadata-variables-over-umap">Metadata variables
+            over UMAP</a>
+            <ul>
+            <li><a href="#diagnosis"
+            id="toc-diagnosis">diagnosis</a></li>
+            <li><a href="#diagnosis_subtype"
+            id="toc-diagnosis_subtype">diagnosis_subtype</a></li>
+            <li><a href="#original_tissue_annotation"
+            id="toc-original_tissue_annotation">original_tissue_annotation</a></li>
+            </ul></li>
             <li><a href="#marker-genes" id="toc-marker-genes">Marker
             genes</a>
             <ul>
@@ -212,6 +226,38 @@ g_dens  = plot_umap_density(int_dt[, .(cell_id, UMAP1, UMAP2) ])
 g       = g_cl + g_dens
 print(g)</code></pre>
 <p><img src="figure/pineda_marker_genes_0.2.Rmd/plot_clusters_sel_res-1.png" width="864" /></p>
+</div>
+<div id="cluster-splits-by-metadata-variables" class="section level2">
+<h2>Cluster splits by metadata variables</h2>
+<p>For each cluster the proportion of cells coming from samples
+associated with specific values of diagnosis, diagnosis_subtype and
+original_tissue_annotation is shown.</p>
+<pre class="r"><code>print(plot_clusters_by_metadata(meta_dt, int_dt, meta_vars = metadata_vars, cl_order = cl_ord))</code></pre>
+<p><img src="figure/pineda_marker_genes_0.2.Rmd/plot_clusters_by_metadata-1.png" width="768" /></p>
+</div>
+<div id="metadata-variables-over-umap" class="section level2 tabset">
+<h2 class="tabset">Metadata variables over UMAP</h2>
+<p>The plot shows a binned UMAP with facets corresponding to specific
+values of different metadata variables which allows the evaluation of
+whether cells sharing certain annotations are particularly abundant in
+some clusters.</p>
+<pre class="r"><code>for (meta_var in metadata_vars) {
+  cat(&#39;###&#39;, meta_var, &#39;\n&#39;)
+  print(plot_clusters_annotated_by_densities(int_dt, meta_var))
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="diagnosis" class="section level3">
+<h3>diagnosis</h3>
+<p><img src="figure/pineda_marker_genes_0.2.Rmd/plot_metadata_over_UMAP-1.png" width="768" /></p>
+</div>
+<div id="diagnosis_subtype" class="section level3">
+<h3>diagnosis_subtype</h3>
+<p><img src="figure/pineda_marker_genes_0.2.Rmd/plot_metadata_over_UMAP-2.png" width="768" /></p>
+</div>
+<div id="original_tissue_annotation" class="section level3">
+<h3>original_tissue_annotation</h3>
+<p><img src="figure/pineda_marker_genes_0.2.Rmd/plot_metadata_over_UMAP-3.png" width="768" /></p>
+</div>
 </div>
 <div id="marker-genes" class="section level2">
 <h2>Marker genes</h2>
@@ -431,7 +477,7 @@ significance threshold of 0.05, are displayed for each cluster.</p>
 ##  collate  en_US.UTF-8
 ##  ctype    en_US.UTF-8
 ##  tz       Europe/Zurich
-##  date     2026-03-04
+##  date     2026-03-07
 ##  pandoc   3.8.2.1 @ /home/macnairw/packages/scprocess/.snakemake/conda/4fef11cadd34f9d2d13a0d6139d09340_/bin/ (via rmarkdown)
 ##  quarto   NA
 ## 
@@ -495,7 +541,7 @@ significance threshold of 0.05, are displayed for each cluster.</p>
 ##  future.apply           1.20.0   2025-06-06 [1] CRAN (R 4.4.3)
 ##  generics               0.1.4    2025-05-09 [1] CRAN (R 4.4.3)
 ##  GenomeInfoDb         * 1.42.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
-##  GenomeInfoDbData       1.2.13   2026-02-17 [1] Bioconductor
+##  GenomeInfoDbData       1.2.13   2026-03-05 [1] Bioconductor
 ##  GenomicRanges        * 1.58.0   2024-10-29 [1] Bioconductor 3.20 (R 4.4.2)
 ##  GetoptLong             1.0.5    2020-12-15 [1] CRAN (R 4.4.3)
 ##  getPass                0.2-4    2023-12-10 [1] CRAN (R 4.4.3)

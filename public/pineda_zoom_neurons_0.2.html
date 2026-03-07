@@ -149,6 +149,12 @@
             <li><a href="#qc-metrics-of-clusters"
             id="toc-qc-metrics-of-clusters">QC metrics of
             clusters</a></li>
+            <li><a href="#cluster-splits-by-metadata-variables"
+            id="toc-cluster-splits-by-metadata-variables">Cluster splits
+            by metadata variables</a></li>
+            <li><a href="#metadata-variables-over-umap"
+            id="toc-metadata-variables-over-umap">Metadata variables
+            over UMAP</a></li>
             </ul></li>
             <li><a href="#marker-genes" id="toc-marker-genes">Marker
             genes</a>
@@ -444,6 +450,40 @@ cluster across different resolution values.</p>
 <div id="section-14" class="section level4">
 <h4>2</h4>
 <p><img src="figure/pineda_zoom_neurons.Rmd/plot_qc_distns-5.png" width="960" /></p>
+</div>
+</div>
+<div id="cluster-splits-by-metadata-variables" class="section level3">
+<h3>Cluster splits by metadata variables</h3>
+<p>For each cluster (resolution: 0.2) the proportion of cells coming
+from samples associated with specific values of diagnosis,
+diagnosis_subtype and original_tissue_annotation is shown.</p>
+<pre class="r"><code>if (!is.null(metadata_vars))
+  (plot_clusters_by_metadata(meta_dt, sel_cl_int_dt, 
+    meta_vars = metadata_vars, cl_order = cl_ord))</code></pre>
+<p><img src="figure/pineda_zoom_neurons.Rmd/plot_clusters_by_metadata-1.png" width="768" /></p>
+</div>
+<div id="metadata-variables-over-umap" class="section level3 tabset">
+<h3 class="tabset">Metadata variables over UMAP</h3>
+<p>The plot shows a binned UMAP with facets corresponding to specific
+values of different metadata variables which allows the evaluation of
+whether cells sharing certain annotations are particularly abundant in
+some clusters.</p>
+<pre class="r"><code>for (meta_var in metadata_vars) {
+  cat(&#39;####&#39;, meta_var, &#39;\n&#39;)
+  print(plot_clusters_annotated_by_densities(sel_cl_int_dt, meta_var))
+  cat(&#39;\n\n&#39;)
+}</code></pre>
+<div id="diagnosis" class="section level4">
+<h4>diagnosis</h4>
+<p><img src="figure/pineda_zoom_neurons.Rmd/plot_metadata_over_UMAP-1.png" width="768" /></p>
+</div>
+<div id="diagnosis_subtype" class="section level4">
+<h4>diagnosis_subtype</h4>
+<p><img src="figure/pineda_zoom_neurons.Rmd/plot_metadata_over_UMAP-2.png" width="768" /></p>
+</div>
+<div id="original_tissue_annotation" class="section level4">
+<h4>original_tissue_annotation</h4>
+<p><img src="figure/pineda_zoom_neurons.Rmd/plot_metadata_over_UMAP-3.png" width="768" /></p>
 </div>
 </div>
 </div>
