@@ -32,7 +32,6 @@ Use this page to navigate through the full set of visualizations and outputs for
 - Celltype labelling ([link](pineda_label_celltypes.html))
 
 ## Subclustering
-- myeloid_0.2 ([link](pineda_zoom_myeloid_0.2.html))
 - myeloid_0.5 ([link](pineda_zoom_myeloid_0.5.html))
 - neurons_0.2 ([link](pineda_zoom_neurons_0.2.html))
 
