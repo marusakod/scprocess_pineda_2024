@@ -1,5 +1,5 @@
 ---
-title: "Zoom in and recluster: neurons"
+title: "Zoom in and recluster: myeloid"
 author:
 - name: Will Macnair
   affiliation:
@@ -17,7 +17,7 @@ output:
 ```{r setup_knitr, include=FALSE}
 library('BiocStyle')
 knitr::opts_chunk$set( autodep=TRUE, cache=TRUE, cache.lazy=FALSE, dev='png', warnings = FALSE, message = FALSE, 
-  fig.path = "figure/pineda_zoom_neurons.Rmd/")
+  fig.path = "figure/pineda_zoom_myeloid.Rmd/")
 knitr::opts_knit$set(root.dir = '..', base.dir = '../public/', base.url = '')
 
 ```
@@ -38,7 +38,7 @@ setDTthreads(n_cores)
 ```{r setup_input, include = FALSE}
 # define selected group
 zoom_dir      = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom"
-zoom_name     = "neurons"
+zoom_name     = "myeloid"
 sub_dir       = file.path(zoom_dir, zoom_name)
 
 batch_var     = "sample_id"
@@ -46,12 +46,12 @@ batch_var     = "sample_id"
 metadata_f    = "/pstore/data/brain-sc-analysis/studies/pineda_2024/data/metadata/pineda_2024_harmonized_metadata.csv"
 gtf_dt_f      = "/pstore/data/neurogenomics/resources/scdata/reference_genomes/human_2024/human_2024_genes_gtf.txt.gz"
 qc_f          = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_qc/qc_all_samples_pineda_2024_2026-02-28.csv.gz"
-cell_hvgs_f   = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/neurons/hvg_dt_pineda_2024_neurons_2026-02-28.csv.gz"
-int_f         = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/neurons/integrated_dt_pineda_2024_neurons_2026-02-28.csv.gz"
-pb_f          = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/neurons/pb_pineda_2024_neurons_0.2_2026-02-28.rds"
-pb_hvgs_f     = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/neurons/pb_hvgs_pineda_2024_neurons_0.2_2026-02-28.csv.gz"
-mkrs_f        = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/neurons/pb_marker_genes_pineda_2024_neurons_0.2_2026-02-28.csv.gz"
-empty_gs_f    = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/neurons/edger_empty_genes_pineda_2024_neurons_2026-02-28.csv.gz"
+cell_hvgs_f   = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/hvg_dt_pineda_2024_myeloid_2026-02-28.csv.gz"
+int_f         = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/integrated_dt_pineda_2024_myeloid_2026-02-28.csv.gz"
+pb_f          = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/pb_pineda_2024_myeloid_0.5_2026-02-28.rds"
+pb_hvgs_f     = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/pb_hvgs_pineda_2024_myeloid_0.5_2026-02-28.csv.gz"
+mkrs_f        = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/pb_marker_genes_pineda_2024_myeloid_0.5_2026-02-28.csv.gz"
+empty_gs_f    = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/edger_empty_genes_pineda_2024_myeloid_2026-02-28.csv.gz"
 pb_empty_f    = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_pseudobulk/pb_empties_pineda_2024_2026-02-28.rds"
 
 # fgsea files
@@ -81,7 +81,7 @@ res_ls  = "0.1 0.2 0.5 1 2" %>%
 
 # marker parameters
 not_ok_re     = "(lincRNA|lncRNA|pseudogene|antisense)"
-sel_res       = "0.2"
+sel_res       = "0.5"
 min_cpm_mkr   = 50
 min_cells     = 10
 

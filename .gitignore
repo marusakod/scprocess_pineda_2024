@@ -5,7 +5,8 @@
 .Rproj.user
 .Ruserdata
 ._*
-.resources
+.log/
+.resources/
 .vscode/
 analysis/*_cache
 analysis/*html
