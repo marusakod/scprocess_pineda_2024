@@ -55,11 +55,11 @@ empty_gs_f    = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pined
 pb_empty_f    = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_pseudobulk/pb_empties_pineda_2024_2026-02-28.rds"
 
 # fgsea files
+ref_txome     = "human_2024"
 do_gsea       = as.logical("True")
-fgsea_go_bp_f = ""
-fgsea_go_cc_f = ""
-fgsea_go_mf_f = ""
-
+fgsea_go_bp_f = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/fgsea_pineda_2024_myeloid_0.5_go_bp_2026-02-28.csv.gz"
+fgsea_go_cc_f = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/fgsea_pineda_2024_myeloid_0.5_go_cc_2026-02-28.csv.gz"
+fgsea_go_mf_f = "/pstore/data/brain-sc-analysis/studies/pineda_2024/output/pineda_zoom/myeloid/fgsea_pineda_2024_myeloid_0.5_go_mf_2026-02-28.csv.gz"
 
 # custom markers for heatmap
 custom_mkr_names_str = "human_brain"
@@ -217,6 +217,7 @@ gsea_ls       = lapply(fgsea_fs, function(f) if(file.exists(f)) {fread(f)} else 
 
 ```{r plot_setup, include = FALSE}
 do_metadata   = length(metadata_vars) > 0
+do_gsea       = (ref_txome %in% c('human_2024', 'human_2020', 'mouse_2024', 'mouse_2020')) & do_gsea
 # for ambient gene heatmaps
 base_w      = 1.5
 unit_w      = 0.5
@@ -430,7 +431,7 @@ for (sel_cl in cl_ord) {
 ### GSEA characterisation of clusters{.tabset}
 Gene Set Enrichment Analysis (GSEA) was performed on marker genes for each cluster, using log fold change as the ranking variable. The top 10 pathways, grouped into five categories and selected based on a significance threshold of 0.05, are displayed for each cluster.
 
-```{r plot_gsea_results_pb, eval = do_gsea, fig.height = 12, fig.width = 8, results = "asis"}
+```{r plot_gsea_results_pb, eval = do_gsea, include = do_gsea, fig.height = 12, fig.width = 8, results = "asis"}
 for (p in names(gsea_ls)) {
   if (is.null(gsea_ls[[p]]))
     next
